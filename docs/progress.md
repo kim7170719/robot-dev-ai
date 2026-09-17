@@ -114,7 +114,7 @@ ros2 launch m1_baseline m1_pipeline.launch.py
 | `simple_diff_robot` builds | PASS | `colcon build --packages-select simple_diff_robot` |
 | Launch: `robot_state_publisher` + `diff_drive_controller` + `joint_state_broadcaster` | PASS | Both controllers `active` |
 | `/cmd_vel` (`TwistStamped`) moves `/odom` | PASS | `odom.x` 0.006 → 8.102 while commanding 0.3 m/s |
-| RViz: robot/TF display | PASS | `LIBGL_ALWAYS_SOFTWARE=1 rviz2`；Fixed Frame=odom；TF `base_link` 隨 `/cmd_vel` 移動 |
+| RViz: robot/TF display | PASS | `__GL_THREADED_OPTIMIZATIONS=0 rviz2`；OpenGL 4.6 NVIDIA 硬體加速；TF `base_link` 隨 `/cmd_vel` 移動 |
 
 G2 is considered **PASS** for the ROS milestone. RViz environment fix is a separate task.
 
