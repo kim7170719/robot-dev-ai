@@ -6,9 +6,7 @@ After every reboot, open this file in the browser first (even if the local clone
 
 https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/os_handoff.md
 
-Until that branch is merged, Windows can keep using:
-
-https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
+Until that branch is merged, **do not** use the `develop` copy of this file; it is stale. Always open the `feature/m1-ros-baseline` URL above.
 
 Update this file, commit, and `git push` **before** you reboot. Do not use `git stash` to cross OS.
 
@@ -21,7 +19,8 @@ Update this file, commit, and `git push` **before** you reboot. Do not use `git 
 | Ubuntu branch | `feature/m1-ros-baseline` |
 | Windows branch | `develop` until M1 PR merges |
 | G0 | PASS — tag `g0-environment-baseline` on `main` (`c771bf1`) |
-| Next OS | Ubuntu (stay here) |
+| Next OS | Windows (this reboot) then back to Ubuntu for Jazzy sudo |
+| Windows todo | `docs/windows_next.md` — fetch `develop` + tags; no ROS install |
 | Do not do | ROS / Isaac / Cosmos on Windows; Cosmos on Ubuntu; develop on `main` |
 
 Gate 0 closed:
@@ -33,6 +32,10 @@ M1-01 blocked on `sudo` in a local Ubuntu terminal. Commands: `docs/m1_ros_jazzy
 
 ### After reboot → Windows
 
+Browser first: https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/windows_next.md
+
+Then:
+
 ```powershell
 cd C:\dev\robot-dev-ai
 git fetch --prune
@@ -40,9 +43,10 @@ git switch develop
 git pull --ff-only
 git fetch --tags
 git status
+git tag -l "g0-*"
 ```
 
-Read `docs/windows_next.md`. Do not install ROS 2.
+Expect tag `g0-environment-baseline`. Read `docs/windows_next.md`. Do not install ROS 2. If you did not edit files, reboot back to Ubuntu.
 
 ### After reboot → Ubuntu
 

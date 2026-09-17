@@ -82,4 +82,4 @@ Issue M1-01: Install and verify ROS 2 Jazzy on Ubuntu 24.04. Commands in `docs/m
 ## Open blockers
 
 1. On Ubuntu, run the sudo commands in `docs/m1_ros_jazzy.md`, then tell Cursor the output of `source /opt/ros/jazzy/setup.bash && ros2 --help`.
-2. Windows: `git fetch --prune; git switch develop; git pull --ff-only; git fetch --tags`. Do not install ROS.
+2. Windows: after reboot follow `docs/windows_next.md` on GitHub (`feature/m1-ros-baseline`); stay on `develop`; do not install ROS.

@@ -15,9 +15,9 @@ Ubuntu and Windows each keep an independent clone. GitHub is the only sync point
 
 ## Current milestone
 
-Day 0 / Gate 0: environment audit and repository baseline.
+Gate 0 **PASS** (`g0-environment-baseline` on `main`). Current work is M1-01 ROS 2 Jazzy on Ubuntu only.
 
-Do not treat Gate 0 as passed until `docs/progress.md` records a full PASS against `CURSOR_PROJECT_GUIDE.md` section 5.3.
+Windows: after reboot open `docs/windows_next.md` on GitHub (do not share the Ubuntu Cursor chat).
 
 ## Start here
 
