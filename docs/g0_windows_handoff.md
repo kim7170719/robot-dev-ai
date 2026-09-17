@@ -64,3 +64,9 @@ git status
 ```
 
 `git status` should be clean. Then reboot or switch back to Ubuntu and continue the original Cursor chat there. Ubuntu will `git pull` and finish Gate 0.
+
+---
+
+**Next Windows guide (M1 / after G0):** `docs/windows_next.md`
+
+https://github.com/kim7170719/robot-dev-ai/blob/docs/g0-cross-os-sync/docs/windows_next.md

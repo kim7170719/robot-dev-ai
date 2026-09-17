@@ -71,4 +71,5 @@ Issue M1-01: Install and verify ROS 2 Jazzy on Ubuntu 24.04. Do not start Cosmos
 
 ## Open blockers
 
-1. After merge, Windows: `git fetch --prune; git switch develop; git pull --ff-only` in `C:\dev\robot-dev-ai`.
+1. Merge https://github.com/kim7170719/robot-dev-ai/pull/1 then tag `g0-environment-baseline`.
+2. Windows next steps (GitHub, no shared chat): `docs/windows_next.md`

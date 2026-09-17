@@ -25,7 +25,8 @@ Do not treat Gate 0 as passed until `docs/progress.md` records a full PASS again
 2. `docs/PROJECT_CONTEXT.md`
 3. `docs/environment.md`
 4. `docs/progress.md`
-5. `.cursor/rules/robotics.mdc`
+5. `docs/windows_next.md` (Windows clone / helper OS; do not share the Ubuntu Cursor chat)
+6. `.cursor/rules/robotics.mdc`
 
 ## Scope freeze (MVP)
 
