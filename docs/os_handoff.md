@@ -12,12 +12,19 @@ Update this file, commit, and `git push` **before** you reboot. Do not use `git 
 
 | Field | Value |
 |---|---|
-| Last writer | Ubuntu |
-| Safe to reboot? | Yes, if `git status` is clean and this branch is pushed |
+| Last writer | Windows |
+| Safe to reboot? | Yes — `git status` clean; this branch pushed |
 | Branch | `docs/g0-cross-os-sync` |
 | PR | https://github.com/kim7170719/robot-dev-ai/pull/1 |
-| Next OS | Windows |
-| Do not do | Install ROS / Isaac / Cosmos on Windows |
+| Next OS | Ubuntu |
+| Do not do | Install ROS / Isaac / Cosmos on Windows; merge PR #1 only when you say to merge |
+
+Windows round 2026-09-17 (this packet):
+
+- `C:\dev\robot-dev-ai` on `docs/g0-cross-os-sync`; `git pull --ff-only` to `5484e04`; working tree clean (no CRLF storm)
+- Confirmed `docs/windows_next.md` is readable locally and at the GitHub URL
+- Did not install ROS 2 / Isaac / Cosmos
+- Next: reboot to Ubuntu; pull this branch; do not merge PR #1 until you explicitly say merge
 
 ### After reboot → Windows
 
