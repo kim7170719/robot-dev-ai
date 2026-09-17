@@ -1,8 +1,12 @@
 # Windows next steps (after Gate 0 probe)
 
-This Cursor Ubuntu chat is not shared with Windows. Use this file on GitHub.
+This Cursor Ubuntu chat is not shared with Windows. Reboot is the normal way to switch OS.
 
-**Open here:**
+**After every reboot, open the live packet first:**
+
+https://github.com/kim7170719/robot-dev-ai/blob/docs/g0-cross-os-sync/docs/os_handoff.md
+
+Then this M1 Windows checklist:
 
 https://github.com/kim7170719/robot-dev-ai/blob/docs/g0-cross-os-sync/docs/windows_next.md
 

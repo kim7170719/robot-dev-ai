@@ -36,13 +36,24 @@ main
 
 Never develop on `main`. Never force-push `main` or `develop`. OS names are not branch names.
 
-## OS switch
+## Dual-boot switch (reboot is expected)
 
-1. `git status`
-2. Commit valid work (`wip:` only if switching OS mid-task)
-3. `git push`
-4. On the other OS: `git fetch --prune`, same branch, `git pull --ff-only`
-5. Start editing only when `git status` is clean
+Cursor chats do not survive reboot. The live packet is `docs/os_handoff.md` on GitHub.
+
+**Leaving this OS**
+
+1. Update `docs/os_handoff.md` if the next OS needs new instructions.
+2. `git status`
+3. Commit if there is real work (`wip:` only if you must reboot mid-task)
+4. `git push`
+5. `scripts/before_reboot.sh` (Ubuntu) or `scripts/before_reboot.ps1` (Windows)
+6. Reboot
+
+**Arriving on the other OS**
+
+1. Open the GitHub URL printed at the top of `docs/os_handoff.md`
+2. `scripts/after_boot.sh` or `scripts/after_boot.ps1`, or the copy-paste commands in that file
+3. `git status` must be clean before new edits
 
 Do not use `git stash` to move work between OS clones.
 
