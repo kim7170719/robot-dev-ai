@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: PR #5 merged. M2 started on `feature/m2-simple-diff-robot`. G2 not PASS until ros2_control apt + launch + `/cmd_vel` odom.
+Current work: M2 launch works; `/cmd_vel` TwistStamped moves `/odom`. G2 RViz still NOT TESTED.
 
 ## Gate 0 checklist
 
@@ -109,6 +109,5 @@ ros2 launch m1_baseline m1_pipeline.launch.py
 
 ## Open blockers
 
-1. Install Jazzy ros2_control apt packages (needs sudo). Commands in `docs/m2_simple_diff_robot.md`.
-2. Gate G2: RViz robot/TF + `/cmd_vel` moves mock chassis / odom.
-3. Windows: pull `develop` (G1 + pipeline). Do not install ROS. M2 is Ubuntu.
+1. Gate G2 RViz: `ros2 launch simple_diff_robot robot.launch.py use_rviz:=true` and confirm robot/TF. Drive already verified via odom.
+2. Windows: pull `develop` for G1/pipeline; M2 is on `feature/m2-simple-diff-robot` until PR #6. No ROS on Windows.

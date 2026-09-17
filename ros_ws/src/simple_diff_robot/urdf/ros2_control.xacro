@@ -3,6 +3,7 @@
   <ros2_control name="SimpleDiffSystem" type="system">
     <hardware>
       <plugin>mock_components/GenericSystem</plugin>
+      <param name="calculate_dynamics">true</param>
     </hardware>
     <joint name="left_wheel_joint">
       <command_interface name="velocity"/>

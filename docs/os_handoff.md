@@ -10,7 +10,7 @@ Browser: https://github.com/kim7170719/robot-dev-ai/blob/feature/m2-simple-diff-
 | Ubuntu branch | `feature/m2-simple-diff-robot` |
 | Windows branch | `develop` (PR #4 and #5 merged) |
 | G0 / G1 | PASS |
-| G2 | NOT PASS — need `sudo apt` ros2_control then launch |
+| G2 | odom drive PASS; RViz NOT TESTED |
 | Windows todo | pull `develop`; **no ROS** |
 | Do not do | Cosmos; Isaac (M3); ROS on Windows |
 

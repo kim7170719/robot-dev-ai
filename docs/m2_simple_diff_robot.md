@@ -1,19 +1,13 @@
 # M2: simple_diff_robot
 
-Not Isaac Sim (M3). Not Cosmos. Ubuntu only.
+Not Isaac Sim (M3). Not Cosmos. Ubuntu only. Do not launch `m1_pipeline` at the same time (`/cmd_vel` type clash).
 
-## Apt (Jazzy)
+## Apt (installed 2026-09-17)
 
-This machine did not have ros2_control installed when the package was added. On Ubuntu:
-
-```bash
-sudo apt update
-sudo apt install -y \
-  ros-jazzy-ros2-control \
-  ros-jazzy-ros2-controllers \
-  ros-jazzy-xacro \
-  ros-jazzy-controller-manager
-```
+- `ros-jazzy-xacro` 2.1.1
+- `ros-jazzy-ros2-control` 4.48.0
+- `ros-jazzy-ros2-controllers` 4.42.1
+- `ros-jazzy-controller-manager` 4.48.0
 
 ## Build / launch
 
@@ -25,22 +19,20 @@ source install/setup.bash
 ros2 launch simple_diff_robot robot.launch.py
 ```
 
-RViz (G2 display):
+RViz (still needed for full G2):
 
 ```bash
 ros2 launch simple_diff_robot robot.launch.py use_rviz:=true
 ```
 
-## Drive
+## Drive (Jazzy uses TwistStamped)
 
 ```bash
 source /opt/ros/jazzy/setup.bash
 source ~/dev/robot-dev-ai/ros_ws/install/setup.bash
-ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2}, angular: {z: 0.0}}" -r 10
-ros2 topic echo /odom --once
-ros2 topic echo /tf --once
+ros2 topic pub --qos-reliability best_effort -r 20 /cmd_vel geometry_msgs/msg/TwistStamped "{twist: {linear: {x: 0.2}}}"
 ```
 
-Expect `/cmd_vel` and `/odom`. Mock hardware integrates wheel velocity so odom.pose should change.
+Verified 2026-09-17: odom `x` 0.006 → 0.804 and `twist.linear.x` 0.3 while commanding 0.3 m/s. Controllers: `diff_drive_controller` and `joint_state_broadcaster` active.
 
-Gate G2 is PASS only after RViz shows the robot/TF and a `/cmd_vel` command changes odom / chassis motion.
+Gate G2 **RViz** item is still NOT TESTED.

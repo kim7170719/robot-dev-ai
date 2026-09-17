@@ -33,8 +33,6 @@ def generate_launch_description():
         parameters=[controllers, {'use_sim_time': use_sim_time}],
         remappings=[
             ('~/robot_description', '/robot_description'),
-            ('/diff_drive_controller/cmd_vel_unstamped', '/cmd_vel'),
-            ('/diff_drive_controller/odom', '/odom'),
         ],
         output='screen',
     )
@@ -47,7 +45,11 @@ def generate_launch_description():
     dd = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['diff_drive_controller'],
+        arguments=[
+            'diff_drive_controller',
+            '--controller-ros-args',
+            '-r /diff_drive_controller/cmd_vel:=/cmd_vel -r /diff_drive_controller/odom:=/odom',
+        ],
         output='screen',
     )
     rviz = Node(
