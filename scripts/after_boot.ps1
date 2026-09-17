@@ -2,9 +2,9 @@
 $ErrorActionPreference = "Stop"
 Set-Location "C:\dev\robot-dev-ai"
 git fetch --prune
-git switch docs/g0-cross-os-sync
+git switch develop
 git pull --ff-only
 git status
 Write-Host "---- docs/os_handoff.md ----"
 Get-Content "docs\os_handoff.md" -TotalCount 80
-Write-Host "Browser copy: https://github.com/kim7170719/robot-dev-ai/blob/docs/g0-cross-os-sync/docs/os_handoff.md"
+Write-Host "Browser copy: https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md"

@@ -4,41 +4,23 @@ This Cursor Ubuntu chat is not shared with Windows. Reboot is the normal way to 
 
 **After every reboot, open the live packet first:**
 
-https://github.com/kim7170719/robot-dev-ai/blob/docs/g0-cross-os-sync/docs/os_handoff.md
+https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 
 Then this M1 Windows checklist:
 
-https://github.com/kim7170719/robot-dev-ai/blob/docs/g0-cross-os-sync/docs/windows_next.md
+https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/windows_next.md
 
 Previous (done): `docs/g0_windows_handoff.md`  
 Master plan: `CURSOR_PROJECT_GUIDE.md`  
-Ubuntu ROS work: wait until Gate 0 is merged; then M1 is **Ubuntu only**.
+Ubuntu ROS work: M1 is **Ubuntu only**.
 
 Do not install ROS 2, Isaac Sim, Isaac ROS, or Cosmos on Windows. Windows is Cursor, documents, Git, and reading.
 
 ---
 
-## 1. Right now: sync this branch
+## 1. Right now: PR #1 is merged — use `develop`
 
-Gate 0 probe already passed. PR to `develop` is:
-
-https://github.com/kim7170719/robot-dev-ai/pull/1
-
-Until that PR is merged, stay on the docs branch:
-
-```powershell
-cd C:\dev\robot-dev-ai
-git fetch --prune
-git switch docs/g0-cross-os-sync
-git pull --ff-only
-git status
-```
-
-Read this file again after pull. `git status` must be clean. If every file looks modified, stop (CRLF problem).
-
----
-
-## 2. After PR #1 is merged: move to `develop`
+https://github.com/kim7170719/robot-dev-ai/pull/1 is merged. Do not use `docs/g0-cross-os-sync` (deleted).
 
 ```powershell
 cd C:\dev\robot-dev-ai
@@ -49,15 +31,13 @@ git status
 git log -5 --oneline
 ```
 
-You should see the Gate 0 docs on `develop`. Then this same guide will live at:
-
-https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/windows_next.md
+Read this file again after pull. `git status` must be clean. If every file looks modified, stop (CRLF problem).
 
 Do not develop on `main`. Do not `git push --force`.
 
 ---
 
-## 3. Next milestone is M1 (not Cosmos)
+## 2. Next milestone is M1 (not Cosmos)
 
 Issue: **M1-01 — Install and verify ROS 2 Jazzy on Ubuntu 24.04**
 
