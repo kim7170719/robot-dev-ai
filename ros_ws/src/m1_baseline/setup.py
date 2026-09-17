@@ -32,6 +32,9 @@ setup(
             'listener = m1_baseline.listener:main',
             'adder = m1_baseline.adder:main',
             'fibonacci = m1_baseline.fibonacci:main',
+            'sensor_node = m1_baseline.sensor_node:main',
+            'planner_node = m1_baseline.planner_node:main',
+            'controller_node = m1_baseline.controller_node:main',
         ],
     },
 )

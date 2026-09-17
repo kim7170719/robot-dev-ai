@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **Gate G1 PASS** on `feature/m1-ros-baseline`. Remaining M1 items (TF2, RViz2, named sensor→planner→controller) are not G1.
+Current work: G1 is on `develop` (PR #4). Next: `feature/m1-pipeline` sensor→planner→controller + TF2/parameter. RViz2 not verified. M2/Cosmos not started.
 
 ## Gate 0 checklist
 
@@ -90,7 +90,24 @@ Issue M1-01: Install and verify ROS 2 Jazzy on Ubuntu 24.04. Commands in `docs/m
 
 Commands: `docs/m1_g1.md`.
 
+## M1 pipeline (after G1)
+
+| Item | Status | Evidence |
+|---|---|---|
+| `sensor_node` → `planner_node` → `controller_node` | PASS | `ros2 launch m1_baseline m1_pipeline.launch.py` |
+| Parameter | PASS | `ros2 param get /planner_node stop_distance` → 0.35 |
+| TF2 `odom` → `base_link` | PASS | `ros2 run tf2_ros tf2_echo odom base_link` |
+| RViz2 | NOT TESTED | GUI; `rviz2` not run in this session |
+
+```bash
+source /opt/ros/jazzy/setup.bash
+cd ~/dev/robot-dev-ai/ros_ws
+colcon build --packages-select m1_baseline
+source install/setup.bash
+ros2 launch m1_baseline m1_pipeline.launch.py
+```
+
 ## Open blockers
 
-1. Optional remaining M1 learning (TF2, RViz2, sensor→planner→controller names). Do not start M2/Cosmos until you choose to.
-2. Windows: after this branch is on GitHub, follow `docs/windows_next.md`; stay on `develop` until the M1 PR merges; do not install ROS.
+1. RViz2 still NOT TESTED. Do not start M2 or Cosmos.
+2. Windows: `git fetch --prune; git switch develop; git pull --ff-only` (G1 is on develop). Pipeline is on `feature/m1-pipeline` until its PR merges. Do not install ROS.
