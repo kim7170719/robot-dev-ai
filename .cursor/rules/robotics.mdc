@@ -31,5 +31,5 @@ Development rules:
 17. Never develop directly on `main`; use a task branch.
 18. Never force-push `main` or `develop`.
 19. Never commit secrets, `.env`, model credentials, build/install/log outputs, or large generated assets.
-20. When switching between Ubuntu and Windows, commit and push first; the other OS must fetch/pull before editing.
+20. When switching between Ubuntu and Windows, commit and push first; the other OS must fetch/pull before editing. Dual-boot: update `docs/os_handoff.md` before reboot; the other OS reads that GitHub file, not the previous Cursor chat.
 21. Update `docs/progress.md` and reference the related issue/milestone in meaningful commits.
