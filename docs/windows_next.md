@@ -12,7 +12,7 @@ https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/windows_next.md
 
 Previous (done): `docs/g0_windows_handoff.md`  
 Master plan: `CURSOR_PROJECT_GUIDE.md`  
-Ubuntu ROS work: M1 is **Ubuntu only**.
+Ubuntu ROS work: M1 is **Ubuntu only**. Gate 0 tag is `g0-environment-baseline` on `main`.
 
 Do not install ROS 2, Isaac Sim, Isaac ROS, or Cosmos on Windows. Windows is Cursor, documents, Git, and reading.
 

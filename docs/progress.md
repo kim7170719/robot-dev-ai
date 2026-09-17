@@ -20,7 +20,9 @@ Out of scope:
 
 ## Current milestone
 
-M0 Environment Audit. Probe round-trip is PASS. Tag `g0-environment-baseline` is created when this branch reaches `main`.
+M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
+
+Current work: **M1-01** ROS 2 Jazzy install on Ubuntu (`feature/m1-ros-baseline`).
 
 ## Gate 0 checklist
 
@@ -41,7 +43,7 @@ M0 Environment Audit. Probe round-trip is PASS. Tag `g0-environment-baseline` is
 | First commit / push | PASS | Ubuntu `main` + `develop` pushed |
 | Windows independent clone | PASS | `C:\dev\robot-dev-ai`; marker `g0-windows-probe-2026-09-17` |
 | Ubuntu → GitHub → Windows → GitHub → Ubuntu | PASS | Ubuntu `git pull --ff-only` `0c51e4f..5abfb65`; `docs/progress.md` is LF-only; `git status` clean |
-| Milestone tag `g0-environment-baseline` | in progress | PR #1 merged to `develop` (`c951015`); waiting `develop` → `main` |
+| Milestone tag `g0-environment-baseline` | PASS | `main` `c771bf1`; `git fetch --tags` |
 
 ## This session
 
@@ -65,12 +67,19 @@ M0 Environment Audit. Probe round-trip is PASS. Tag `g0-environment-baseline` is
 - Windows commit: `5abfb65` `docs: record Windows Gate 0 pull`
 - Line endings: `docs/progress.md` and `docs/environment.md` are LF-only; `git diff --check` clean
 
-## Next (after Gate 0)
+## Next (M1)
 
-Issue M1-01: Install and verify ROS 2 Jazzy on Ubuntu 24.04. Do not start Cosmos.
+Issue M1-01: Install and verify ROS 2 Jazzy on Ubuntu 24.04. Commands in `docs/m1_ros_jazzy.md`. Do not start Cosmos.
+
+| M1-01 check | Status | Evidence |
+|---|---|---|
+| `source /opt/ros/jazzy/setup.bash` | FAIL | `/opt/ros` absent; `sudo` needs a local password |
+| `ros2 --help` | FAIL | not installed |
+| turtlesim | NOT TESTED | |
+| workspace `colcon build` | NOT TESTED | |
+| first own package | NOT TESTED | |
 
 ## Open blockers
 
-1. `develop` → `main`, then tag `g0-environment-baseline`.
-2. Windows: `git fetch --prune; git switch develop; git pull --ff-only` (docs branch is deleted).
-3. Then M1-01 ROS 2 Jazzy on Ubuntu only.
+1. On Ubuntu, run the sudo commands in `docs/m1_ros_jazzy.md`, then tell Cursor the output of `source /opt/ros/jazzy/setup.bash && ros2 --help`.
+2. Windows: `git fetch --prune; git switch develop; git pull --ff-only; git fetch --tags`. Do not install ROS.
