@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: G1 is on `develop` (PR #4). Next: `feature/m1-pipeline` sensor→planner→controller + TF2/parameter. RViz2 not verified. M2/Cosmos not started.
+Current work: PR #5 merged. M2 started on `feature/m2-simple-diff-robot`. G2 not PASS until ros2_control apt + launch + `/cmd_vel` odom.
 
 ## Gate 0 checklist
 
@@ -109,5 +109,6 @@ ros2 launch m1_baseline m1_pipeline.launch.py
 
 ## Open blockers
 
-1. RViz2 still NOT TESTED. Do not start M2 or Cosmos.
-2. Windows: `git fetch --prune; git switch develop; git pull --ff-only` (G1 is on develop). Pipeline is on `feature/m1-pipeline` until its PR merges. Do not install ROS.
+1. Install Jazzy ros2_control apt packages (needs sudo). Commands in `docs/m2_simple_diff_robot.md`.
+2. Gate G2: RViz robot/TF + `/cmd_vel` moves mock chassis / odom.
+3. Windows: pull `develop` (G1 + pipeline). Do not install ROS. M2 is Ubuntu.
