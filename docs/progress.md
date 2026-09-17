@@ -39,8 +39,8 @@ M0 Environment Audit. Gate G0 is **not** complete.
 | GitHub SSH/HTTPS on Ubuntu | PASS | SSH as `kim7170719`; `gh` 2.99.0 |
 | GitHub repo `kim7170719/robot-dev-ai` | PASS | https://github.com/kim7170719/robot-dev-ai |
 | First commit / push | PASS | Ubuntu `main` + `develop` pushed |
-| Windows independent clone | NOT TESTED | clone on Windows to `C:\dev\robot-dev-ai` |
-| Ubuntu → GitHub → Windows → GitHub → Ubuntu | NOT TESTED | blocked on Windows clone |
+| Windows independent clone | PASS | `C:\dev\robot-dev-ai`; marker `g0-windows-probe-2026-09-17` |
+| Ubuntu → GitHub → Windows → GitHub → Ubuntu | in progress | Windows pulled Ubuntu probe; Ubuntu pull still needed |
 | Milestone tag `g0-environment-baseline` | FAIL | Gate 0 not passed |
 
 ## This session
@@ -48,6 +48,14 @@ M0 Environment Audit. Gate G0 is **not** complete.
 - Created `/home/yu/dev/robot-dev-ai` and moved `CURSOR_PROJECT_GUIDE.md` into it.
 - Installed user-local `gh` 2.99.0; GitHub CLI logged in as `kim7170719`.
 - Created public GitHub repo `kim7170719/robot-dev-ai` and pushed the Ubuntu clone.
+
+## Gate 0 Windows probe
+
+- Date: 2026-09-17
+- Clone: `C:\dev\robot-dev-ai`
+- Branch: `docs/g0-cross-os-sync`
+- Marker: `g0-windows-probe-2026-09-17`
+- Confirmed Ubuntu marker `g0-ubuntu-probe-2026-09-17` after `git pull --ff-only`
 
 ## Next (after Gate 0)
 
