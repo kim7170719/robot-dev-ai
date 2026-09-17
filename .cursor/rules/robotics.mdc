@@ -1,0 +1,35 @@
+---
+description: Robotics research baseline and development rules for robot-dev-ai
+alwaysApply: true
+---
+
+Project baseline:
+- Ubuntu 24.04 LTS
+- ROS 2 Jazzy
+- Python 3.12 series
+- Isaac Sim as primary 3D physics simulator
+- Isaac ROS for NVIDIA-accelerated ROS workloads
+- Differential-drive robot as MVP target
+
+Development rules:
+1. Do not change ROS distribution without an explicit architecture decision.
+2. Do not replace or globally downgrade system Python.
+3. Prefer APIs and packages compatible with ROS 2 Jazzy.
+4. Prefer official ROS/NVIDIA documentation for version-sensitive instructions.
+5. Before editing code, explain which files will change and why.
+6. Make the smallest change that satisfies the current milestone.
+7. Never hide build/test failures. Report the exact command and error summary.
+8. Every generated ROS package must declare dependencies correctly.
+9. Keep hardware-dependent code behind clear interfaces.
+10. Simulation validation must happen before real-hardware deployment.
+11. Do not add a new framework/library if the existing stack can solve the task.
+12. Record architecture/version decisions in docs/decisions/.
+13. Add or update tests when behavior changes.
+14. After finishing a task, update docs/progress.md.
+15. Never claim a milestone is complete unless its acceptance criteria pass.
+16. Before editing, report `git status` and current branch.
+17. Never develop directly on `main`; use a task branch.
+18. Never force-push `main` or `develop`.
+19. Never commit secrets, `.env`, model credentials, build/install/log outputs, or large generated assets.
+20. When switching between Ubuntu and Windows, commit and push first; the other OS must fetch/pull before editing.
+21. Update `docs/progress.md` and reference the related issue/milestone in meaningful commits.

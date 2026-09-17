@@ -1,0 +1,28 @@
+# ROS/colcon
+ros_ws/build/
+ros_ws/install/
+ros_ws/log/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Secrets / local config
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs / caches
+*.log
+.cache/
+
+# Experiment generated data
+experiments/tmp/

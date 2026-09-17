@@ -1,0 +1,65 @@
+# Environment audit (Ubuntu)
+
+Recorded: 2026-09-17
+
+Host clone path: `/home/yu/dev/robot-dev-ai`
+
+## Commands
+
+```bash
+lsb_release -a
+uname -m
+python3 --version
+nvidia-smi
+lspci | grep -i nvidia
+free -h
+df -h
+git --version
+```
+
+## Results
+
+| Item | Value | Gate 0 note |
+|---|---|---|
+| OS | Ubuntu 24.04.4 LTS (`noble`) | PASS: 24.04 LTS |
+| Arch | x86_64 | recorded |
+| Python | 3.12.3 | PASS: 3.12 series |
+| GPU | NVIDIA GeForce RTX 2080 Ti | recorded |
+| VRAM | 11264 MiB (11 GB) | recorded |
+| Driver | 595.84 (`nvidia-driver-595-open`) | `nvidia-smi` works |
+| CUDA (driver report) | 13.2 | recorded; not an install of the CUDA toolkit |
+| RAM | 31 GiB total, ~22 GiB available at audit | recorded |
+| Swap | 8.0 GiB | recorded |
+| Root disk | 457G total, 22G used, 412G free on `/` (`/dev/nvme1n1p1`) | recorded |
+| Git | 2.43.0 | PASS: installed |
+| Git identity | `user.name` set on this OS | PASS; email is local-only, not copied into this file |
+| GitHub CLI (`gh`) | 2.99.0 at `~/.local/bin/gh` | PASS: logged in as `kim7170719` over SSH |
+| GitHub SSH | Ubuntu `ed25519` key authenticates as `kim7170719` | PASS |
+| ROS 2 Jazzy | `/opt/ros` absent | expected at M0; install is M1 |
+| Windows clone | not created from this session | NOT TESTED |
+
+PCI:
+
+```text
+2b:00.0 VGA compatible controller: NVIDIA Corporation TU102 [GeForce RTX 2080 Ti Rev. A] (rev a1)
+```
+
+`nvidia-smi` summary:
+
+```text
+Driver Version: 595.84
+CUDA Version: 13.2
+GPU: NVIDIA GeForce RTX 2080 Ti
+Memory-Usage: 759 MiB / 11264 MiB
+```
+
+## Dual-OS notes
+
+Ubuntu is the official research environment. Windows 10 remains the helper OS for Cursor, documents, and Git. This clone is Ubuntu-only so far. Do not share this working tree with Windows.
+
+## Version-sensitive next checks
+
+Before M1, re-read:
+
+- https://docs.ros.org/en/jazzy/
+- https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_ros.html
