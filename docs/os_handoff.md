@@ -1,30 +1,25 @@
 # Dual-boot OS handoff
 
-Ubuntu and Windows do not share a Cursor chat. Reboot is normal. **GitHub is the handoff.**
+After reboot open:
 
-After every reboot, open this file in the browser first:
+https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-pipeline/docs/os_handoff.md
 
-https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/os_handoff.md
+If that 404s, use develop:
 
-Until the M1 PR merges, **do not** trust the `develop` copy of this file.
+https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 
 ## Current packet (2026-09-17)
 
 | Field | Value |
 |---|---|
 | Last writer | Ubuntu |
-| Safe to reboot? | Yes after this packet is pushed |
-| Ubuntu branch | `feature/m1-ros-baseline` |
-| Windows branch | `develop` until M1 PR merges |
-| G0 | PASS — `g0-environment-baseline` |
-| G1 | PASS — `ros2 launch m1_baseline m1_graph.launch.py` + CLI service/action |
-| Next OS | Either; Windows has a read-only Git round. Ubuntu can keep M1 extras. |
-| Windows todo | `docs/windows_next.md` — fetch `develop` + tags; **no ROS** |
-| Do not do | ROS / Isaac / Cosmos on Windows; Cosmos on Ubuntu; develop on `main` |
+| Ubuntu branch | `feature/m1-pipeline` |
+| Windows branch | `develop` (G1 merged via PR #4) |
+| G0 / G1 | PASS |
+| Next | Windows pull `develop`; Ubuntu pipeline PR; no M2/Cosmos |
+| Windows todo | `docs/windows_next.md` — **no ROS install** |
 
-### After reboot → Windows
-
-Follow https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/windows_next.md
+### Windows
 
 ```powershell
 cd C:\dev\robot-dev-ai
@@ -35,19 +30,14 @@ git fetch --tags
 git status
 ```
 
-### After reboot → Ubuntu
+Browser: https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-pipeline/docs/windows_next.md
+
+### Ubuntu
 
 ```bash
 cd ~/dev/robot-dev-ai
 git fetch --prune
-git switch feature/m1-ros-baseline
+git switch feature/m1-pipeline
 git pull --ff-only
 git status
 ```
-
-G1 commands: `docs/m1_g1.md`.
-
-## Every reboot
-
-Leave: status → commit → push → `scripts/before_reboot.*` → reboot.  
-Arrive: browser packet → fetch/switch/pull → clean status before edits.
