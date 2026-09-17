@@ -47,3 +47,22 @@ ros2 run turtlesim turtle_teleop_key
 ```
 
 Workspace + first package come after `ros2 --help` succeeds. Record results in `docs/progress.md`. Do not claim Gate G1 until the package builds and launch starts multiple nodes.
+
+## Verified on this Ubuntu (2026-09-17)
+
+| Check | Result |
+|---|---|
+| Packages | `ros-jazzy-desktop` 0.11.0-1noble.20260905.070740, `ros-dev-tools` 1.0.3 |
+| Distro | `ROS_DISTRO=jazzy` |
+| `ros2 --help` | PASS |
+| turtlesim | PASS (user-run GUI test) |
+| First package | `ros_ws/src/m1_baseline` |
+| `colcon build --packages-select m1_baseline` | PASS |
+
+```bash
+source /opt/ros/jazzy/setup.bash
+cd ~/dev/robot-dev-ai/ros_ws
+colcon build --packages-select m1_baseline
+source install/setup.bash
+ros2 run m1_baseline talker
+```

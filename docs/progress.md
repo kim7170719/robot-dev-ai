@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **M1-01** ROS 2 Jazzy install on Ubuntu (`feature/m1-ros-baseline`).
+Current work: **M1-01** install verified. First package `m1_baseline` builds. Gate G1 is **not** complete (no multi-node launch yet).
 
 ## Gate 0 checklist
 
@@ -73,13 +73,13 @@ Issue M1-01: Install and verify ROS 2 Jazzy on Ubuntu 24.04. Commands in `docs/m
 
 | M1-01 check | Status | Evidence |
 |---|---|---|
-| `source /opt/ros/jazzy/setup.bash` | FAIL | `/opt/ros` absent; `sudo` needs a local password |
-| `ros2 --help` | FAIL | not installed |
-| turtlesim | NOT TESTED | |
-| workspace `colcon build` | NOT TESTED | |
-| first own package | NOT TESTED | |
+| `source /opt/ros/jazzy/setup.bash` | PASS | `/opt/ros/jazzy/setup.bash` |
+| `ros2 --help` | PASS | `ROS_DISTRO=jazzy` |
+| turtlesim | PASS | user GUI test of `turtlesim_node` / `turtle_teleop_key` |
+| workspace `colcon build` | PASS | `colcon build --packages-select m1_baseline` |
+| first own package | PASS | `ros_ws/src/m1_baseline` talker on `chatter` |
 
 ## Open blockers
 
-1. On Ubuntu, run the sudo commands in `docs/m1_ros_jazzy.md`, then tell Cursor the output of `source /opt/ros/jazzy/setup.bash && ros2 --help`.
-2. Windows: after reboot follow `docs/windows_next.md` on GitHub (`feature/m1-ros-baseline`); stay on `develop`; do not install ROS.
+1. Gate G1 still needs launch of multiple nodes and CLI checks of topic / node / service / action. Next: keep working on `feature/m1-ros-baseline`.
+2. Windows: follow `docs/windows_next.md` on GitHub; stay on `develop`; do not install ROS.

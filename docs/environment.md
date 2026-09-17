@@ -35,7 +35,7 @@ git --version
 | Git identity | `user.name` set on this OS | PASS; email is local-only, not copied into this file |
 | GitHub CLI (`gh`) | 2.99.0 at `~/.local/bin/gh` | PASS: logged in as `kim7170719` over SSH |
 | GitHub SSH | Ubuntu `ed25519` key authenticates as `kim7170719` | PASS |
-| ROS 2 Jazzy | `/opt/ros` absent | expected at M0; install is M1 |
+| ROS 2 Jazzy | `/opt/ros/jazzy` (`ros-jazzy-desktop` 0.11.0) | PASS M1-01 |
 | Windows clone | `C:\dev\robot-dev-ai` (reported 2026-09-17) | independent clone; round-trip still in progress |
 
 PCI:

@@ -76,10 +76,10 @@ Then open a PR into `develop`. Before reboot: commit and push. Do not use `git s
 
 ## Ubuntu is doing (not you)
 
-M1-01: install ROS 2 Jazzy desktop with `sudo` using `docs/m1_ros_jazzy.md`.  
-Gate G1 is not PASS until Ubuntu has `ros2 --help`, turtlesim, `colcon build`, and a first package.
+M1-01 install + turtlesim + first package `m1_baseline` are done on Ubuntu.  
+Gate G1 is **not** PASS until Ubuntu has a launch that starts multiple nodes and CLI checks of topic / node / service / action.
 
-When Ubuntu records G1 in `docs/progress.md`, a new Windows GitHub checklist will replace this one.
+When Ubuntu records G1 in `docs/progress.md`, a new Windows GitHub checklist will replace this one. Stay on `develop`. Do not install ROS.
 
 ---
 

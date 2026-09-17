@@ -19,8 +19,8 @@ Update this file, commit, and `git push` **before** you reboot. Do not use `git 
 | Ubuntu branch | `feature/m1-ros-baseline` |
 | Windows branch | `develop` until M1 PR merges |
 | G0 | PASS — tag `g0-environment-baseline` on `main` (`c771bf1`) |
-| Next OS | Windows (this reboot) then back to Ubuntu for Jazzy sudo |
-| Windows todo | `docs/windows_next.md` — fetch `develop` + tags; no ROS install |
+| Next OS | Ubuntu (stay here) for G1 multi-node launch |
+| Windows todo | `docs/windows_next.md` — stay on `develop`; no ROS; M1-01 install is done on Ubuntu |
 | Do not do | ROS / Isaac / Cosmos on Windows; Cosmos on Ubuntu; develop on `main` |
 
 Gate 0 closed:
@@ -28,7 +28,7 @@ Gate 0 closed:
 - PR #1 → `develop`, PR #2 → `main`
 - Tag: `g0-environment-baseline`
 
-M1-01 blocked on `sudo` in a local Ubuntu terminal. Commands: `docs/m1_ros_jazzy.md`
+M1-01 install verified on Ubuntu. First package `m1_baseline` builds. Gate G1 not yet.
 
 ### After reboot → Windows
 
