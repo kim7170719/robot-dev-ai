@@ -2,13 +2,11 @@
 
 Ubuntu and Windows do not share a Cursor chat. Reboot is normal. **GitHub is the handoff.**
 
-After every reboot, open this file in the browser first (even if the local clone is stale):
+After every reboot, open this file in the browser first:
 
 https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/os_handoff.md
 
-Until that branch is merged, **do not** use the `develop` copy of this file; it is stale. Always open the `feature/m1-ros-baseline` URL above.
-
-Update this file, commit, and `git push` **before** you reboot. Do not use `git stash` to cross OS.
+Until the M1 PR merges, **do not** trust the `develop` copy of this file.
 
 ## Current packet (2026-09-17)
 
@@ -18,23 +16,15 @@ Update this file, commit, and `git push` **before** you reboot. Do not use `git 
 | Safe to reboot? | Yes after this packet is pushed |
 | Ubuntu branch | `feature/m1-ros-baseline` |
 | Windows branch | `develop` until M1 PR merges |
-| G0 | PASS — tag `g0-environment-baseline` on `main` (`c771bf1`) |
-| Next OS | Ubuntu (stay here) for G1 multi-node launch |
-| Windows todo | `docs/windows_next.md` — stay on `develop`; no ROS; M1-01 install is done on Ubuntu |
+| G0 | PASS — `g0-environment-baseline` |
+| G1 | PASS — `ros2 launch m1_baseline m1_graph.launch.py` + CLI service/action |
+| Next OS | Either; Windows has a read-only Git round. Ubuntu can keep M1 extras. |
+| Windows todo | `docs/windows_next.md` — fetch `develop` + tags; **no ROS** |
 | Do not do | ROS / Isaac / Cosmos on Windows; Cosmos on Ubuntu; develop on `main` |
-
-Gate 0 closed:
-
-- PR #1 → `develop`, PR #2 → `main`
-- Tag: `g0-environment-baseline`
-
-M1-01 install verified on Ubuntu. First package `m1_baseline` builds. Gate G1 not yet.
 
 ### After reboot → Windows
 
-Browser first: https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/windows_next.md
-
-Then:
+Follow https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/windows_next.md
 
 ```powershell
 cd C:\dev\robot-dev-ai
@@ -43,10 +33,7 @@ git switch develop
 git pull --ff-only
 git fetch --tags
 git status
-git tag -l "g0-*"
 ```
-
-Expect tag `g0-environment-baseline`. Read `docs/windows_next.md`. Do not install ROS 2. If you did not edit files, reboot back to Ubuntu.
 
 ### After reboot → Ubuntu
 
@@ -58,12 +45,9 @@ git pull --ff-only
 git status
 ```
 
-Then run the sudo install in `docs/m1_ros_jazzy.md` if `/opt/ros/jazzy` is still missing.
+G1 commands: `docs/m1_g1.md`.
 
-## Every reboot (both OS)
+## Every reboot
 
-**Leaving this OS:** `git status` → commit if needed → `git push` → `scripts/before_reboot.sh` or `.ps1` → reboot.
-
-**Arriving:** open the GitHub URL at the top → fetch / switch / `git pull --ff-only` → clean `git status` before edits.
-
-Clones: Ubuntu `~/dev/robot-dev-ai`, Windows `C:\dev\robot-dev-ai`.
+Leave: status → commit → push → `scripts/before_reboot.*` → reboot.  
+Arrive: browser packet → fetch/switch/pull → clean status before edits.

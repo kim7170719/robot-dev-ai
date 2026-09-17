@@ -1,20 +1,22 @@
-# Windows checklist (M1)
+# Windows checklist (after Gate G1)
 
 This Cursor Ubuntu chat is **not** shared with Windows. After reboot, use GitHub only.
 
-**Open these two pages in the browser first:**
+**Open these pages in the browser first** (do not use the stale `develop` copies until the M1 PR merges):
 
-1. Live packet: https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/os_handoff.md
-2. This checklist: https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/windows_next.md
+1. https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/os_handoff.md
+2. https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/windows_next.md
+3. https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/m1_g1.md
 
-Clone: `C:\dev\robot-dev-ai`  
-Do not open the Ubuntu working tree from a shared disk.
+Clone: `C:\dev\robot-dev-ai`
 
 ---
 
-## Do this now (this reboot)
+## Do this now
 
-1. Fetch tags and stay on `develop` (do **not** install ROS).
+Ubuntu Gate **G1 is PASS** (`m1_baseline` launch + CLI). You still **do not install ROS**.
+
+1. Sync Git (stay on `develop` until the M1 PR is merged):
 
 ```powershell
 cd C:\dev\robot-dev-ai
@@ -23,67 +25,27 @@ git switch develop
 git pull --ff-only
 git fetch --tags
 git status
-git log -5 --oneline
 git tag -l "g0-*"
 ```
 
-2. Confirm you see tag `g0-environment-baseline`. If `git status` lists almost every file as modified, **stop** (CRLF). Do not commit that.
+2. If almost every file is modified, stop (CRLF). Do not commit that.
 
-3. Optional: bookmark the two GitHub URLs above.
+3. Read the three GitHub URLs above. Confirm G1 in `docs/progress.md` on the **feature branch page**, not an old `develop` file.
 
-4. You may **read** (no install):
+4. After the M1 PR is merged into `develop`, run the same fetch/switch/pull again so local `develop` has `m1_baseline` and `docs/m1_g1.md`.
 
-- https://docs.ros.org/en/jazzy/
-- https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html
-- Issue https://github.com/kim7170719/robot-dev-ai/issues/3
-- Ubuntu install notes (on the feature branch in the browser): https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/m1_ros_jazzy.md
-
-5. Do **not** edit files this round unless you have a docs-only change. If you changed nothing:
-
-```powershell
-git status
-```
-
-Must be clean, then reboot back to Ubuntu.
-
-6. If you **must** commit docs from Windows, use a branch from `develop`, never `main`:
-
-```powershell
-git switch develop
-git pull --ff-only
-git switch -c docs/m1-notes
-# edit markdown only
-git add <files>
-git commit -m "docs: ..."
-git push -u origin docs/m1-notes
-```
-
-Then open a PR into `develop`. Before reboot: commit and push. Do not use `git stash` across OS.
+5. If you changed nothing: `git status` clean, then reboot back to Ubuntu when you are done reading.
 
 ---
 
 ## Must not do on Windows
 
-- Install ROS 2 / Jazzy / turtlesim
-- Install Isaac Sim, Isaac ROS, Nav2, or Cosmos
-- Treat Windows as the official ROS machine
-- Change ROS distribution or system Python
-- `git push --force` on `main` or `develop`
-- Work on `main`
-- Switch to deleted branch `docs/g0-cross-os-sync`
+- Install ROS 2, Isaac Sim, Isaac ROS, Nav2, or Cosmos
+- Develop on `main` or force-push `main` / `develop`
+- Use deleted branch `docs/g0-cross-os-sync`
 
 ---
 
-## Ubuntu is doing (not you)
+## Ubuntu next (not you)
 
-M1-01 install + turtlesim + first package `m1_baseline` are done on Ubuntu.  
-Gate G1 is **not** PASS until Ubuntu has a launch that starts multiple nodes and CLI checks of topic / node / service / action.
-
-When Ubuntu records G1 in `docs/progress.md`, a new Windows GitHub checklist will replace this one. Stay on `develop`. Do not install ROS.
-
----
-
-## After every reboot (habit)
-
-Leaving Windows: `git status` → commit if needed → `git push` → `.\scripts\before_reboot.ps1` → reboot.  
-Arriving: browser packet first → then the PowerShell block in **Do this now**.
+Remaining M1 learning (TF2, RViz2, sensor→planner→controller) is optional after G1. M2 is not started. Cosmos is not started.
