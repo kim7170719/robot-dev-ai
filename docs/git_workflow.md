@@ -50,6 +50,12 @@ Do not use `git stash` to move work between OS clones.
 
 Conventional Commits. One logical change per commit. Update `docs/progress.md` in meaningful commits.
 
-## Gate 0 Git acceptance (not yet passed)
+## Gate 0 Git acceptance
 
-Ubuntu → GitHub → Windows → GitHub → Ubuntu round-trip is required before claiming Gate 0.
+Round-trip on `docs/g0-cross-os-sync`:
+
+1. Ubuntu pushed `g0-ubuntu-probe-2026-09-17` in `docs/environment.md`.
+2. Windows pulled that branch, wrote `g0-windows-probe-2026-09-17` in `docs/progress.md`, pushed `5abfb65`.
+3. Ubuntu `git pull --ff-only` received `5abfb65`. Working tree clean. Markdown stayed LF.
+
+Clones remain independent: `/home/yu/dev/robot-dev-ai` and `C:\dev\robot-dev-ai`.

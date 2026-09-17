@@ -20,7 +20,7 @@ Out of scope:
 
 ## Current milestone
 
-M0 Environment Audit. Gate G0 is **not** complete.
+M0 Environment Audit. Probe round-trip is PASS. Tag `g0-environment-baseline` is created when this branch reaches `main`.
 
 ## Gate 0 checklist
 
@@ -40,8 +40,8 @@ M0 Environment Audit. Gate G0 is **not** complete.
 | GitHub repo `kim7170719/robot-dev-ai` | PASS | https://github.com/kim7170719/robot-dev-ai |
 | First commit / push | PASS | Ubuntu `main` + `develop` pushed |
 | Windows independent clone | PASS | `C:\dev\robot-dev-ai`; marker `g0-windows-probe-2026-09-17` |
-| Ubuntu → GitHub → Windows → GitHub → Ubuntu | in progress | Windows pulled Ubuntu probe; Ubuntu pull still needed |
-| Milestone tag `g0-environment-baseline` | FAIL | Gate 0 not passed |
+| Ubuntu → GitHub → Windows → GitHub → Ubuntu | PASS | Ubuntu `git pull --ff-only` `0c51e4f..5abfb65`; `docs/progress.md` is LF-only; `git status` clean |
+| Milestone tag `g0-environment-baseline` | in progress | after `docs/g0-cross-os-sync` → `develop` → `main` |
 
 ## This session
 
@@ -57,11 +57,18 @@ M0 Environment Audit. Gate G0 is **not** complete.
 - Marker: `g0-windows-probe-2026-09-17`
 - Confirmed Ubuntu marker `g0-ubuntu-probe-2026-09-17` after `git pull --ff-only`
 
+## Gate 0 Ubuntu return pull
+
+- Date: 2026-09-17
+- Clone: `/home/yu/dev/robot-dev-ai`
+- Command: `git pull --ff-only` on `docs/g0-cross-os-sync`
+- Windows commit: `5abfb65` `docs: record Windows Gate 0 pull`
+- Line endings: `docs/progress.md` and `docs/environment.md` are LF-only; `git diff --check` clean
+
 ## Next (after Gate 0)
 
 Issue M1-01: Install and verify ROS 2 Jazzy on Ubuntu 24.04. Do not start Cosmos.
 
 ## Open blockers
 
-1. On Windows, independently `git clone git@github.com:kim7170719/robot-dev-ai.git` into `C:\dev\robot-dev-ai`.
-2. Complete Ubuntu → GitHub → Windows → GitHub → Ubuntu sync, then add tag `g0-environment-baseline`.
+1. After merge, Windows: `git fetch --prune; git switch develop; git pull --ff-only` in `C:\dev\robot-dev-ai`.
