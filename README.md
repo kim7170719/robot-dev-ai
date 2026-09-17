@@ -15,9 +15,7 @@ Ubuntu and Windows each keep an independent clone. GitHub is the only sync point
 
 ## Current milestone
 
-Day 0 / Gate 0: environment audit and repository baseline.
-
-Do not treat Gate 0 as passed until `docs/progress.md` records a full PASS against `CURSOR_PROJECT_GUIDE.md` section 5.3.
+Gate 0 **PASS**. Gate G1 **PASS** on `feature/m1-ros-baseline`. Windows: `docs/windows_next.md` on that branch.
 
 ## Start here
 

@@ -1,87 +1,51 @@
-# Windows next steps (after Gate 0 probe)
+# Windows checklist (after Gate G1)
 
-This Cursor Ubuntu chat is not shared with Windows. Reboot is the normal way to switch OS.
+This Cursor Ubuntu chat is **not** shared with Windows. After reboot, use GitHub only.
 
-**After every reboot, open the live packet first:**
+**Open these pages in the browser first** (do not use the stale `develop` copies until the M1 PR merges):
 
-https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
+1. https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/os_handoff.md
+2. https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/windows_next.md
+3. https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-ros-baseline/docs/m1_g1.md
 
-Then this M1 Windows checklist:
-
-https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/windows_next.md
-
-Previous (done): `docs/g0_windows_handoff.md`  
-Master plan: `CURSOR_PROJECT_GUIDE.md`  
-Ubuntu ROS work: M1 is **Ubuntu only**.
-
-Do not install ROS 2, Isaac Sim, Isaac ROS, or Cosmos on Windows. Windows is Cursor, documents, Git, and reading.
+Clone: `C:\dev\robot-dev-ai`
 
 ---
 
-## 1. Right now: PR #1 is merged — use `develop`
+## Do this now
 
-https://github.com/kim7170719/robot-dev-ai/pull/1 is merged. Do not use `docs/g0-cross-os-sync` (deleted).
+Ubuntu Gate **G1 is PASS** (`m1_baseline` launch + CLI). You still **do not install ROS**.
+
+1. Sync Git (stay on `develop` until the M1 PR is merged):
 
 ```powershell
 cd C:\dev\robot-dev-ai
 git fetch --prune
 git switch develop
 git pull --ff-only
+git fetch --tags
 git status
-git log -5 --oneline
+git tag -l "g0-*"
 ```
 
-Read this file again after pull. `git status` must be clean. If every file looks modified, stop (CRLF problem).
+2. If almost every file is modified, stop (CRLF). Do not commit that.
 
-Do not develop on `main`. Do not `git push --force`.
+3. Read the three GitHub URLs above. Confirm G1 in `docs/progress.md` on the **feature branch page**, not an old `develop` file.
 
----
+4. After the M1 PR is merged into `develop`, run the same fetch/switch/pull again so local `develop` has `m1_baseline` and `docs/m1_g1.md`.
 
-## 2. Next milestone is M1 (not Cosmos)
-
-Issue: **M1-01 — Install and verify ROS 2 Jazzy on Ubuntu 24.04**
-
-That install runs only on Ubuntu. On Windows you may:
-
-- Read https://docs.ros.org/en/jazzy/ before Ubuntu starts the install
-- Edit docs, thesis notes, issues, and this repo via Git
-- Use Cursor on `C:\dev\robot-dev-ai` in a **new** chat
-- Before editing: `git fetch --prune`, same branch as Ubuntu, `git pull --ff-only`, then `git status` clean
-
-On Windows you must **not**:
-
-- Treat Windows as the ROS / Isaac machine
-- Change ROS distribution, system Python, or add extra robot types
-- Start Cosmos, Isaac Sim, Nav2, or Jetson work
-
-M1 acceptance (verified on Ubuntu, recorded in `docs/progress.md`):
-
-- `source /opt/ros/jazzy/setup.bash`
-- `ros2 --help`
-- turtlesim starts
-- workspace `colcon build`
-- first own package exists
-- install commands written in docs
+5. If you changed nothing: `git status` clean, then reboot back to Ubuntu when you are done reading.
 
 ---
 
-## 4. If you must commit from Windows during M1
+## Must not do on Windows
 
-Use a task branch from `develop`, never `main`:
-
-```powershell
-git switch develop
-git pull --ff-only
-git switch -c docs/m1-notes
-```
-
-Commit message style: `docs: ...`  
-After push, open a PR into `develop`.
-
-Before switching back to Ubuntu: commit and push. Do not use `git stash` to carry work across OS.
+- Install ROS 2, Isaac Sim, Isaac ROS, Nav2, or Cosmos
+- Develop on `main` or force-push `main` / `develop`
+- Use deleted branch `docs/g0-cross-os-sync`
 
 ---
 
-## 5. Stop condition
+## Ubuntu next (not you)
 
-When Ubuntu records M1 Gate G1 in `docs/progress.md`, the next Windows guide will be added on GitHub the same way. Until then, this file is the Windows checklist.
+Remaining M1 learning (TF2, RViz2, sensor→planner→controller) is optional after G1. M2 is not started. Cosmos is not started.

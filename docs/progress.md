@@ -20,7 +20,9 @@ Out of scope:
 
 ## Current milestone
 
-M0 Environment Audit. Probe round-trip is PASS. Tag `g0-environment-baseline` is created when this branch reaches `main`.
+M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
+
+Current work: **Gate G1 PASS** on `feature/m1-ros-baseline`. Remaining M1 items (TF2, RViz2, named sensor→planner→controller) are not G1.
 
 ## Gate 0 checklist
 
@@ -41,7 +43,7 @@ M0 Environment Audit. Probe round-trip is PASS. Tag `g0-environment-baseline` is
 | First commit / push | PASS | Ubuntu `main` + `develop` pushed |
 | Windows independent clone | PASS | `C:\dev\robot-dev-ai`; marker `g0-windows-probe-2026-09-17` |
 | Ubuntu → GitHub → Windows → GitHub → Ubuntu | PASS | Ubuntu `git pull --ff-only` `0c51e4f..5abfb65`; `docs/progress.md` is LF-only; `git status` clean |
-| Milestone tag `g0-environment-baseline` | in progress | PR #1 merged to `develop` (`c951015`); waiting `develop` → `main` |
+| Milestone tag `g0-environment-baseline` | PASS | `main` `c771bf1`; `git fetch --tags` |
 
 ## This session
 
@@ -65,12 +67,30 @@ M0 Environment Audit. Probe round-trip is PASS. Tag `g0-environment-baseline` is
 - Windows commit: `5abfb65` `docs: record Windows Gate 0 pull`
 - Line endings: `docs/progress.md` and `docs/environment.md` are LF-only; `git diff --check` clean
 
-## Next (after Gate 0)
+## Next (M1)
 
-Issue M1-01: Install and verify ROS 2 Jazzy on Ubuntu 24.04. Do not start Cosmos.
+Issue M1-01: Install and verify ROS 2 Jazzy on Ubuntu 24.04. Commands in `docs/m1_ros_jazzy.md`. Do not start Cosmos.
+
+| M1-01 check | Status | Evidence |
+|---|---|---|
+| `source /opt/ros/jazzy/setup.bash` | PASS | `/opt/ros/jazzy/setup.bash` |
+| `ros2 --help` | PASS | `ROS_DISTRO=jazzy` |
+| turtlesim | PASS | user GUI test of `turtlesim_node` / `turtle_teleop_key` |
+| workspace `colcon build` | PASS | `colcon build --packages-select m1_baseline` |
+| first own package | PASS | `ros_ws/src/m1_baseline` talker on `chatter` |
+
+## Gate G1
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Source ROS / workspace from clean terminal | PASS | `source /opt/ros/jazzy/setup.bash` then `source ros_ws/install/setup.bash` |
+| Own package builds | PASS | `colcon build --packages-select m1_baseline` |
+| Launch starts multiple nodes | PASS | `ros2 launch m1_baseline m1_graph.launch.py` → talker, listener, adder, fibonacci |
+| CLI topic / node / service / action | PASS | `/chatter`; `/m1_talker` `/m1_listener` `/m1_adder` `/m1_fibonacci`; `/add_two_ints` sum=5; `/fibonacci` order 3 succeeded |
+
+Commands: `docs/m1_g1.md`.
 
 ## Open blockers
 
-1. `develop` → `main`, then tag `g0-environment-baseline`.
-2. Windows: `git fetch --prune; git switch develop; git pull --ff-only` (docs branch is deleted).
-3. Then M1-01 ROS 2 Jazzy on Ubuntu only.
+1. Optional remaining M1 learning (TF2, RViz2, sensor→planner→controller names). Do not start M2/Cosmos until you choose to.
+2. Windows: after this branch is on GitHub, follow `docs/windows_next.md`; stay on `develop` until the M1 PR merges; do not install ROS.
