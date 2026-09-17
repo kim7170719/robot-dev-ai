@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: G2 PASS (drive verified). RViz blocked by host GLX/NVIDIA open module issue (not a ROS problem). Moving to next.
+Current work: **G2 PASS**. RViz with `LIBGL_ALWAYS_SOFTWARE=1`; TF `base_link` moved with `/cmd_vel`. PR #6 → `develop` next.
 
 ## Gate 0 checklist
 
@@ -114,7 +114,7 @@ ros2 launch m1_baseline m1_pipeline.launch.py
 | `simple_diff_robot` builds | PASS | `colcon build --packages-select simple_diff_robot` |
 | Launch: `robot_state_publisher` + `diff_drive_controller` + `joint_state_broadcaster` | PASS | Both controllers `active` |
 | `/cmd_vel` (`TwistStamped`) moves `/odom` | PASS | `odom.x` 0.006 → 8.102 while commanding 0.3 m/s |
-| RViz: robot/TF display | NOT TESTED | Host GLX `BadValue` (NVIDIA open kernel module issue, not a ROS issue) |
+| RViz: robot/TF display | PASS | `LIBGL_ALWAYS_SOFTWARE=1 rviz2`；Fixed Frame=odom；TF `base_link` 隨 `/cmd_vel` 移動 |
 
 G2 is considered **PASS** for the ROS milestone. RViz environment fix is a separate task.
 
