@@ -17,13 +17,35 @@ Host: RTX 2080 Ti 11GB. Isaac Sim 4.5 minimum is RTX 3070 / 8GB.
 | Driver when 595 used | **CRASH** — `librtx.scenedb.plugin.so` segfault |
 | Driver downgrade to 580 | PASS — `nvidia-driver-580` installed |
 | Isaac Sim headless startup | **PASS** — `isaacsim.exp.full.streaming-4.5.0` loaded, 1781 MiB VRAM |
-| Startup time (first run) | ~35 min (shader compilation); subsequent runs ~1–3 min |
+| Startup time (first run) | ~35 min (shader compilation); subsequent runs ~30 sec |
+| Python in container | **PASS** — `python3 -c "print..."` returns Python 3.10.15 |
+| ROS2 bridge loaded | **PASS** — `rclpy loaded` (internal Humble); bridge startup 2546ms |
+| ROS2 bridge env vars | `RMW_IMPLEMENTATION=rmw_fastrtps_cpp` + `LD_LIBRARY_PATH=.../humble/lib` |
 
 Driver note: 595 causes `librtx.scenedb.plugin.so` crash in Isaac Sim 4.5. Driver 580 works.
 
 ---
 
-## Step 1: Install Docker
+## Standard run command
+
+```bash
+env -i HOME=$HOME USER=$USER PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+docker run --rm --gpus all \
+  -e "ACCEPT_EULA=Y" -e "PRIVACY_CONSENT=Y" \
+  -e "RMW_IMPLEMENTATION=rmw_fastrtps_cpp" \
+  -e "LD_LIBRARY_PATH=/isaac-sim/exts/isaacsim.ros2.bridge/humble/lib" \
+  --network=host \
+  -v ~/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
+  -v ~/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
+  -v ~/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
+  -v ~/docker/isaac-sim/cache/glcache:/root/.cache/mesa_shader_cache:rw \
+  -v ~/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw \
+  -v ~/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw \
+  -v ~/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
+  -v ~/docker/isaac-sim/documents:/root/Documents:rw \
+  nvcr.io/nvidia/isaac-sim:4.5.0 \
+  ./runheadless.native.sh -v
+```
 
 ```bash
 # Remove old versions
