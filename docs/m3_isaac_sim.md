@@ -6,6 +6,23 @@ Host: RTX 2080 Ti 11GB. Isaac Sim 4.5 minimum is RTX 3070 / 8GB.
 
 ---
 
+## Verified setup (2026-09-18)
+
+| Item | Status |
+|---|---|
+| Docker | 29.8.1 |
+| NVIDIA Container Toolkit | installed |
+| `docker run --gpus all ... nvidia-smi` | PASS (RTX 2080 Ti 11GB) |
+| Isaac Sim 4.5 image | `nvcr.io/nvidia/isaac-sim:4.5.0` pulled |
+| Driver when 595 used | **CRASH** — `librtx.scenedb.plugin.so` segfault |
+| Driver downgrade to 580 | PASS — `nvidia-driver-580` installed |
+| Isaac Sim headless startup | **PASS** — `isaacsim.exp.full.streaming-4.5.0` loaded, 1781 MiB VRAM |
+| Startup time (first run) | ~35 min (shader compilation); subsequent runs ~1–3 min |
+
+Driver note: 595 causes `librtx.scenedb.plugin.so` crash in Isaac Sim 4.5. Driver 580 works.
+
+---
+
 ## Step 1: Install Docker
 
 ```bash
