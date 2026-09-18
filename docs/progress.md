@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **G2 PASS**. RViz with `LIBGL_ALWAYS_SOFTWARE=1`; TF `base_link` moved with `/cmd_vel`. PR #6 → `develop` next.
+Current work: M3 started. Using Isaac Sim 4.5 via Docker (RTX 2080 Ti = 11GB meets 4.5 minimum). Docker not yet installed.
 
 ## Gate 0 checklist
 
