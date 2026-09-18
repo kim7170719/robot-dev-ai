@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: G1 is on `develop` (PR #4). Next: `feature/m1-pipeline` sensor→planner→controller + TF2/parameter. RViz2 not verified. M2/Cosmos not started.
+Current work: **G2 PASS**. RViz with `LIBGL_ALWAYS_SOFTWARE=1`; TF `base_link` moved with `/cmd_vel`. PR #6 → `develop` next.
 
 ## Gate 0 checklist
 
@@ -107,7 +107,21 @@ source install/setup.bash
 ros2 launch m1_baseline m1_pipeline.launch.py
 ```
 
-## Open blockers
+## M2 Gate G2
 
-1. RViz2 still NOT TESTED. Do not start M2 or Cosmos.
-2. Windows: `git fetch --prune; git switch develop; git pull --ff-only` (G1 is on develop). Pipeline is on `feature/m1-pipeline` until its PR merges. Do not install ROS.
+| Criterion | Status | Evidence |
+|---|---|---|
+| `simple_diff_robot` builds | PASS | `colcon build --packages-select simple_diff_robot` |
+| Launch: `robot_state_publisher` + `diff_drive_controller` + `joint_state_broadcaster` | PASS | Both controllers `active` |
+| `/cmd_vel` (`TwistStamped`) moves `/odom` | PASS | `odom.x` 0.006 → 8.102 while commanding 0.3 m/s |
+| RViz: robot/TF display | PASS | `__GL_THREADED_OPTIMIZATIONS=0 rviz2`；OpenGL 4.6 NVIDIA 硬體加速；TF `base_link` 隨 `/cmd_vel` 移動 |
+
+G2 is considered **PASS** for the ROS milestone. RViz environment fix is a separate task.
+
+```bash
+# Drive command (Jazzy uses TwistStamped):
+ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/TwistStamped \
+  "{header: {stamp: {sec: 0}}, twist: {linear: {x: 0.2}}}"
+```
+
+Full commands: `docs/m2_simple_diff_robot.md`.

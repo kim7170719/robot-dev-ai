@@ -1,16 +1,8 @@
-# Windows checklist
+# Windows checklist (M2)
 
-Ubuntu Cursor chat is not shared. Use GitHub.
+Do **not** install ROS / Isaac / Cosmos on Windows.
 
-**Browser first:**
-
-https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-pipeline/docs/windows_next.md
-
-https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/m1_g1.md
-
-## Do this now
-
-G1 is **on `develop`** (PR #4 merged). Do **not** install ROS.
+G1 and the M1 pipeline are on **`develop`**. M2 URDF work is Ubuntu-only.
 
 ```powershell
 cd C:\dev\robot-dev-ai
@@ -22,14 +14,7 @@ git status
 git log -5 --oneline
 ```
 
-You should see commit `feat: M1 Jazzy baseline and Gate G1 launch (#4)`.
+You should see PR #4 and #5 merge commits. If every file is modified, stop (CRLF).
 
-If every file looks modified, stop (CRLF). Do not commit that.
-
-Optional read-only: https://github.com/kim7170719/robot-dev-ai/blob/feature/m1-pipeline/docs/m1_pipeline.md
-
-If you changed nothing, reboot back to Ubuntu when done.
-
-## Must not
-
-ROS 2 / Isaac / Cosmos / Nav2 on Windows. No `main`. No force-push.
+Browser (M2 notes, Ubuntu will run these):  
+https://github.com/kim7170719/robot-dev-ai/blob/feature/m2-simple-diff-robot/docs/m2_simple_diff_robot.md
