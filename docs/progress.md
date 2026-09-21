@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: M3 — ROS2 bridge DDS **PASS** (Humble↔Jazzy /clock confirmed). Next: diff drive OmniGraph for /cmd_vel+/odom, or merge to develop.
+Current work: **G3 PASS** — `/cmd_vel` vx=0.30 received in Isaac Sim; `odom.x` 0→2.1 confirmed. CycloneDDS unicast peer. Merging to develop next.
 
 ## Gate 0 checklist
 

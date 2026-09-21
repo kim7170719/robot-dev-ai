@@ -8,33 +8,30 @@
 | Save USD | PASS | `simple_diff_robot.usd` 6.0 KB at `~/docker/isaac-sim/documents/` |
 | Physics / collision | PASS | CPU physics + minimal articulation runs 360 frames without crash |
 | Camera / LiDAR | NOT TESTED | camera_link and lidar_link in USD; ROS2 topics not yet configured |
-| ROS 2 Bridge | PARTIAL | Container→Host PASS (`/clock` `/odom` visible on Jazzy); Host→Container BLOCKED (DDS asymmetry) |
-| `/clock` | PASS | Jazzy host `ros2 topic list` shows `/clock`; 150 frames delivered |
-| `/odom` | PASS (pub) | Jazzy host sees `/odom` topic; echo empty due to QoS or timing |
-| `/cmd_vel` | PARTIAL | Topic visible on host (`ros2 topic list`); but `Subscription count: 0` from host — Humble FastDDS 2.x subscriber not discoverable by Jazzy FastDDS 3.x |
-| G3: `/cmd_vel` controls robot | NOT PASS | cmd_vel not received in container; DDS asymmetry blocks host→container direction |
-| G3: Isaac Sim sensor data → ROS 2 | PARTIAL | /clock and /odom published by container and visible on host |
+| ROS 2 Bridge | PASS | CycloneDDS unicast peer `127.0.0.1`; Humble↔Jazzy bidirectional |
+| `/clock` | PASS | Jazzy host `ros2 topic list` shows `/clock` |
+| `/odom` | PASS | odom.x increments: 0 → 0.38 → 0.67 → ... while commanding vx=0.3 |
+| `/cmd_vel` | PASS | `Subscription count: 1`; `vx=0.30` received in container continuously |
+| G3: `/cmd_vel` controls robot | PASS | cmd_vel received + odom.x moving |
+| G3: Isaac Sim sensor data → ROS 2 | PASS | `/clock` and `/odom` published and visible on Jazzy host |
 
-## Known constraints and root causes
+## Known constraints and solutions
 
-**DDS asymmetry (key finding):**
-- Container FastDDS 2.x publishes → Jazzy FastDDS 3.x can discover → works ✅
-- Jazzy FastDDS 3.x publishes → Humble FastDDS 2.x container can subscribe → `Subscription count: 0` from host ❌
-- This is a known FastDDS 2.x ↔ 3.x participant discovery incompatibility
+**DDS solution (key finding):**
+- FastDDS 2.x (Humble in container) ↔ FastDDS 3.x (Jazzy host): asymmetric, does NOT work
+- **CycloneDDS 0.10.4 (container) ↔ 0.10.5 (Jazzy host): WORKS** with unicast peer config
+- Required: `RMW_IMPLEMENTATION=rmw_cyclonedds_cpp` AND `CYCLONEDDS_URI=<CycloneDDS><Domain><Discovery><Peers><Peer Address='127.0.0.1'/></Peers></Discovery></Domain></CycloneDDS>` on BOTH sides
 
-**Physics crash root causes:**
-- `IsaacArticulationController` + `IsaacComputeOmniGraph` OmniGraph nodes crash driver 580
-- `rclpy.spin_once()` in Kit update callback → crash after ~180 calls
-- **Workaround**: rclpy on separate thread via `MultiThreadedExecutor` → 360 frames stable
+**Host setup:**
+```bash
+source /opt/ros/jazzy/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export CYCLONEDDS_URI="<CycloneDDS><Domain><Discovery><Peers><Peer Address='127.0.0.1'/></Peers></Discovery></Domain></CycloneDDS>"
+```
 
-**Kit scripting pattern (proven):**
-- Use `--exec` with `--ext-folder /isaac-sim/apps --ext-folder /isaac-sim/extscache --no-window --allow-root`
-- Physics and rclpy work only from update event subscription callback
-- `app.post_quit()` triggers cleanup crash (non-fatal for tests)
-
-## Workaround for G3 cmd_vel (TODO)
-
-Option A: Bridge via relay node on host (Jazzy→Jazzy→container).  
-Option B: Use CycloneDDS (`RMW_IMPLEMENTATION=rmw_cyclonedds_cpp`) on container side.  
-Option C: Use Isaac Sim's streaming API (WebRTC) for two-way control.  
-Option D: Upgrade to Isaac Sim 5.x + RTX 4080 (resolves driver and DDS issues simultaneously).
+**Container setup:**
+```
+-e "RMW_IMPLEMENTATION=rmw_cyclonedds_cpp"
+-e "LD_LIBRARY_PATH=/isaac-sim/exts/isaacsim.ros2.bridge/humble/lib"
+-e "CYCLONEDDS_URI=<CycloneDDS><Domain><Discovery><Peers><Peer Address='127.0.0.1'/></Peers></Discovery></Domain></CycloneDDS>"
+```
