@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: M3 — Isaac Sim 4.5 headless **startup PASS** with driver 580. Next: open scene, import URDF, enable ROS2 bridge.
+Current work: M3 — URDF import PASS (prim=/World/simple_diff_robot/base_link, USD saved). Next: physics/collision, ROS2 bridge cmd_vel/odom.
 
 ## Gate 0 checklist
 
