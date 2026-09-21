@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: M3 — URDF import PASS (prim=/World/simple_diff_robot/base_link, USD saved). Next: physics/collision, ROS2 bridge cmd_vel/odom.
+Current work: M3 — ROS2 bridge DDS **PASS** (Humble↔Jazzy /clock confirmed). Next: diff drive OmniGraph for /cmd_vel+/odom, or merge to develop.
 
 ## Gate 0 checklist
 
