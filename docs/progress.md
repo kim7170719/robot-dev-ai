@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **G3 PASS** — `/cmd_vel` vx=0.30 received in Isaac Sim; `odom.x` 0→2.1 confirmed. CycloneDDS unicast peer. Merging to develop next.
+Current work: **G3 PASS** `m3-g3-isaac-sim`. Next: M4 Nav2. Windows: pull `develop` + `git fetch --tags`.
 
 ## Gate 0 checklist
 
