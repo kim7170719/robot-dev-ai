@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **G2 PASS**. RViz with `LIBGL_ALWAYS_SOFTWARE=1`; TF `base_link` moved with `/cmd_vel`. PR #6 → `develop` next.
+Current work: **G3 PASS** — `/cmd_vel` vx=0.30 received in Isaac Sim; `odom.x` 0→2.1 confirmed. CycloneDDS unicast peer. Merging to develop next.
 
 ## Gate 0 checklist
 
