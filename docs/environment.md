@@ -1,6 +1,6 @@
 # Environment audit (Ubuntu)
 
-Recorded: 2026-09-17
+Recorded: 2026-09-17. Last GPU driver verification: 2026-10-01.
 
 Host clone path: `/home/yu/dev/robot-dev-ai`
 
@@ -26,8 +26,8 @@ git --version
 | Python | 3.12.3 | PASS: 3.12 series |
 | GPU | NVIDIA GeForce RTX 2080 Ti | recorded |
 | VRAM | 11264 MiB (11 GB) | recorded |
-| Driver | 595.84 (`nvidia-driver-595-open`) | `nvidia-smi` works |
-| CUDA (driver report) | 13.2 | recorded; not an install of the CUDA toolkit |
+| Driver | 580.178.04 (`nvidia-driver-580`) | `nvidia-smi` works; see ADR 0003 |
+| CUDA (driver report) | 13.0 | recorded; not an install of the CUDA toolkit |
 | RAM | 31 GiB total, ~22 GiB available at audit | recorded |
 | Swap | 8.0 GiB | recorded |
 | Root disk | 457G total, 22G used, 412G free on `/` (`/dev/nvme1n1p1`) | recorded |
@@ -47,8 +47,8 @@ PCI:
 `nvidia-smi` summary:
 
 ```text
-Driver Version: 595.84
-CUDA Version: 13.2
+Driver Version: 580.178.04
+CUDA Version: 13.0
 GPU: NVIDIA GeForce RTX 2080 Ti
 Memory-Usage: 759 MiB / 11264 MiB
 ```
