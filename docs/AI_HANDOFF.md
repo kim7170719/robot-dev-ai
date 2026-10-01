@@ -6,7 +6,7 @@ Updated: 2026-10-01. Next editor should refresh this file after the next real ta
 
 **G0–G4 PASS** on Ubuntu. MVP Phase A (M1–M4) is done in substance. Next milestone is **M5 Isaac ROS** (not started).
 
-G4 work is pushed on `feature/m4-nav2` and is **not merged to `develop`**. PR [#10](https://github.com/kim7170719/robot-dev-ai/pull/10) targets `develop`.
+G4 was merged into `develop` through PR [#10](https://github.com/kim7170719/robot-dev-ai/pull/10). Create a new feature branch for M5; do not develop directly on `develop`.
 
 ## Done
 
@@ -25,8 +25,7 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## In progress
 
-- Review / merge PR [#10](https://github.com/kim7170719/robot-dev-ai/pull/10) (`feature/m4-nav2` → `develop`)
-- Begin M5 after the PR is merged
+- M5 Isaac ROS baseline is ready to begin on a new `feature/m5-*` branch
 
 ## Not done
 
@@ -44,7 +43,7 @@ Isaac Sim G4 CLI results (2026-09-21):
 - `docs/m4_nav2.md`, `docs/progress.md`, `docs/decisions/0004-synthetic-2d-lidar.md`
 - `experiments/raw/M4-G4.md`
 
-Checkpoint commit: `4a1bfad` (G4 implementation, evidence, tests, and dual-boot packets), pushed to `origin/feature/m4-nav2`.
+G4 integration: PR [#10](https://github.com/kim7170719/robot-dev-ai/pull/10) merged to `develop` as `73d2aba`.
 
 ## Known issues / debt
 
@@ -82,11 +81,11 @@ FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host�
 
 | Field | Value |
 |---|---|
-| Branch | `feature/m4-nav2` (tracks `origin/feature/m4-nav2`) |
-| `develop` | `02a011d` — G3 handoff, **no G4** |
+| Branch | Start M5 from a new `feature/m5-*` branch based on `develop` |
+| `develop` | `73d2aba` — G4 merged |
 | `main` | `c771bf1` — do not develop here |
-| Working tree | Clean after committing this handoff amendment |
+| Working tree | Clean after merging G4 and this handoff update |
 
 ## Suggested next step
 
-1. Review / merge PR [#10](https://github.com/kim7170719/robot-dev-ai/pull/10), then start M5: Isaac ROS container + `docs/isaac_ros_baseline.md` (Gate G5).
+1. Start M5: Isaac ROS container + `docs/isaac_ros_baseline.md` (Gate G5).

@@ -9,8 +9,8 @@ https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 | Field | Value |
 |---|---|
 | Last writer | Ubuntu |
-| Ubuntu branch | `feature/m4-nav2` |
-| Windows branch | `feature/m4-nav2` after its G4 checkpoint is pushed; otherwise `develop` |
+| Ubuntu branch | `develop` (create `feature/m5-*` before M5 edits) |
+| Windows branch | `develop` |
 | G0 / G1 / G2 / G3 / G4 | ALL PASS |
 | Tags | `g0-environment-baseline`, `m2-g2-simple-diff-robot`, `m3-g3-isaac-sim` |
 | Next milestone | M5 Isaac ROS (Ubuntu only) |
@@ -33,20 +33,20 @@ git tag -l "g*" "m*"
 ```
 
 Confirm G4 files: `docs/m4_nav2.md`, `experiments/raw/M4-G4.md`, and `ros_ws/src/simple_diff_nav/`.
-Read: https://github.com/kim7170719/robot-dev-ai/blob/feature/m4-nav2/docs/windows_next.md
+Read: https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/windows_next.md
 
 ### After reboot → Ubuntu
 
 ```bash
 cd ~/dev/robot-dev-ai
 git fetch --prune
-git switch feature/m4-nav2
+git switch develop
 git pull --ff-only
 git fetch --tags
 git status
 ```
 
-Then open a new Codex chat and start M5 only after the G4 checkpoint is committed and pushed.
+Then create a `feature/m5-*` branch before beginning M5.
 
 ## Every reboot
 

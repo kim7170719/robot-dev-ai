@@ -4,20 +4,20 @@ Ubuntu Cursor chat is not shared. Use GitHub.
 
 **Open first:**
 
-https://github.com/kim7170719/robot-dev-ai/blob/feature/m4-nav2/docs/os_handoff.md
+https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 
-https://github.com/kim7170719/robot-dev-ai/blob/feature/m4-nav2/docs/windows_next.md
+https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/windows_next.md
 
 ---
 
 ## Do this now
 
-G0 through **G4** are all **PASS** on `feature/m4-nav2`. G4 must be merged into `develop` before treating `develop` as the current milestone branch.
+G0 through **G4** are all **PASS** on `develop`.
 
 ```powershell
 cd C:\dev\robot-dev-ai
 git fetch --prune
-git switch feature/m4-nav2
+git switch develop
 git pull --ff-only
 git fetch --tags
 git status
