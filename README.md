@@ -15,7 +15,7 @@ Ubuntu and Windows each keep an independent clone. GitHub is the only sync point
 
 ## Current milestone
 
-Gate 0 **PASS**. Gate G1 **PASS** on `feature/m1-ros-baseline`. Windows: `docs/windows_next.md` on that branch.
+G0–G4 **PASS**. Current work: **M5 Isaac ROS** next. Windows: `docs/windows_next.md`.
 
 ## Start here
 

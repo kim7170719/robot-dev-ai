@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **G3 PASS** `m3-g3-isaac-sim`. Next: M4 Nav2. Windows: pull `develop` + `git fetch --tags`.
+Current work: **G4 PASS** on `feature/m4-nav2` (Isaac Sim navigate-to-pose). Windows: pull after merge; do not install Nav2.
 
 ## Gate 0 checklist
 
@@ -125,3 +125,19 @@ ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/TwistStamped \
 ```
 
 Full commands: `docs/m2_simple_diff_robot.md`.
+
+## M4 Nav2 / Gate G4
+
+| Item | Status | Evidence |
+|---|---|---|
+| Nav2 + SLAM Toolbox installed | PASS | `ros2 pkg list` → `nav2_bringup` `slam_toolbox` |
+| Synthetic `/scan` (host) | PASS | `scan_sim.py`; 6 raycast tests; `/scan` `lidar_link` |
+| Isaac Sim `/scan` `/odom` `/clock` | PASS | CycloneDDS; `/scan` ~10 Hz wall-clock stamps |
+| `slam_toolbox` `map → odom` | PASS | with `use_isaac_sim:=true` |
+| Nav2 lifecycle `active` | PASS | controller / planner / bt_navigator `active [3]` |
+| Host RViz navigate-to-pose | PASS | user: 測試沒問題 |
+| Isaac Sim navigate-to-pose | PASS | `navigate_to_pose` SUCCEEDED; odom 3.09 → 0.96 |
+| Obstacle avoidance | PASS | goal (2.0, 2.2) around box at (2.0, 1.0); odom 1.87, 2.25 |
+| Gate G4 | PASS | `experiments/raw/M4-G4.md` |
+
+Commands: `docs/m4_nav2.md`. Decision: `docs/decisions/0004-synthetic-2d-lidar.md`.

@@ -16,7 +16,7 @@ slam_toolbox:
     publish_tf: true
     provide_odom_frame: false
 
-    use_sim_time: true
+    use_sim_time: false
 
     # Mapping params
     resolution: 0.05

@@ -1,0 +1,93 @@
+# AI handoff (live)
+
+Updated: 2026-10-01. Next editor should refresh this file after the next real task.
+
+## Where we are
+
+**G0–G4 PASS** on Ubuntu. MVP Phase A (M1–M4) is done in substance. Next milestone is **M5 Isaac ROS** (not started).
+
+G4 work is checkpointed on `feature/m4-nav2` and is **not merged to `develop`**. Push this commit, then open a PR into `develop`.
+
+## Done
+
+| Gate | What | Evidence |
+|---|---|---|
+| G0 | Repo, GitHub, dual-OS clone sync | tag `g0-environment-baseline` on `main` |
+| G1 | ROS 2 Jazzy, own package, launch, topic/service/action | `docs/m1_g1.md` |
+| G2 | `simple_diff_robot` URDF + ros2_control + RViz | `/cmd_vel` TwistStamped moves `/odom` |
+| G3 | Isaac Sim 4.5 Docker, Humble↔Jazzy via CycloneDDS | `/cmd_vel` → `/odom`; tag `m3-g3-isaac-sim` |
+| G4 | Nav2 + SLAM, host RViz goal, Isaac Sim goals | `experiments/raw/M4-G4.md` |
+
+Isaac Sim G4 CLI results (2026-09-21):
+
+- `navigate_to_pose` `(1.0, 0.0)` SUCCEEDED (odom 3.09 → 0.96)
+- `navigate_to_pose` `(2.0, 2.2)` around box at `(2.0, 1.0)` SUCCEEDED (odom 1.87, 2.25)
+
+## In progress
+
+- Push checkpoint `e7e9711` (amended below), then PR `feature/m4-nav2` → `develop`
+- Begin M5 only after the PR is open or merged
+
+## Not done
+
+- M5 Isaac ROS container + one reproducible pipeline (`docs/isaac_ros_baseline.md`)
+- M6+ research core (schema, agent, registry, validator)
+- Real-hardware / Jetson
+- Isaac Sim RTX/PhysX LiDAR (synthetic 2D scan is the G4 path)
+- Full URDF physics in Isaac Sim (crashes; G3/G4 use kinematic cube + raycast)
+- Cosmos (forbidden as Isaac physics replacement; not before M13)
+
+## Recently touched files (G4 checkpoint)
+
+- `ros_ws/src/simple_diff_nav/` — `scan_sim.py`, `odom_to_tf.py`, `room_scan.py`, slam/nav2 launch+params, tests
+- `simulator/worlds/m4_lidar_scan.py` — Isaac Sim `/scan` `/odom` `/clock`, Twist `/cmd_vel`
+- `docs/m4_nav2.md`, `docs/progress.md`, `docs/decisions/0004-synthetic-2d-lidar.md`
+- `experiments/raw/M4-G4.md`
+
+Checkpoint commit: `e7e9711` (G4 implementation, evidence, tests, and dual-boot packets). It is awaiting a push at this edit.
+
+## Known issues / debt
+
+- **Humble CycloneDDS ↔ Jazzy**: `/clock` publisher type hash can show `INVALID`; wall-clock stamps + `use_sim_time:=false` is the working G4 pattern
+- **`/cmd_vel` types**: ros2_control (host G2) wants **TwistStamped**; Nav2 Jazzy collision_monitor publishes **Twist**. Isaac G4 script subscribes to Twist
+- **collision_monitor** must use `base_link` (not TurtleBot `base_footprint`) or it zeros `/cmd_vel`
+- **Kit `--exec`**: container must use `--entrypoint /isaac-sim/kit/kit` or the script never runs
+- Keep `UPDATE_SUB` (or equivalent) so the Kit update callback is not garbage-collected
+- Isaac `m4_lidar_scan.py` and `room_scan.py` must stay geometrically in sync (8×6 m room, box at 2,1)
+- `docs/environment.md` is aligned with the verified 580.178.04 driver (ADR 0003)
+- G4 `cmd_vel` timeout (0.5 s) is in the script on disk; running containers may be older
+
+## Environment (Ubuntu)
+
+| Item | Value |
+|---|---|
+| OS | Ubuntu 24.04 LTS |
+| GPU | RTX 2080 Ti 11 GB |
+| Driver for Isaac | 580.178.04 (not 595) |
+| ROS | Jazzy at `/opt/ros/jazzy` |
+| Isaac Sim | Docker `nvcr.io/nvidia/isaac-sim:4.5.0`, Humble rclpy inside |
+| DDS | `RMW_IMPLEMENTATION=rmw_cyclonedds_cpp` + unicast peer `127.0.0.1` both sides |
+| RViz | `__GL_THREADED_OPTIMIZATIONS=0` |
+
+FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host↔container.
+
+## Windows / Ubuntu
+
+- Two clones; GitHub only sync. No shared working tree
+- Windows: docs/Git only. Do not install ROS / Isaac / Nav2 / Cosmos
+- Before reboot: commit, push, update `docs/os_handoff.md`
+- After reboot: open the GitHub `os_handoff.md` URL, not the previous chat
+
+## Git
+
+| Field | Value |
+|---|---|
+| Branch | `feature/m4-nav2` (tracks `origin/feature/m4-nav2`) |
+| `develop` | `02a011d` — G3 handoff, **no G4** |
+| `main` | `c771bf1` — do not develop here |
+| Working tree | Clean after committing this handoff amendment |
+
+## Suggested next step
+
+1. Push the G4 checkpoint and open a PR from `feature/m4-nav2` to `develop`.
+2. Start M5: Isaac ROS container + `docs/isaac_ros_baseline.md` (Gate G5).
