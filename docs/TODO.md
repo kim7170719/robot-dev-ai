@@ -1,18 +1,6 @@
 # TODO
 
-## P0 — review and merge G4 integration
-
-### Review PR #10 and merge into `develop`
-
-- **Purpose:** Integrate the verified G4 implementation into the shared development branch.
-- **Files:** PR #10, checkpoint `4a1bfad` on `feature/m4-nav2`.
-- **Done when:** PR #10 is merged into `develop`.
-
-### Refresh dual-boot packets (done in G4 checkpoint)
-
-- **Purpose:** Windows/Ubuntu after reboot still say “next is M4”.
-- **Files:** `docs/os_handoff.md`, `docs/windows_next.md`, `docs/progress.md` current-milestone line
-- **Done:** both packets say G4 PASS, next M5, and point to `feature/m4-nav2` until merge.
+## P0 — M5 Isaac ROS baseline
 
 ## P1 — important
 
