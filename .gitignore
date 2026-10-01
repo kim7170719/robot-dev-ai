@@ -1,6 +1,10 @@
 # ROS/colcon
 ros_ws/build/
+/build/
+/install/
+/log/
 ros_ws/install/
+
 ros_ws/log/
 
 # Python

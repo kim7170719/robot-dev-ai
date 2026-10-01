@@ -1,12 +1,12 @@
 # TODO
 
-## P0 — complete the G4 integration
+## P0 — review and merge G4 integration
 
-### Push G4 checkpoint and open PR
+### Review PR #10 and merge into `develop`
 
-- **Purpose:** Share the verified G4 implementation for review and merge.
-- **Files:** checkpoint `e7e9711` (amended below) on `feature/m4-nav2`.
-- **Done when:** commit pushed; PR to `develop` is open or merged.
+- **Purpose:** Integrate the verified G4 implementation into the shared development branch.
+- **Files:** PR #10, checkpoint `4a1bfad` on `feature/m4-nav2`.
+- **Done when:** PR #10 is merged into `develop`.
 
 ### Refresh dual-boot packets (done in G4 checkpoint)
 
