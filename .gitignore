@@ -10,6 +10,7 @@ ros_ws/log/
 # Python
 .venv/
 venv/
+*.egg-info/
 __pycache__/
 *.pyc
 

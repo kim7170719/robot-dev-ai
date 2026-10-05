@@ -22,7 +22,55 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **G4 PASS** on `feature/m4-nav2` (Isaac Sim navigate-to-pose). Windows: pull after merge; do not install Nav2.
+Current work: **G8 PASS** on `feature/m5-isaac-ros` (deterministic ROS project templates). Windows: pull after merge; do not install ROS or Isaac Sim.
+
+## M8 Template Engine / Gate G8
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Registry-authorized template selection | PASS | `TemplateExpander.expand()` rejects capabilities not declared by selected hardware |
+| Differential-drive project skeleton | PASS | package metadata, Python node, resource marker, config, and launch template |
+| Sensor/navigation/GPU fragments | PASS | LiDAR, camera, Nav2, and Isaac ROS image-processing templates expand deterministically |
+| Generated ROS package builds | PASS | generated `demo_diff_drive` passed Jazzy `colcon build --packages-select demo_diff_drive` |
+
+Automated test suite: `.venv/bin/pytest` → 36 passed (2026-10-01).
+
+## M9 Requirement Agent / Gate G9
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Explicit requirement parsing | PASS | `RequirementAgent.parse()` recognizes MVP capability phrases |
+| Structured specification and provenance | PASS | Pydantic `RobotSpecification` / `RequirementResult` |
+| Ambiguity handling | PASS | unspecified capabilities produce a question rather than invented hardware |
+| Provider validation and retry | PASS | injectable structured-output provider retries once after invalid output |
+| Gemini Free Tier structured output | PASS | real `gemini-3.5-flash-lite` request returned registry-compatible MVP IDs |
+
+## M10 Compatibility Resolver / Gate G10
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Capability and dependency reasoning | PASS | selects validated packages; blocks undeclared or unpackaged capabilities |
+| ROS distro and target platform | PASS | requires a Jazzy driver and filters platform-restricted packages |
+| Message type conversion | PASS | selects validated `Twist → TwistStamped` conversion package |
+| Explainable output | PASS | returns selected package IDs and rule-derived issue strings |
+| M9 → M10 integration | PASS | parsed differential-drive + Nav2 specification resolves to validated packages |
+| GPU support classification | PASS | Turing Isaac ROS path is experimental only with M5 evidence; otherwise below-Ampere is blocked |
+
+## M11 Auto Debug Agent (in progress)
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Build and launch package diagnosis | PASS | detects CMake and `ros2 launch` missing-package evidence |
+| Successful build classification | PASS | real `simple_diff_robot` + `simple_diff_nav` build exited 0 and returned `build-succeeded` |
+| Topic/type validation | PASS | reports a `Twist` versus `TwistStamped` mismatch |
+| TF validation | PASS | identifies a required but absent parent-to-child edge |
+| Controller validation | PASS | identifies required controllers not in `active` state |
+| Bounded repair policy | PASS | stops at the configured maximum and emits reviewable failure evidence |
+| Read-only runtime collection | PASS | allowlisted node, topic, and controller commands return captured evidence |
+| Collector timeout diagnosis | PASS | live `ros2 control list_controllers` 10-second timeout is classified safely |
+| Failure report | PASS | diagnosis includes command, exit code, evidence, repair budget, and null/no patch diff |
+| Patch proposal | PASS | produces a reviewable, path-constrained `package.xml` dependency diff |
+| Patch application | NOT IMPLEMENTED | recommendations are intentionally non-mutating |
 
 ## Gate 0 checklist
 

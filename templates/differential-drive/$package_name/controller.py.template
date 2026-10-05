@@ -1,0 +1,17 @@
+import rclpy
+from rclpy.node import Node
+
+
+class DifferentialDriveController(Node):
+    def __init__(self) -> None:
+        super().__init__("differential_drive_controller")
+
+
+def main() -> None:
+    rclpy.init()
+    node = DifferentialDriveController()
+    try:
+        rclpy.spin(node)
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
