@@ -11,13 +11,13 @@ https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 | Last writer | Ubuntu |
 | Ubuntu branch | `feature/m12-full-mvp` |
 | Windows branch | `feature/m12-full-mvp` |
-| G0–G11 | ALL PASS |
+| G0–G12 | ALL PASS |
 | Tags | `g0-environment-baseline`, `m2-g2-simple-diff-robot`, `m3-g3-isaac-sim` |
-| Next milestone | M12 MVP Freeze |
+| Next milestone | M14 GUI MVP — typed API first; Cosmos O1 deferred |
 | Windows todo | Fetch `feature/m12-full-mvp`; use Windows only for Git, Cursor, and docs |
 | Do not do | ROS on Windows; Isaac Sim on Windows; Cosmos |
 
-G11 completed: M11 provides constrained build collection, read-only ROS node/topic/controller/TF snapshots, evidence-backed diagnosis, bounded repair recommendations, reviewable dependency diffs, and failure reports. See `docs/progress.md` and `docs/AI_HANDOFF.md`.
+G12 completed: the frozen virtual MVP passed. v0.3 makes M14 GUI MVP the main path. M13 Cosmos is Optional Extension O1 and must not be installed on this RTX 2080 Ti (Turing, 11 GB). See `docs/roadmap_v0.3.md`, `docs/m14_gui_architecture.md`, and `docs/m13_cosmos.md`.
 
 ### After reboot → Windows
 
@@ -30,7 +30,7 @@ git status
 git log -5 --oneline
 ```
 
-Confirm M11 files: `agent/auto_debug/`, `tests/test_auto_debug_agent.py`, `tests/test_build_command_collector.py`, and `docs/progress.md`.
+Confirm M12/G12 files plus M14 documents: `agent/mvp_pipeline/`, `agent/auto_debug/repairer.py`, `docs/roadmap_v0.3.md`, and `docs/m14_gui_architecture.md`. Do not pull Cosmos models on Windows.
 
 ### After reboot → Ubuntu
 
@@ -43,7 +43,7 @@ git fetch --tags
 git status
 ```
 
-Continue M12 only after reading `docs/AI_HANDOFF.md`.
+Read `docs/AI_HANDOFF.md`, `docs/roadmap_v0.3.md`, and `docs/m14_gui_architecture.md`. Do not attempt Cosmos execution until using supported hardware.
 
 ## Every reboot
 

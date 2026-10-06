@@ -120,6 +120,20 @@ def test_parse_explicit_mobile_robot_requirement_into_structured_spec() -> None:
     }
 
 
+def test_parse_frozen_chinese_mvp_request_into_all_required_capabilities() -> None:
+    result = RequirementAgent().parse(
+        "我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。"
+    )
+
+    assert result.specification.capability_ids == [
+        "differential-drive",
+        "planar-lidar",
+        "rgb-camera",
+        "navigation",
+    ]
+    assert result.ambiguities == []
+
+
 def test_parse_reports_ambiguity_instead_of_inventing_capabilities() -> None:
     result = RequirementAgent().parse("請幫我做一台機器人")
 

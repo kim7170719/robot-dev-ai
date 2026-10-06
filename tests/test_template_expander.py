@@ -98,6 +98,14 @@ def test_differential_drive_expands_package_name_in_paths_and_contents() -> None
 
     assert result.files["resource/demo_diff_drive"] == "demo_diff_drive\n"
     assert "name='demo_diff_drive'" in result.files["setup.py"]
+    controller = result.files["demo_diff_drive/controller.py"]
+    assert 'Twist, "/cmd_vel", self._observe_cmd_vel, 10' in controller
+    assert 'UInt32, "/demo_diff_drive/cmd_vel_observed", 10' in controller
+    assert "<exec_depend>geometry_msgs</exec_depend>" in result.files["package.xml"]
+    assert "<exec_depend>std_msgs</exec_depend>" in result.files["package.xml"]
+    launch = result.files["launch/controller.launch.py"]
+    assert 'FindPackageShare("demo_diff_drive")' in launch
+    assert '"config", "controller.yaml"' in launch
 
 
 @pytest.mark.parametrize(

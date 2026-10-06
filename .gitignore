@@ -31,3 +31,6 @@ Thumbs.db
 
 # Experiment generated data
 experiments/tmp/
+
+# User-requested generated reports (source evidence remains in docs/*.md)
+docs/PROJECT_STATUS_REPORT_*.docx

@@ -4,7 +4,7 @@ Updated: 2026-10-06. Next editor should refresh this file after the next real ta
 
 ## Where we are
 
-**G0–G11 PASS** on Ubuntu. MVP research core has started. The next milestone is **M12 MVP Freeze**.
+**G0–G12 PASS** on Ubuntu. M14 GUI MVP is the active main path; M13/G13 is deferred as Optional Extension O1. Isaac Sim remains the physics authority.
 
 G4 was merged into `develop` through PR [#10](https://github.com/kim7170719/robot-dev-ai/pull/10). Create a new feature branch for M5; do not develop directly on `develop`.
 
@@ -31,7 +31,7 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Next
 
-- M12 MVP Freeze: demonstrate the frozen path from a natural-language differential-drive robot request through specification, compatibility resolution, template generation, ROS build, launch, and simulation PASS or FAIL.
+- M14 starts with a typed, read-only API contract over the frozen core. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU; resume only on supported hardware with a measurable scenario-generation hypothesis.
 
 ## M5 evidence
 
@@ -47,11 +47,12 @@ Isaac Sim G4 CLI results (2026-09-21):
 - Full URDF physics in Isaac Sim (crashes; G3/G4 use kinematic cube + raycast)
 - Cosmos (forbidden as Isaac physics replacement; not before M13)
 
-## Recently touched files (M11 checkpoint)
+## Recently touched files (M12 in progress)
 
 - `agent/requirement_agent/`, `agent/schemas/` — M9 parser, specification schema, provenance, ambiguity handling, Gemini adapter, and structured-output retry
 - `agent/compatibility_resolver/`, `registry/models.py` — M10 rule resolver, target-platform constraints, interface dependencies, and conversion records
 - `agent/auto_debug/` — M11 restricted build collection plus non-mutating diagnostics from build, node, topic, TF, and controller evidence
+- `agent/mvp_pipeline/` — M12 deterministic prompt → registry resolution → template materialization → restricted build orchestration
 - `agent/template_engine/` — deterministic registry-authorized expansion and safe output writing
 - `templates/` — differential-drive, LiDAR, camera, Nav2, and Isaac ROS project fragments
 - `tests/test_template_expander.py` — expansion, refusal, materialization, and fragment tests
@@ -73,6 +74,22 @@ M11 TF snapshot evidence (2026-10-06): fixed one-shot `/tf` and `/tf_static` col
 M11 restricted-build evidence (2026-10-06): `BuildCommandCollector` accepted only valid package names and ran `colcon build --packages-select simple_diff_robot simple_diff_nav` without a shell. The build exited 0 and was diagnosed as `build-succeeded`.
 
 **Gate G11 PASS (2026-10-06):** all M11 checklist items have automated tests and/or live evidence. Patch application remains intentionally manual and non-mutating.
+
+M12 pre-build evidence (2026-10-06): the differential-drive + Nav2 request generated an isolated temporary workspace, selected `diff-drive-controller` and `nav2-bringup`, and passed restricted `colcon build --packages-select mvp_diff_drive` with `build-succeeded`. The frozen Chinese NVIDIA differential-drive + LiDAR + Camera + navigation request now resolves four capabilities and renders all four templates.
+
+M12 generated-runtime evidence (2026-10-06): corrected generated `mvp_diff_drive` package-share launch completed a clean rerun with no config-path warning. Its non-controlling `/cmd_vel` observer published count `3` during fixed `(1.0, 0.0)` validation, and Nav2 returned `SUCCEEDED`.
+
+M12 automatic-repair evidence (2026-10-06): `ConstrainedRepairer` verified an M11 `package.xml` dependency proposal against the current temporary generated manifest, applied it only under that workspace's `src/`, and rebuilt `mvp_diff_drive` successfully. It rejects other repair types and paths outside `src/`.
+
+M12 virtual-camera evidence (2026-10-06): isolated G4 Isaac Sim was restarted with `m4_lidar_scan.py` publishing RGB8 `/camera/image_raw` (64×48) and `/camera/camera_info`, both with `camera_link`. Host inspection received both message types; `base_link → camera_link` reported translation `(0.150, 0.000, 0.020)`. The fixed `m4-navigation` validator again returned `SUCCEEDED` after the camera addition.
+
+M13 preflight evidence (2026-10-06): local inspection found RTX 2080 Ti (Turing, compute capability 7.5, 11,264 MiB), Docker 29.8.1, NVIDIA runtime, and 347 GB free disk. Current official Cosmos Predict prerequisites require Ampere-or-newer GPUs, so no image, model, Conda environment, or system-Python change was attempted. Scope and isolated-container plan: `docs/m13_cosmos.md`.
+
+M14 first API evidence (2026-10-06): FastAPI provides `GET /api/v1/project/summary` for frozen-MVP metadata and `POST /api/v1/requirements/parse` for the existing Requirement Agent's typed result. Both endpoints are in-process/read-only and do not invoke ROS or a shell. API tests plus the full suite pass: 51 tests.
+
+M12 exact-workspace evidence (2026-10-06): a fresh temporary workspace generated from the exact frozen Chinese request selected all four packages, rendered differential-drive, LiDAR, Camera, and Nav2 templates, and passed restricted `colcon build --packages-select mvp_diff_drive`. That same generated workspace then launched its observer in the isolated G4 stack. During the fixed validator goal it received `/cmd_vel` count `1411`; the validator returned `SUCCEEDED`.
+
+**Gate G12 PASS (2026-10-06):** M12 has reproducible virtual-only evidence for parsing, structured spec, registry lookup, compatibility, template/workspace generation, restricted build, generated launch, isolated Isaac Sim start, ROS graph/topic inspection, TF validation, navigation PASS/FAIL, and constrained repair. No physical robot was commanded or required.
 
 ## Known issues / debt
 
@@ -110,11 +127,12 @@ FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host�
 
 | Field | Value |
 |---|---|
-| Branch | `feature/m5-isaac-ros` |
+| Branch | `feature/m12-full-mvp` |
 | `develop` | `d3fdd40` — M5 handoff merged |
 | `main` | `c771bf1` — do not develop here |
-| Working tree | Clean after merging G4 and this handoff update |
+| Working tree | M12 implementation, M13 preflight, and M14 roadmap/architecture are uncommitted; commit before reboot or OS switch |
 
 ## Suggested next step
 
-1. Start M6 Proposal documentation; do not begin schema or agent implementation before the MVP scope is frozen.
+1. Review and commit/push the M12/G12 freeze plus M13/M14 roadmap documents before changing branches. Then implement the read-only M14 project-summary API contract.
+M12 simulation-validator evidence (2026-10-06): isolated G4 Isaac Sim, SLAM, and Nav2 were started; `/controller_server`, `/planner_server`, and `/bt_navigator` reached `active [3]`. The fixed `m4-navigation` validator sent the `(1.0, 0.0)` map goal and received `SUCCEEDED`. The Isaac container and host launch processes remain running for interactive testing.

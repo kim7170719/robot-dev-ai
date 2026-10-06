@@ -1,5 +1,27 @@
 # TODO
 
+## Deferred — M13 Cosmos scenario generation (Optional Extension O1)
+
+- **Purpose:** Add a separate scenario-generation capability without replacing Isaac Sim physics or the G12 validator.
+- **Files:** `docs/m13_cosmos.md`; future isolated Cosmos adapter/container only on supported hardware
+- **Status (2026-10-06):** DEFERRED. The local RTX 2080 Ti is Turing with 11 GB VRAM; current Cosmos Predict requires Ampere+ GPUs. No model image or checkpoint was downloaded. This extension no longer blocks M14–M18.
+- **Done when:** a supported independent environment reproduces one official scenario-generation example, produces a reviewable Isaac-world candidate, and G12 still runs without Cosmos.
+
+## P0 — M14 GUI MVP
+
+- **Purpose:** Make the frozen G7–G12 core usable through a typed API and web GUI without changing robotics behavior.
+- **Files:** `api/`, `gui/`, `docs/m14_gui_architecture.md`, API tests
+- **Status (2026-10-06):** Started. Roadmap and API safety boundary are accepted; read-only project summary and deterministic requirement-parse contracts are tested. Next: compatibility resolution.
+- **Done when:** the five core views consume typed API evidence for project, requirement, compatibility, generation/build, runtime, validation, and repair without direct ROS/shell access or a Cosmos dependency.
+
+
+## Completed — M12 MVP Freeze
+
+- **Purpose:** Demonstrate the frozen prompt-to-simulation PASS/FAIL path for the differential-drive MVP.
+- **Files:** `agent/mvp_pipeline/`; `simulator/`; `validator/`
+- **Status (2026-10-06):** PASS. The exact request generated and built a fresh four-capability workspace, then launched it in the isolated G4 stack. Its observer received Nav2 `/cmd_vel` while the fixed `(1.0, 0.0)` validator returned `SUCCEEDED`; G4 supplied `/scan`, `/camera/image_raw`, `/camera/camera_info`, and the existing camera TF. Evidence is virtual-only; no physical robot was involved.
+- **Done when:** the frozen natural-language request produces a reproducible simulation PASS or explicit FAIL evidence.
+
 ## Completed — M11 Auto Debug Agent
 
 - **Purpose:** Diagnose build and ROS graph failures through explicit tools and evidence.

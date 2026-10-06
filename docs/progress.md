@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **G8 PASS** on `feature/m5-isaac-ros` (deterministic ROS project templates). Windows: pull after merge; do not install ROS or Isaac Sim.
+Current work: **M14 GUI MVP architecture and typed API**. G12 remains frozen and runnable without Cosmos; M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
 
 ## M8 Template Engine / Gate G8
 
@@ -33,7 +33,7 @@ Current work: **G8 PASS** on `feature/m5-isaac-ros` (deterministic ROS project t
 | Sensor/navigation/GPU fragments | PASS | LiDAR, camera, Nav2, and Isaac ROS image-processing templates expand deterministically |
 | Generated ROS package builds | PASS | generated `demo_diff_drive` passed Jazzy `colcon build --packages-select demo_diff_drive` |
 
-Automated test suite: `.venv/bin/pytest` → 44 passed (2026-10-06).
+Automated test suite: `.venv/bin/pytest` → 51 passed (2026-10-06).
 
 ## M9 Requirement Agent / Gate G9
 
@@ -77,6 +77,44 @@ Automated test suite: `.venv/bin/pytest` → 44 passed (2026-10-06).
 | Patch application | NOT IMPLEMENTED | recommendations are intentionally non-mutating |
 
 **Gate G11: PASS (2026-10-06).** The M11 gate requires evidence-backed build and ROS diagnostics, bounded repair recommendations, reviewable diffs, and failure reports. Automated patch application is deliberately excluded from this gate.
+
+## M12 MVP Freeze
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Prompt-to-build orchestration | PASS | `MvpPipeline.run()` parses a differential-drive + Nav2 request, resolves packages, renders templates, and materializes an isolated ROS workspace |
+| Generated-project build | PASS | a temporary generated `mvp_diff_drive` workspace passed restricted `colcon build --packages-select mvp_diff_drive` |
+| Frozen four-capability request | PASS | the exact Chinese NVIDIA differential-drive + LiDAR + Camera + navigation request resolves all four capabilities and materializes their templates |
+| Generated-package runtime integration | PASS | corrected package-share launch rerun had no config-path warning; observer received Nav2 `/cmd_vel` count `3`, and fixed `(1.0, 0.0)` validator returned `SUCCEEDED` |
+| Fixed simulation validator | PASS | `IsaacSimulationValidator.validate(m4-navigation)` maps the fixed G4 navigation goal outcome to explicit PASS/FAIL evidence without a shell |
+| Live Isaac Sim PASS/FAIL | PASS | isolated G4 Isaac Sim + SLAM + Nav2 stack reached `(1.0, 0.0)`; fixed validator received `SUCCEEDED` |
+| Virtual camera integration | PASS | G4 now publishes RGB8 `/camera/image_raw` and `/camera/camera_info` at `camera_link`; the existing `base_link → camera_link` TF was observed |
+| Bounded automatic repair | PASS | verified `package.xml` dependency diff applied only in a temporary generated workspace; restricted rebuild returned `build-succeeded` |
+| Exact generated workspace launch | PASS | the exact four-capability workspace launched in G4; its non-controlling observer received Nav2 `/cmd_vel` count `1411` while the fixed validator returned `SUCCEEDED` |
+
+**Gate G12: PASS (2026-10-06).** The frozen request completed deterministic parsing, registry resolution, template/workspace generation, restricted build, generated-package launch, isolated Isaac Sim graph and TF validation, fixed navigation PASS/FAIL evidence, and one constrained reproducible repair. This gate covers virtual LiDAR and Camera only; no physical hardware was used.
+
+## M13 Cosmos scenario generation (Optional Extension O1)
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Scope choice | PASS | scenario generation selected; Isaac Sim remains the physics and validator authority |
+| Independent environment plan | PASS | documented Docker-only isolation; no ROS or system-Python mutation |
+| Official hardware preflight | DEFERRED | RTX 2080 Ti is Turing / 11 GB; current Cosmos Predict prerequisites require Ampere+ |
+| Core MVP without Cosmos | PASS | G12 remains runnable and has no Cosmos dependency |
+
+**Gate G13: DEFERRED.** See `docs/m13_cosmos.md` and ADR 0006; no model/container pull was attempted on unsupported hardware, and G13 no longer blocks the main roadmap.
+
+## M14 GUI MVP (started)
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Roadmap re-baseline | PASS | `docs/roadmap_v0.3.md` moves Cosmos to Optional Extension O1 and makes GUI the main path |
+| API / GUI safety boundary | PASS | ADR 0007 and `docs/m14_gui_architecture.md`: GUI reaches core only through a typed API; no arbitrary shell, direct ROS, or Isaac viewport |
+| Project and requirement API | PASS | `GET /api/v1/project/summary` exposes frozen-MVP metadata; `POST /api/v1/requirements/parse` returns the existing typed specification/provenance without ROS or shell execution |
+| Five GUI views | NOT STARTED | Dashboard, Requirement, Robot Configuration, Runtime, Validation/Experience |
+
+**Gate G14: NOT RUN.**
 
 ## Gate 0 checklist
 

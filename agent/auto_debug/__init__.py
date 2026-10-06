@@ -19,6 +19,7 @@ from .diagnoser import (
     RuntimeRequirements,
     TfEvidence,
 )
+from .repairer import ConstrainedRepairer, RepairResult
 
 __all__ = [
     "AutoDebugAgent",
@@ -26,6 +27,7 @@ __all__ = [
     "BuildEvidence",
     "CommandEvidence",
     "ControllerEvidence",
+    "ConstrainedRepairer",
     "DiagnosisResult",
     "FailureReport",
     "NodeEvidence",
@@ -34,6 +36,7 @@ __all__ = [
     "RosCommandCollector",
     "RosRuntimeCollector",
     "RosRuntimeSnapshot",
+    "RepairResult",
     "RuntimeRequirements",
     "TfEvidence",
 ]

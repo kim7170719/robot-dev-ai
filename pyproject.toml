@@ -8,11 +8,14 @@ version = "0.1.0"
 description = "Structured knowledge and validation for an AI robot development platform."
 requires-python = ">=3.12"
 dependencies = [
+  "fastapi>=0.115,<0.116",
   "pydantic>=2.11,<3",
 ]
 
 [project.optional-dependencies]
 dev = [
+  "anyio>=4.7,<4.12",
+ "httpx>=0.28,<1",
   "pytest>=8.0",
 ]
 gemini = [
@@ -24,4 +27,4 @@ testpaths = ["tests"]
 addopts = "-q"
 
 [tool.setuptools.packages.find]
-include = ["agent*", "registry*"]
+include = ["agent*", "api*", "registry*"]

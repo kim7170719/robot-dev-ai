@@ -12,6 +12,8 @@ Numbered ADRs live in `docs/decisions/`. This page is the index for agents. Add 
 | 0003 | Host NVIDIA driver **580** (not 595) | 595 segfaults `librtx.scenedb` in Isaac 4.5 | If moving to Isaac 5.x |
 | 0004 | Synthetic 2D `/scan` (room raycast), not RTX LiDAR | Unblocks SLAM/Nav2; RTX LiDAR crash risk on 11 GB | When PhysX/RTX lidar is stable |
 | 0005 | Isaac ROS 4.5 project-owned Docker image + image-proc binary baseline | Isolates CUDA dependencies and gives a repeatable first accelerated pipeline | If a supported GPU or official deployment path changes |
+| 0006 | Cosmos is an optional scenario-proposal extension | Turing host cannot run the supported path; it must not block productization | Supported hardware plus a measurable O1 hypothesis |
+| 0007 | GUI accesses core only through a typed API | Preserve constrained execution and keep frontend free of ROS/shell logic | If a reviewed deployment boundary replaces FastAPI |
 | — | CycloneDDS + unicast `127.0.0.1` for Humble container ↔ Jazzy host | FastDDS 2.x/3.x is one-way | If both sides share one RMW version |
 | — | Isaac G4 stamps = **wall clock**; `use_sim_time:=false` | Humble `/clock` type-hash / TF_OLD_DATA | If DDS type matching is fixed |
 | — | Nav2 `/cmd_vel` = **Twist**; host ros2_control = **TwistStamped** | Jazzy Nav2 vs Jazzy diff_drive | Keep both mappings documented |

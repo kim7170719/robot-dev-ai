@@ -36,11 +36,20 @@ class RequirementAgent:
 
         if "差速" in normalized or "differential-drive" in normalized:
             capabilities.append("differential-drive")
-        if "2d lidar" in normalized or "2d 雷達" in normalized:
+        if (
+            "2d lidar" in normalized
+            or "2d 雷達" in normalized
+            or "lidar" in normalized
+            or "雷達" in normalized
+        ):
             capabilities.append("planar-lidar")
-        if "rgb" in normalized and "相機" in normalized:
+        if "rgb" in normalized or "camera" in normalized or "相機" in normalized:
             capabilities.append("rgb-camera")
-        if "nav2" in normalized:
+        if (
+            "nav2" in normalized
+            or "navigation" in normalized
+            or "自主導航" in normalized
+        ):
             capabilities.append("navigation")
 
         simulator = "isaac-sim" if "isaac sim" in normalized else None
