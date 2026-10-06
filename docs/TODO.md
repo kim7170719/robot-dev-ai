@@ -1,10 +1,10 @@
 # TODO
 
-## P0 — M11 Auto Debug Agent
+## Completed — M11 Auto Debug Agent
 
 - **Purpose:** Diagnose build and ROS graph failures through explicit tools and evidence.
 - **Files:** `agent/`; `validator/`
-- **Status (2026-10-01):** In progress. `AutoDebugAgent.diagnose()` classifies successful builds and has evidence-based, non-mutating diagnoses for missing ROS packages/nodes, topic type mismatches, missing TF edges, inactive controllers, collector timeouts, and a maximum repair-attempt stop condition. Each result carries a serializable failure report and can propose a constrained `package.xml` dependency diff without writing it; `RosCommandCollector` allowlists read-only ROS inspection commands.
+- **Status (2026-10-06):** **G11 PASS.** `BuildCommandCollector.collect()` runs only package-name-validated `colcon build --packages-select` commands without a shell. `AutoDebugAgent.diagnose()` classifies successful builds and has evidence-based, non-mutating diagnoses for missing ROS packages/nodes, topic type mismatches, missing TF edges, inactive controllers, collector timeouts, and a maximum repair-attempt stop condition. `RosRuntimeCollector.collect_snapshot()` parses five allowlisted read-only inspection results, including one-shot `/tf` and `/tf_static` edges. `AutoDebugAgent.diagnose_snapshot()` checks required nodes, topic types, controllers, and TF edges without inferring state from failed collection. Each result carries a serializable failure report and can propose a constrained `package.xml` dependency diff without writing it.
 - **Done when:** a failed build or ROS graph can produce an evidence-backed diagnosis and a bounded repair suggestion.
 
 ## P1 — important

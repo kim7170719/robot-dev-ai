@@ -1,6 +1,12 @@
 """Public evidence-based diagnosis boundary."""
 
-from .collector import CommandEvidence, RosCommandCollector
+from .build_collector import BuildCommandCollector
+from .collector import (
+    CommandEvidence,
+    RosCommandCollector,
+    RosRuntimeCollector,
+    RosRuntimeSnapshot,
+)
 from .diagnoser import (
     AutoDebugAgent,
     BuildEvidence,
@@ -10,11 +16,13 @@ from .diagnoser import (
     NodeEvidence,
     PackageManifestEvidence,
     RosGraphEvidence,
+    RuntimeRequirements,
     TfEvidence,
 )
 
 __all__ = [
     "AutoDebugAgent",
+    "BuildCommandCollector",
     "BuildEvidence",
     "CommandEvidence",
     "ControllerEvidence",
@@ -24,5 +32,8 @@ __all__ = [
     "PackageManifestEvidence",
     "RosGraphEvidence",
     "RosCommandCollector",
+    "RosRuntimeCollector",
+    "RosRuntimeSnapshot",
+    "RuntimeRequirements",
     "TfEvidence",
 ]

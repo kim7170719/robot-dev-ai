@@ -33,7 +33,7 @@ Current work: **G8 PASS** on `feature/m5-isaac-ros` (deterministic ROS project t
 | Sensor/navigation/GPU fragments | PASS | LiDAR, camera, Nav2, and Isaac ROS image-processing templates expand deterministically |
 | Generated ROS package builds | PASS | generated `demo_diff_drive` passed Jazzy `colcon build --packages-select demo_diff_drive` |
 
-Automated test suite: `.venv/bin/pytest` → 36 passed (2026-10-01).
+Automated test suite: `.venv/bin/pytest` → 44 passed (2026-10-06).
 
 ## M9 Requirement Agent / Gate G9
 
@@ -56,21 +56,27 @@ Automated test suite: `.venv/bin/pytest` → 36 passed (2026-10-01).
 | M9 → M10 integration | PASS | parsed differential-drive + Nav2 specification resolves to validated packages |
 | GPU support classification | PASS | Turing Isaac ROS path is experimental only with M5 evidence; otherwise below-Ampere is blocked |
 
-## M11 Auto Debug Agent (in progress)
+## M11 Auto Debug Agent / Gate G11
 
 | Capability | Status | Evidence |
 |---|---|---|
 | Build and launch package diagnosis | PASS | detects CMake and `ros2 launch` missing-package evidence |
+| Restricted build collection | PASS | only valid package names can form `colcon build --packages-select`; real selected-package build returned `build-succeeded` |
 | Successful build classification | PASS | real `simple_diff_robot` + `simple_diff_nav` build exited 0 and returned `build-succeeded` |
 | Topic/type validation | PASS | reports a `Twist` versus `TwistStamped` mismatch |
 | TF validation | PASS | identifies a required but absent parent-to-child edge |
 | Controller validation | PASS | identifies required controllers not in `active` state |
 | Bounded repair policy | PASS | stops at the configured maximum and emits reviewable failure evidence |
 | Read-only runtime collection | PASS | allowlisted node, topic, and controller commands return captured evidence |
+| Runtime snapshot | PASS | one read-only collection returns parsed node, topic-type, controller-state, and per-command evidence |
+| Runtime snapshot diagnosis | PASS | command failures, missing required nodes, topic-type mismatches, and inactive controllers are diagnosed from one snapshot; failed collection is not treated as absent state |
+| TF runtime collection and diagnosis | PASS | parses fixed one-shot `/tf` and `/tf_static` observations; required edges are checked only when both collections succeed |
 | Collector timeout diagnosis | PASS | live `ros2 control list_controllers` 10-second timeout is classified safely |
 | Failure report | PASS | diagnosis includes command, exit code, evidence, repair budget, and null/no patch diff |
 | Patch proposal | PASS | produces a reviewable, path-constrained `package.xml` dependency diff |
 | Patch application | NOT IMPLEMENTED | recommendations are intentionally non-mutating |
+
+**Gate G11: PASS (2026-10-06).** The M11 gate requires evidence-backed build and ROS diagnostics, bounded repair recommendations, reviewable diffs, and failure reports. Automated patch application is deliberately excluded from this gate.
 
 ## Gate 0 checklist
 

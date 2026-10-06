@@ -9,7 +9,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .collector import CommandEvidence
+from .collector import CommandEvidence, RosRuntimeSnapshot
 
 
 class BuildEvidence(BaseModel):
@@ -61,6 +61,17 @@ class NodeEvidence(BaseModel):
 
     required_nodes: list[str] = Field(default_factory=list)
     observed_nodes: list[str] = Field(default_factory=list)
+
+
+class RuntimeRequirements(BaseModel):
+    """Declared ROS runtime conditions needed by a robot workflow."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    required_nodes: list[str] = Field(default_factory=list)
+    required_topic_types: dict[str, str] = Field(default_factory=dict)
+    required_active_controllers: list[str] = Field(default_factory=list)
+    required_tf_edges: list[tuple[str, str]] = Field(default_factory=list)
 
 
 class PackageManifestEvidence(BaseModel):
@@ -142,6 +153,75 @@ class AutoDebugAgent:
         else:
             result = self._diagnose_build(evidence)
         return self._with_report(evidence, result)
+
+    def diagnose_snapshot(
+        self,
+        snapshot: RosRuntimeSnapshot,
+        requirements: RuntimeRequirements,
+    ) -> list[DiagnosisResult]:
+        """Diagnose failed read-only collection commands from one snapshot."""
+
+        diagnoses = [
+            self.diagnose(evidence)
+            for evidence in snapshot.commands.values()
+            if evidence.exit_code != 0
+        ]
+        if requirements.required_nodes:
+            node_diagnosis = self.diagnose(
+                NodeEvidence(
+                    required_nodes=requirements.required_nodes,
+                    observed_nodes=snapshot.nodes,
+                )
+            )
+            if node_diagnosis.category != "unknown-build-failure":
+                diagnoses.append(node_diagnosis)
+        for topic, required_message_type in requirements.required_topic_types.items():
+            observed_message_type = snapshot.topic_types.get(topic)
+            if observed_message_type is None:
+                continue
+            topic_diagnosis = self.diagnose(
+                RosGraphEvidence(
+                    topic=topic,
+                    observed_message_type=observed_message_type,
+                    required_message_type=required_message_type,
+                )
+            )
+            if topic_diagnosis.category != "unknown-build-failure":
+                diagnoses.append(topic_diagnosis)
+        controller_command = snapshot.commands.get(
+            "ros2-control-list-controllers"
+        )
+        if (
+            requirements.required_active_controllers
+            and (controller_command is None or controller_command.exit_code == 0)
+        ):
+            controller_diagnosis = self.diagnose(
+                ControllerEvidence(
+                    required_active=requirements.required_active_controllers,
+                    observed_states=snapshot.controller_states,
+                )
+            )
+            if controller_diagnosis.category != "unknown-build-failure":
+                diagnoses.append(controller_diagnosis)
+        tf_commands = [
+            snapshot.commands.get("ros2-tf-once"),
+            snapshot.commands.get("ros2-tf-static-once"),
+        ]
+        if (
+            requirements.required_tf_edges
+            and all(command is None or command.exit_code == 0 for command in tf_commands)
+        ):
+            for required_parent, required_child in requirements.required_tf_edges:
+                tf_diagnosis = self.diagnose(
+                    TfEvidence(
+                        required_parent=required_parent,
+                        required_child=required_child,
+                        observed_edges=snapshot.tf_edges,
+                    )
+                )
+                if tf_diagnosis.category != "unknown-build-failure":
+                    diagnoses.append(tf_diagnosis)
+        return diagnoses
 
     @staticmethod
     def _with_report(

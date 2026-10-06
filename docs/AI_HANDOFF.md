@@ -1,10 +1,10 @@
 # AI handoff (live)
 
-Updated: 2026-10-01. Next editor should refresh this file after the next real task.
+Updated: 2026-10-06. Next editor should refresh this file after the next real task.
 
 ## Where we are
 
-**G0–G10 PASS** on Ubuntu. MVP research core has started. The next milestone is **M11 Auto Debug Agent**.
+**G0–G11 PASS** on Ubuntu. MVP research core has started. The next milestone is **M12 MVP Freeze**.
 
 G4 was merged into `develop` through PR [#10](https://github.com/kim7170719/robot-dev-ai/pull/10). Create a new feature branch for M5; do not develop directly on `develop`.
 
@@ -29,9 +29,9 @@ Isaac Sim G4 CLI results (2026-09-21):
 - `navigate_to_pose` `(1.0, 0.0)` SUCCEEDED (odom 3.09 → 0.96)
 - `navigate_to_pose` `(2.0, 2.2)` around box at `(2.0, 1.0)` SUCCEEDED (odom 1.87, 2.25)
 
-## In progress
+## Next
 
-- M11 Auto Debug Agent: build/launch missing-package/node, topic type, TF, controller, collector-timeout diagnoses, successful-build classification, a three-attempt repair limit, read-only command collection, serializable failure reports, and constrained manifest diff proposals are implemented; patch application remains
+- M12 MVP Freeze: demonstrate the frozen path from a natural-language differential-drive robot request through specification, compatibility resolution, template generation, ROS build, launch, and simulation PASS or FAIL.
 
 ## M5 evidence
 
@@ -41,17 +41,17 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Not done
 
-- M11+ debugging and validation agents
+- M12+ validation and orchestration agents
 - Real-hardware / Jetson
 - Isaac Sim RTX/PhysX LiDAR (synthetic 2D scan is the G4 path)
 - Full URDF physics in Isaac Sim (crashes; G3/G4 use kinematic cube + raycast)
 - Cosmos (forbidden as Isaac physics replacement; not before M13)
 
-## Recently touched files (M10 checkpoint)
+## Recently touched files (M11 checkpoint)
 
 - `agent/requirement_agent/`, `agent/schemas/` — M9 parser, specification schema, provenance, ambiguity handling, Gemini adapter, and structured-output retry
 - `agent/compatibility_resolver/`, `registry/models.py` — M10 rule resolver, target-platform constraints, interface dependencies, and conversion records
-- `agent/auto_debug/` — M11 non-mutating diagnoses from build, topic, TF, and controller evidence
+- `agent/auto_debug/` — M11 restricted build collection plus non-mutating diagnostics from build, node, topic, TF, and controller evidence
 - `agent/template_engine/` — deterministic registry-authorized expansion and safe output writing
 - `templates/` — differential-drive, LiDAR, camera, Nav2, and Isaac ROS project fragments
 - `tests/test_template_expander.py` — expansion, refusal, materialization, and fragment tests
@@ -63,6 +63,16 @@ M10 boundary: static rules distinguish validated, experimental, and blocked conf
 M11 live evidence: `ros2 node list` and `ros2 topic list -t` returned successfully; `ros2 control list_controllers` timed out at 10 seconds. The node snapshot contained only `/tm_smooth_controller`, so M11 diagnosed missing `/controller_manager`; no host process was mutated.
 
 M11 build evidence: `colcon build --packages-select simple_diff_robot simple_diff_nav` exited 0 on 2026-10-01, and `AutoDebugAgent` classified its evidence as `build-succeeded`.
+
+M11 runtime-snapshot evidence (2026-10-06): node and topic inspection completed; the snapshot parsed the active topic types. `ros2 control list_controllers` again timed out at 10 seconds, so controller state is empty and the timeout remains explicit evidence; no process or controller was changed.
+
+M11 end-to-end snapshot diagnosis (2026-10-06): with `/controller_manager` required and `/joint_command` constrained to `sensor_msgs/msg/JointState`, live evidence produced `ros-command-timeout` and `missing-ros-node`. It did not infer an inactive controller from the failed controller query.
+
+M11 TF snapshot evidence (2026-10-06): fixed one-shot `/tf` and `/tf_static` collection succeeded and parsed seven observed edges, including `world → base`. A required `map → odom` edge was correctly diagnosed as missing. The controller query independently timed out; failed collection is never interpreted as missing TF or controller state.
+
+M11 restricted-build evidence (2026-10-06): `BuildCommandCollector` accepted only valid package names and ran `colcon build --packages-select simple_diff_robot simple_diff_nav` without a shell. The build exited 0 and was diagnosed as `build-succeeded`.
+
+**Gate G11 PASS (2026-10-06):** all M11 checklist items have automated tests and/or live evidence. Patch application remains intentionally manual and non-mutating.
 
 ## Known issues / debt
 

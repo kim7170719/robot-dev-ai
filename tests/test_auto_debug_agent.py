@@ -6,6 +6,8 @@ from agent.auto_debug import (
     NodeEvidence,
     PackageManifestEvidence,
     RosGraphEvidence,
+    RosRuntimeSnapshot,
+    RuntimeRequirements,
     TfEvidence,
 )
 
@@ -147,6 +149,98 @@ def test_diagnose_timeout_from_allowlisted_ros_collector() -> None:
     assert diagnosis.suggested_actions == [
         "inspect controller_manager availability before retrying ros2 control"
     ]
+
+
+def test_diagnose_snapshot_surfaces_failed_runtime_command() -> None:
+    snapshot = RosRuntimeSnapshot(
+        commands={
+            "ros2-node-list": CommandEvidence(
+                command="ros2 node list",
+                exit_code=0,
+                stdout="/controller_manager\n",
+            ),
+            "ros2-topic-list-types": CommandEvidence(
+                command="ros2 topic list -t",
+                exit_code=0,
+            ),
+            "ros2-control-list-controllers": CommandEvidence(
+                command="ros2 control list_controllers",
+                exit_code=124,
+                stderr="command timed out after 10 seconds",
+            ),
+        },
+        nodes=["/controller_manager"],
+    )
+
+    diagnoses = AutoDebugAgent().diagnose_snapshot(
+        snapshot,
+        RuntimeRequirements(
+            required_active_controllers=["diff_drive_controller"],
+        ),
+    )
+
+    assert [diagnosis.category for diagnosis in diagnoses] == ["ros-command-timeout"]
+    assert diagnoses[0].report.command == "ros2 control list_controllers"
+
+
+def test_diagnose_snapshot_reports_missing_required_node() -> None:
+    diagnoses = AutoDebugAgent().diagnose_snapshot(
+        RosRuntimeSnapshot(
+            commands={},
+            nodes=["/nav2_controller"],
+        ),
+        RuntimeRequirements(required_nodes=["/controller_manager"]),
+    )
+
+    assert [diagnosis.category for diagnosis in diagnoses] == ["missing-ros-node"]
+    assert diagnoses[0].evidence == ["missing node: /controller_manager"]
+
+
+def test_diagnose_snapshot_reports_required_topic_type_mismatch() -> None:
+    diagnoses = AutoDebugAgent().diagnose_snapshot(
+        RosRuntimeSnapshot(
+            commands={},
+            topic_types={"/cmd_vel": "geometry_msgs/msg/Twist"},
+        ),
+        RuntimeRequirements(
+            required_topic_types={
+                "/cmd_vel": "geometry_msgs/msg/TwistStamped",
+            }
+        ),
+    )
+
+    assert [diagnosis.category for diagnosis in diagnoses] == ["topic-type-mismatch"]
+    assert diagnoses[0].evidence == [
+        "/cmd_vel: geometry_msgs/msg/Twist != geometry_msgs/msg/TwistStamped"
+    ]
+
+
+def test_diagnose_snapshot_reports_inactive_required_controller() -> None:
+    diagnoses = AutoDebugAgent().diagnose_snapshot(
+        RosRuntimeSnapshot(
+            commands={},
+            controller_states={"diff_drive_controller": "inactive"},
+        ),
+        RuntimeRequirements(
+            required_active_controllers=["diff_drive_controller"],
+        ),
+    )
+
+    assert [diagnosis.category for diagnosis in diagnoses] == ["inactive-controller"]
+    assert diagnoses[0].evidence == ["diff_drive_controller: inactive"]
+
+
+def test_diagnose_snapshot_reports_missing_required_tf_edge() -> None:
+    diagnoses = AutoDebugAgent().diagnose_snapshot(
+        RosRuntimeSnapshot(
+            commands={},
+            tf_edges=[("odom", "base_link")],
+        ),
+        RuntimeRequirements(required_tf_edges=[("map", "odom")]),
+    )
+
+    assert [diagnosis.category for diagnosis in diagnoses] == ["missing-tf-transform"]
+    assert diagnoses[0].evidence == ["missing transform: map -> odom"]
 
 
 def test_diagnose_missing_required_ros_node() -> None:
