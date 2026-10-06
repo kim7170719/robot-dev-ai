@@ -49,6 +49,8 @@ The first implemented paths are `GET /api/v1/project/summary` and
 invoke ROS or a shell.
 The next path, `POST /api/v1/compatibility/resolve`, accepts an explicit
 registry and deployment request, then returns the existing resolver result.
+`POST /api/v1/templates/preview` uses the same explicit-registry pattern to
+render files in memory only; it does not call the expander write operation.
 
 The first GUI views are Dashboard, Requirement, Robot Configuration, Runtime,
 and Validation/Experience. View implementation is downstream of the API
@@ -86,6 +88,6 @@ contract and does not add a new robotics capability.
 The next technical slice defines and tests the initial API response schemas
 and a read-only project-summary endpoint. A frontend technology is deliberately
 not selected until the API contract is proven.
-The next technical slice adds template/workspace-generation evidence to the
-typed API. A frontend technology is deliberately not selected until the API
-contract is proven.
+The next technical slice defines the constrained workspace-generation/build
+operation and its confirmation/evidence behavior. A frontend technology is
+deliberately not selected until the API contract is proven.

@@ -12,6 +12,7 @@ from agent.compatibility_resolver import (
 )
 from agent.requirement_agent import RequirementAgent
 from agent.schemas import RequirementResult
+from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
 from registry.models import RobotKnowledgeRegistry
 
 
@@ -46,6 +47,15 @@ class CompatibilityRequest(BaseModel):
     request: ResolutionRequest
 
 
+class TemplatePreviewRequest(BaseModel):
+    """Registry-authorized template input rendered only in memory."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    registry: RobotKnowledgeRegistry
+    request: ExpansionRequest
+
+
 def create_app(project_summary: ProjectSummary | None = None) -> FastAPI:
     """Create the read-only API without starting ROS or shell commands."""
 
@@ -67,6 +77,11 @@ def create_app(project_summary: ProjectSummary | None = None) -> FastAPI:
     @app.post("/api/v1/compatibility/resolve", response_model=ResolutionResult)
     def resolve_compatibility(request: CompatibilityRequest) -> ResolutionResult:
         return CompatibilityResolver().resolve(request.registry, request.request)
+
+    @app.post("/api/v1/templates/preview", response_model=ExpansionResult)
+    def preview_template(request: TemplatePreviewRequest) -> ExpansionResult:
+        template_root = Path(__file__).parents[1] / "templates"
+        return TemplateExpander(template_root).expand(request.registry, request.request)
 
     return app
 

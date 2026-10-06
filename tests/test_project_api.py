@@ -110,3 +110,41 @@ def test_compatibility_endpoint_returns_selected_packages() -> None:
         "issues": [],
         "warnings": [],
     }
+
+
+def test_template_preview_returns_rendered_files_without_workspace_writes() -> None:
+    response = TestClient(create_app()).post(
+        "/api/v1/templates/preview",
+        json={
+            "registry": {
+                "hardware": [
+                    {
+                        "id": "ydlidar-x4",
+                        "kind": "lidar",
+                        "vendor": "YDLIDAR",
+                        "capability_ids": ["planar-lidar"],
+                    }
+                ],
+                "capabilities": [
+                    {
+                        "id": "planar-lidar",
+                        "interface_ids": [],
+                        "template_id": "lidar",
+                    }
+                ],
+            },
+            "request": {
+                "hardware_id": "ydlidar-x4",
+                "capability_id": "planar-lidar",
+                "values": {"scan_topic": "/scan", "frame_id": "lidar_link"},
+            },
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "template_id": "lidar",
+        "files": {
+            "config/lidar.yaml": "scan_topic: /scan\nframe_id: lidar_link\n"
+        },
+    }

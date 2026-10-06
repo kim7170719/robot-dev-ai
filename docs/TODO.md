@@ -11,7 +11,7 @@
 
 - **Purpose:** Make the frozen G7–G12 core usable through a typed API and web GUI without changing robotics behavior.
 - **Files:** `api/`, `gui/`, `docs/m14_gui_architecture.md`, API tests
-- **Status (2026-10-06):** Started. Project summary, deterministic requirement parsing, and explicit-registry compatibility resolution are tested. Next: template/workspace generation evidence.
+- **Status (2026-10-06):** Started. Project summary, deterministic requirement parsing, explicit-registry compatibility resolution, and in-memory template preview are tested. Next: define constrained workspace generation/build confirmation and evidence.
 - **Done when:** the five core views consume typed API evidence for project, requirement, compatibility, generation/build, runtime, validation, and repair without direct ROS/shell access or a Cosmos dependency.
 
 
