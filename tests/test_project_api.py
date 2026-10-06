@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from starlette.testclient import TestClient
 
 from api.app import ProjectSummary, create_app
@@ -148,3 +150,56 @@ def test_template_preview_returns_rendered_files_without_workspace_writes() -> N
             "config/lidar.yaml": "scan_topic: /scan\nframe_id: lidar_link\n"
         },
     }
+
+
+def test_workspace_plan_requires_confirmation_before_generating_files(
+    tmp_path: Path,
+) -> None:
+    client = TestClient(create_app(workspace_root=tmp_path))
+    request = {
+        "output_name": "lidar-demo",
+        "registry": {
+            "hardware": [
+                {
+                    "id": "ydlidar-x4",
+                    "kind": "lidar",
+                    "vendor": "YDLIDAR",
+                    "capability_ids": ["planar-lidar"],
+                }
+            ],
+            "capabilities": [
+                {
+                    "id": "planar-lidar",
+                    "interface_ids": [],
+                    "template_id": "lidar",
+                }
+            ],
+        },
+        "requests": [
+            {
+                "hardware_id": "ydlidar-x4",
+                "capability_id": "planar-lidar",
+                "values": {"scan_topic": "/scan", "frame_id": "lidar_link"},
+            }
+        ],
+    }
+
+    plan = client.post("/api/v1/workspaces/plan", json=request)
+
+    assert plan.status_code == 200
+    assert plan.json()["status"] == "awaiting-confirmation"
+    assert plan.json()["files"] == {
+        "config/lidar.yaml": "scan_topic: /scan\nframe_id: lidar_link\n"
+    }
+    assert not (tmp_path / "lidar-demo").exists()
+
+    apply = client.post(
+        "/api/v1/workspaces/apply",
+        json={"confirmation_id": plan.json()["confirmation_id"], "confirmed": True},
+    )
+
+    assert apply.status_code == 200
+    assert apply.json()["status"] == "generated"
+    assert (tmp_path / "lidar-demo" / "config" / "lidar.yaml").read_text() == (
+        "scan_topic: /scan\nframe_id: lidar_link\n"
+    )

@@ -51,6 +51,9 @@ The next path, `POST /api/v1/compatibility/resolve`, accepts an explicit
 registry and deployment request, then returns the existing resolver result.
 `POST /api/v1/templates/preview` uses the same explicit-registry pattern to
 render files in memory only; it does not call the expander write operation.
+`POST /api/v1/workspaces/plan` returns a one-time confirmation ID and file
+map without writing. Only `POST /api/v1/workspaces/apply` with that ID and
+`confirmed=true` writes below an API-configured workspace root.
 
 The first GUI views are Dashboard, Requirement, Robot Configuration, Runtime,
 and Validation/Experience. View implementation is downstream of the API
@@ -85,9 +88,6 @@ contract and does not add a new robotics capability.
 
 ## Downstream work
 
-The next technical slice defines and tests the initial API response schemas
-and a read-only project-summary endpoint. A frontend technology is deliberately
-not selected until the API contract is proven.
-The next technical slice defines the constrained workspace-generation/build
-operation and its confirmation/evidence behavior. A frontend technology is
-deliberately not selected until the API contract is proven.
+The next technical slice adds the existing restricted build collector to a
+confirmed generated workspace. A frontend technology is deliberately not
+selected until the API contract is proven.

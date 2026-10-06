@@ -1,8 +1,10 @@
 """Read-only FastAPI boundary for the frozen Robot Dev AI core."""
 
 from pathlib import Path
+from typing import Literal
+from uuid import uuid4
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 
 from agent.compatibility_resolver import (
@@ -13,7 +15,7 @@ from agent.compatibility_resolver import (
 from agent.requirement_agent import RequirementAgent
 from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
-from registry.models import RobotKnowledgeRegistry
+from registry.models import Identifier, RobotKnowledgeRegistry
 
 
 class ProjectSummary(BaseModel):
@@ -56,10 +58,54 @@ class TemplatePreviewRequest(BaseModel):
     request: ExpansionRequest
 
 
-def create_app(project_summary: ProjectSummary | None = None) -> FastAPI:
-    """Create the read-only API without starting ROS or shell commands."""
+class WorkspacePlanRequest(BaseModel):
+    """A requested generated package below the configured workspace root."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    output_name: Identifier
+    registry: RobotKnowledgeRegistry
+    requests: list[ExpansionRequest] = Field(min_length=1)
+
+
+class WorkspacePlan(BaseModel):
+    """A non-mutating preview that must be confirmed before generation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    confirmation_id: str
+    status: Literal["awaiting-confirmation"]
+    target_path: str
+    files: dict[str, str]
+
+
+class WorkspaceApplyRequest(BaseModel):
+    """A second explicit confirmation for one pending workspace plan."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    confirmation_id: str = Field(min_length=1)
+    confirmed: Literal[True]
+
+
+class WorkspaceApplyResult(BaseModel):
+    """Evidence that a reviewed plan was materialized."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["generated"]
+    target_path: str
+    files: list[str]
+
+
+def create_app(
+    project_summary: ProjectSummary | None = None,
+    workspace_root: Path | None = None,
+) -> FastAPI:
+    """Create the presentation API without starting ROS or shell commands."""
 
     summary = project_summary or _default_project_summary()
+    pending_plans: dict[str, WorkspacePlan] = {}
     app = FastAPI(
         title="Robot Dev AI API",
         version="0.1.0",
@@ -82,6 +128,61 @@ def create_app(project_summary: ProjectSummary | None = None) -> FastAPI:
     def preview_template(request: TemplatePreviewRequest) -> ExpansionResult:
         template_root = Path(__file__).parents[1] / "templates"
         return TemplateExpander(template_root).expand(request.registry, request.request)
+
+    @app.post("/api/v1/workspaces/plan", response_model=WorkspacePlan)
+    def plan_workspace(request: WorkspacePlanRequest) -> WorkspacePlan:
+        if workspace_root is None:
+            raise HTTPException(
+                status_code=503, detail="workspace generation is not configured"
+            )
+        target = _workspace_target(workspace_root, request.output_name)
+        if target.exists():
+            raise HTTPException(status_code=409, detail="workspace target exists")
+        expander = TemplateExpander(Path(__file__).parents[1] / "templates")
+        files: dict[str, str] = {}
+        try:
+            for expansion_request in request.requests:
+                result = expander.expand(request.registry, expansion_request)
+                overlap = set(files).intersection(result.files)
+                if overlap:
+                    raise ValueError(
+                        "multiple templates write the same file: "
+                        + ", ".join(sorted(overlap))
+                    )
+                files.update(result.files)
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        plan = WorkspacePlan(
+            confirmation_id=uuid4().hex,
+            status="awaiting-confirmation",
+            target_path=str(target),
+            files=files,
+        )
+        pending_plans[plan.confirmation_id] = plan
+        return plan
+
+    @app.post("/api/v1/workspaces/apply", response_model=WorkspaceApplyResult)
+    def apply_workspace(request: WorkspaceApplyRequest) -> WorkspaceApplyResult:
+        if workspace_root is None:
+            raise HTTPException(
+                status_code=503, detail="workspace generation is not configured"
+            )
+        plan = pending_plans.get(request.confirmation_id)
+        if plan is None:
+            raise HTTPException(status_code=404, detail="workspace plan was not found")
+        target = _workspace_target(workspace_root, Path(plan.target_path).name)
+        if target.exists():
+            raise HTTPException(status_code=409, detail="workspace target exists")
+        TemplateExpander(Path(__file__).parents[1] / "templates").write(
+            ExpansionResult(template_id="workspace", files=plan.files),
+            target,
+        )
+        pending_plans.pop(plan.confirmation_id)
+        return WorkspaceApplyResult(
+            status="generated",
+            target_path=str(target),
+            files=sorted(plan.files),
+        )
 
     return app
 
@@ -109,3 +210,13 @@ def _branch_from_head(head_path: Path) -> str:
         return "unknown"
     prefix = "ref: refs/heads/"
     return head.removeprefix(prefix) if head.startswith(prefix) else "detached"
+
+
+def _workspace_target(workspace_root: Path, output_name: str) -> Path:
+    """Resolve an output below the configured root without path escapes."""
+
+    root = workspace_root.resolve()
+    target = (root / output_name).resolve()
+    if not target.is_relative_to(root):
+        raise HTTPException(status_code=422, detail="workspace target escapes root")
+    return target

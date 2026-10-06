@@ -33,7 +33,7 @@ Current work: **M14 GUI MVP architecture and typed API**. G12 remains frozen and
 | Sensor/navigation/GPU fragments | PASS | LiDAR, camera, Nav2, and Isaac ROS image-processing templates expand deterministically |
 | Generated ROS package builds | PASS | generated `demo_diff_drive` passed Jazzy `colcon build --packages-select demo_diff_drive` |
 
-Automated test suite: `.venv/bin/pytest` → 53 passed (2026-10-06).
+Automated test suite: `.venv/bin/pytest` → 54 passed (2026-10-06).
 
 ## M9 Requirement Agent / Gate G9
 
@@ -111,7 +111,7 @@ Automated test suite: `.venv/bin/pytest` → 53 passed (2026-10-06).
 |---|---|---|
 | Roadmap re-baseline | PASS | `docs/roadmap_v0.3.md` moves Cosmos to Optional Extension O1 and makes GUI the main path |
 | API / GUI safety boundary | PASS | ADR 0007 and `docs/m14_gui_architecture.md`: GUI reaches core only through a typed API; no arbitrary shell, direct ROS, or Isaac viewport |
-| Project, requirement, compatibility, and template-preview API | PASS | Project summary reads Git HEAD without shell execution; requirement parsing, compatibility resolution, and in-memory template expansion expose existing typed core behavior without ROS or workspace writes |
+| Project, requirement, compatibility, template preview, and confirmed workspace generation API | PASS | Typed core behavior is exposed without ROS; workspace plan is non-mutating and only a confirmation ID plus `confirmed=true` materializes files below the configured sandbox root |
 | Five GUI views | NOT STARTED | Dashboard, Requirement, Robot Configuration, Runtime, Validation/Experience |
 
 **Gate G14: NOT RUN.**
