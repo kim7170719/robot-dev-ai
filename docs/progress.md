@@ -111,7 +111,7 @@ Automated test suite: `.venv/bin/pytest` → 54 passed (2026-10-06).
 |---|---|---|
 | Roadmap re-baseline | PASS | `docs/roadmap_v0.3.md` moves Cosmos to Optional Extension O1 and makes GUI the main path |
 | API / GUI safety boundary | PASS | ADR 0007 and `docs/m14_gui_architecture.md`: GUI reaches core only through a typed API; no arbitrary shell, direct ROS, or Isaac viewport |
-| Project, requirement, compatibility, template preview, and confirmed workspace generation API | PASS | Typed core behavior is exposed without ROS; workspace plan is non-mutating and only a confirmation ID plus `confirmed=true` materializes files below the configured sandbox root |
+| Project, requirement, compatibility, template preview, confirmed workspace generation, and restricted build API | PASS | Typed core behavior is exposed without ROS; generated ROS packages are confined to `<workspace>/src/`, and only an already generated package with a third `confirmed=true` can run `colcon build --packages-select`; typed diagnosis preserves build failures |
 | Five GUI views | NOT STARTED | Dashboard, Requirement, Robot Configuration, Runtime, Validation/Experience |
 
 **Gate G14: NOT RUN.**

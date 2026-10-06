@@ -2,6 +2,8 @@ from pathlib import Path
 
 from starlette.testclient import TestClient
 
+from agent.auto_debug.build_collector import BuildCommandCollector
+from agent.auto_debug.diagnoser import BuildEvidence
 from api.app import ProjectSummary, create_app
 
 
@@ -157,7 +159,7 @@ def test_workspace_plan_requires_confirmation_before_generating_files(
 ) -> None:
     client = TestClient(create_app(workspace_root=tmp_path))
     request = {
-        "output_name": "lidar-demo",
+        "output_name": "lidar_demo",
         "registry": {
             "hardware": [
                 {
@@ -191,7 +193,7 @@ def test_workspace_plan_requires_confirmation_before_generating_files(
     assert plan.json()["files"] == {
         "config/lidar.yaml": "scan_topic: /scan\nframe_id: lidar_link\n"
     }
-    assert not (tmp_path / "lidar-demo").exists()
+    assert not (tmp_path / "src" / "lidar_demo").exists()
 
     apply = client.post(
         "/api/v1/workspaces/apply",
@@ -200,6 +202,79 @@ def test_workspace_plan_requires_confirmation_before_generating_files(
 
     assert apply.status_code == 200
     assert apply.json()["status"] == "generated"
-    assert (tmp_path / "lidar-demo" / "config" / "lidar.yaml").read_text() == (
+    assert (tmp_path / "src" / "lidar_demo" / "config" / "lidar.yaml").read_text() == (
         "scan_topic: /scan\nframe_id: lidar_link\n"
     )
+
+
+def test_workspace_build_requires_a_confirmed_generated_plan(tmp_path: Path) -> None:
+    observed_commands: list[tuple[tuple[str, ...], Path]] = []
+
+    def successful_build(
+        arguments: tuple[str, ...], workspace: Path
+    ) -> BuildEvidence:
+        observed_commands.append((arguments, workspace))
+        return BuildEvidence(command=" ".join(arguments), exit_code=0)
+
+    client = TestClient(
+        create_app(
+            workspace_root=tmp_path,
+            build_collector_factory=lambda workspace: BuildCommandCollector(
+                workspace, runner=successful_build
+            ),
+        )
+    )
+    request = {
+        "output_name": "lidar_demo",
+        "registry": {
+            "hardware": [
+                {
+                    "id": "ydlidar-x4",
+                    "kind": "lidar",
+                    "vendor": "YDLIDAR",
+                    "capability_ids": ["planar-lidar"],
+                }
+            ],
+            "capabilities": [
+                {
+                    "id": "planar-lidar",
+                    "interface_ids": [],
+                    "template_id": "lidar",
+                }
+            ],
+        },
+        "requests": [
+            {
+                "hardware_id": "ydlidar-x4",
+                "capability_id": "planar-lidar",
+                "values": {"scan_topic": "/scan", "frame_id": "lidar_link"},
+            }
+        ],
+    }
+
+    plan = client.post("/api/v1/workspaces/plan", json=request)
+    confirmation_id = plan.json()["confirmation_id"]
+
+    before_apply = client.post(
+        "/api/v1/workspaces/build",
+        json={"confirmation_id": confirmation_id, "confirmed": True},
+    )
+    assert before_apply.status_code == 404
+
+    apply = client.post(
+        "/api/v1/workspaces/apply",
+        json={"confirmation_id": confirmation_id, "confirmed": True},
+    )
+    assert apply.status_code == 200
+
+    build = client.post(
+        "/api/v1/workspaces/build",
+        json={"confirmation_id": confirmation_id, "confirmed": True},
+    )
+
+    assert build.status_code == 200
+    assert build.json()["status"] == "build-succeeded"
+    assert build.json()["diagnosis"]["category"] == "build-succeeded"
+    assert observed_commands == [
+        (("colcon", "build", "--packages-select", "lidar_demo"), tmp_path)
+    ]

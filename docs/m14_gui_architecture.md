@@ -53,7 +53,12 @@ registry and deployment request, then returns the existing resolver result.
 render files in memory only; it does not call the expander write operation.
 `POST /api/v1/workspaces/plan` returns a one-time confirmation ID and file
 map without writing. Only `POST /api/v1/workspaces/apply` with that ID and
-`confirmed=true` writes below an API-configured workspace root.
+`confirmed=true` writes a ROS-valid package below the API-configured
+`<workspace>/src/` root. `POST /api/v1/workspaces/build` requires a third
+`confirmed=true` and the ID of an already generated plan. It invokes only the
+existing restricted `colcon build --packages-select <package>` collector in
+that configured workspace and returns its typed diagnosis; it never repairs
+or executes arbitrary commands.
 
 The first GUI views are Dashboard, Requirement, Robot Configuration, Runtime,
 and Validation/Experience. View implementation is downstream of the API
@@ -65,6 +70,7 @@ contract and does not add a new robotics capability.
 |---|---|
 | GUI → API | typed client error; no implicit retry of mutations |
 | API → core | validation error returned as structured evidence |
+| API → workspace build | only a generated, ROS-valid package selected from an explicit confirmation ID; build failure remains diagnosis evidence |
 | API → ROS collector | collector timeout/failure is surfaced, never interpreted as absence |
 | API → repair | proposal only until the established constrained-repair policy authorizes the exact workspace action |
 | API → O1 Cosmos | explicit unavailable result; all G12 paths remain usable |
@@ -88,6 +94,6 @@ contract and does not add a new robotics capability.
 
 ## Downstream work
 
-The next technical slice adds the existing restricted build collector to a
-confirmed generated workspace. A frontend technology is deliberately not
-selected until the API contract is proven.
+The next technical slice exposes read-only runtime snapshots through the same
+typed boundary. A frontend technology is deliberately not selected until the
+API contract is proven.

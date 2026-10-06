@@ -31,7 +31,7 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Next
 
-- M14 starts with a typed, read-only API contract over the frozen core. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU; resume only on supported hardware with a measurable scenario-generation hypothesis.
+- M14 exposes the frozen core through a typed API. Workspace mutation and restricted build require separate explicit confirmations; M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU; resume only on supported hardware with a measurable scenario-generation hypothesis.
 
 ## M5 evidence
 
@@ -90,6 +90,8 @@ M14 compatibility evidence (2026-10-06): `POST /api/v1/compatibility/resolve` ac
 M14 template-preview evidence (2026-10-06): `POST /api/v1/templates/preview` renders registry-authorized templates in memory and returns the typed file map; it does not write a workspace or invoke ROS. Full suite: 53 tests.
 M14 workspace evidence (2026-10-06): `POST /api/v1/workspaces/plan` returns preview files and a confirmation ID without writing. `POST /api/v1/workspaces/apply` requires that ID plus `confirmed=true`, then writes only below the configured workspace root. Full suite: 54 tests.
 
+M14 workspace-build evidence (2026-10-06): generated packages are restricted to `<workspace>/src/<ros_package_name>`. `POST /api/v1/workspaces/build` accepts only the confirmation ID of an already generated package plus a third `confirmed=true`, then runs the existing `colcon build --packages-select <package>` collector in the configured workspace and returns its typed diagnosis. Full suite: 55 tests.
+
 M12 exact-workspace evidence (2026-10-06): a fresh temporary workspace generated from the exact frozen Chinese request selected all four packages, rendered differential-drive, LiDAR, Camera, and Nav2 templates, and passed restricted `colcon build --packages-select mvp_diff_drive`. That same generated workspace then launched its observer in the isolated G4 stack. During the fixed validator goal it received `/cmd_vel` count `1411`; the validator returned `SUCCEEDED`.
 
 **Gate G12 PASS (2026-10-06):** M12 has reproducible virtual-only evidence for parsing, structured spec, registry lookup, compatibility, template/workspace generation, restricted build, generated launch, isolated Isaac Sim start, ROS graph/topic inspection, TF validation, navigation PASS/FAIL, and constrained repair. No physical robot was commanded or required.
@@ -131,11 +133,11 @@ FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host�
 | Field | Value |
 |---|---|
 | Branch | `feature/gui-mvp` (from merged `develop`) |
-| `develop` | `d3fdd40` — M5 handoff merged |
+| `develop` | `2d39098` — M12 freeze merged |
 | `main` | `c771bf1` — do not develop here |
-| Working tree | clean at `bc8929c` on `feature/m12-full-mvp`; generated status DOCX is intentionally ignored |
+| Working tree | M14 changes belong on `feature/gui-mvp`; generated status DOCX is intentionally ignored |
 
 ## Suggested next step
 
-1. Review the M12/M14 PR into `develop`; then create `feature/gui-mvp` from updated `develop` for the next M14 API/UI slices.
+1. Review PR #13 into `develop`; then add the read-only runtime-snapshot API slice before choosing a frontend framework.
 M12 simulation-validator evidence (2026-10-06): isolated G4 Isaac Sim, SLAM, and Nav2 were started; `/controller_server`, `/planner_server`, and `/bt_navigator` reached `active [3]`. The fixed `m4-navigation` validator sent the `(1.0, 0.0)` map goal and received `SUCCEEDED`. The Isaac container and host launch processes remain running for interactive testing.

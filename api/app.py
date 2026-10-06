@@ -1,7 +1,7 @@
-"""Read-only FastAPI boundary for the frozen Robot Dev AI core."""
+"""Typed FastAPI boundary for the frozen Robot Dev AI core."""
 
 from pathlib import Path
-from typing import Literal
+from typing import Callable, Literal
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
@@ -12,10 +12,12 @@ from agent.compatibility_resolver import (
     ResolutionRequest,
     ResolutionResult,
 )
+from agent.auto_debug.build_collector import BuildCommandCollector
+from agent.auto_debug.diagnoser import AutoDebugAgent, DiagnosisResult
 from agent.requirement_agent import RequirementAgent
 from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
-from registry.models import Identifier, RobotKnowledgeRegistry
+from registry.models import RobotKnowledgeRegistry
 
 
 class ProjectSummary(BaseModel):
@@ -63,7 +65,7 @@ class WorkspacePlanRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    output_name: Identifier
+    output_name: str = Field(pattern=r"^[A-Za-z][A-Za-z0-9_]*$")
     registry: RobotKnowledgeRegistry
     requests: list[ExpansionRequest] = Field(min_length=1)
 
@@ -98,14 +100,35 @@ class WorkspaceApplyResult(BaseModel):
     files: list[str]
 
 
+class WorkspaceBuildRequest(BaseModel):
+    """A third explicit confirmation to build one generated package."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    confirmation_id: str = Field(min_length=1)
+    confirmed: Literal[True]
+
+
+class WorkspaceBuildResult(BaseModel):
+    """Collected build evidence classified without applying a repair."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["build-succeeded", "build-failed"]
+    diagnosis: DiagnosisResult
+
+
 def create_app(
     project_summary: ProjectSummary | None = None,
     workspace_root: Path | None = None,
+    build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
 ) -> FastAPI:
     """Create the presentation API without starting ROS or shell commands."""
 
     summary = project_summary or _default_project_summary()
     pending_plans: dict[str, WorkspacePlan] = {}
+    generated_plans: dict[str, WorkspacePlan] = {}
+    collector_factory = build_collector_factory or BuildCommandCollector
     app = FastAPI(
         title="Robot Dev AI API",
         version="0.1.0",
@@ -178,10 +201,35 @@ def create_app(
             target,
         )
         pending_plans.pop(plan.confirmation_id)
+        generated_plans[plan.confirmation_id] = plan
         return WorkspaceApplyResult(
             status="generated",
             target_path=str(target),
             files=sorted(plan.files),
+        )
+
+    @app.post("/api/v1/workspaces/build", response_model=WorkspaceBuildResult)
+    def build_workspace(request: WorkspaceBuildRequest) -> WorkspaceBuildResult:
+        if workspace_root is None:
+            raise HTTPException(
+                status_code=503, detail="workspace generation is not configured"
+            )
+        plan = generated_plans.get(request.confirmation_id)
+        if plan is None:
+            raise HTTPException(
+                status_code=404, detail="generated workspace plan was not found"
+            )
+        evidence = collector_factory(workspace_root).collect(
+            [Path(plan.target_path).name]
+        )
+        diagnosis = AutoDebugAgent().diagnose(evidence)
+        return WorkspaceBuildResult(
+            status=(
+                "build-succeeded"
+                if diagnosis.category == "build-succeeded"
+                else "build-failed"
+            ),
+            diagnosis=diagnosis,
         )
 
     return app
@@ -213,10 +261,11 @@ def _branch_from_head(head_path: Path) -> str:
 
 
 def _workspace_target(workspace_root: Path, output_name: str) -> Path:
-    """Resolve an output below the configured root without path escapes."""
+    """Resolve a ROS package below the configured workspace's ``src`` directory."""
 
     root = workspace_root.resolve()
-    target = (root / output_name).resolve()
-    if not target.is_relative_to(root):
+    source_root = (root / "src").resolve()
+    target = (source_root / output_name).resolve()
+    if not target.is_relative_to(source_root):
         raise HTTPException(status_code=422, detail="workspace target escapes root")
     return target
