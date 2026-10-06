@@ -1,0 +1,30 @@
+import rclpy
+from geometry_msgs.msg import Twist
+from rclpy.node import Node
+from std_msgs.msg import UInt32
+
+
+class DifferentialDriveController(Node):
+    def __init__(self) -> None:
+        super().__init__("differential_drive_controller")
+        self._observed_count = 0
+        self._observed_publisher = self.create_publisher(
+            UInt32, "/$package_name/cmd_vel_observed", 10
+        )
+        self._subscription = self.create_subscription(
+            Twist, "${cmd_vel_topic}", self._observe_cmd_vel, 10
+        )
+
+    def _observe_cmd_vel(self, _: Twist) -> None:
+        self._observed_count += 1
+        self._observed_publisher.publish(UInt32(data=self._observed_count))
+
+
+def main() -> None:
+    rclpy.init()
+    node = DifferentialDriveController()
+    try:
+        rclpy.spin(node)
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()

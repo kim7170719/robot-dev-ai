@@ -1,0 +1,10 @@
+ARG BASE_IMAGE=nvcr.io/nvidia/isaac/ros:isaac_ros_89df02a734965ed64c227ef531c09d65-amd64
+FROM ${BASE_IMAGE}
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ros-jazzy-isaac-ros-image-proc \
+        ros-jazzy-isaac-ros-examples \
+    && rm -rf /var/lib/apt/lists/*

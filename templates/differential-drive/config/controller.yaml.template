@@ -1,0 +1,6 @@
+controller:
+  ros__parameters:
+    base_frame: ${base_frame}
+    cmd_vel_topic: ${cmd_vel_topic}
+    wheel_radius_m: ${wheel_radius_m}
+    wheel_separation_m: ${wheel_separation_m}

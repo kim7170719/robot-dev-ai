@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "robot-dev-ai"
+version = "0.1.0"
+description = "Structured knowledge and validation for an AI robot development platform."
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<0.116",
+  "pydantic>=2.11,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "anyio>=4.7,<4.12",
+ "httpx>=0.28,<1",
+  "pytest>=8.0",
+]
+gemini = [
+  "google-genai>=1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.setuptools.packages.find]
+include = ["agent*", "api*", "registry*"]

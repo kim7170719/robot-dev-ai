@@ -1,0 +1,33 @@
+from launch import LaunchDescription
+from launch_ros.actions import ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
+
+
+def generate_launch_description():
+    return LaunchDescription(
+        [
+            ComposableNodeContainer(
+                name="image_proc_container",
+                namespace="",
+                package="rclcpp_components",
+                executable="component_container_mt",
+                composable_node_descriptions=[
+                    ComposableNode(
+                        package="isaac_ros_image_proc",
+                        plugin="nvidia::isaac_ros::image_proc::ResizeNode",
+                        name="resize",
+                        remappings=[
+                            ("image", "${input_image_topic}"),
+                            ("camera_info", "${input_camera_info_topic}"),
+                        ],
+                        parameters=[
+                            {
+                                "output_width": ${output_width},
+                                "output_height": ${output_height},
+                            }
+                        ],
+                    )
+                ],
+            )
+        ]
+    )

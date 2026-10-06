@@ -4,49 +4,47 @@ After every reboot, open this file in the browser first:
 
 https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 
-## Current packet (2026-10-01)
+## Current packet (2026-10-06)
 
 | Field | Value |
 |---|---|
 | Last writer | Ubuntu |
-| Ubuntu branch | `develop` (create `feature/m5-*` before M5 edits) |
-| Windows branch | `develop` |
-| G0 / G1 / G2 / G3 / G4 | ALL PASS |
+| Ubuntu branch | `feature/m12-full-mvp` |
+| Last pushed series | M12 freeze, M14 API start, and handoff update; inspect `git log -2 --oneline` after pull |
+| Windows branch | `feature/m12-full-mvp` |
+| G0–G12 | ALL PASS |
 | Tags | `g0-environment-baseline`, `m2-g2-simple-diff-robot`, `m3-g3-isaac-sim` |
-| Next milestone | M5 Isaac ROS (Ubuntu only) |
-| Windows todo | Fetch the G4 checkpoint; do not install ROS, Isaac, Nav2, or Isaac ROS |
+| Next milestone | M14 GUI MVP — typed API first; Cosmos O1 deferred |
+| Windows todo | Fetch `feature/m12-full-mvp`; use Windows only for Git, Cursor, and docs |
 | Do not do | ROS on Windows; Isaac Sim on Windows; Cosmos |
 
-G4 completed: Nav2 + SLAM Toolbox navigation in Isaac Sim, including obstacle avoidance, with a synthetic 2D `/scan`. See `docs/m4_nav2.md` and `experiments/raw/M4-G4.md`.
+G12 completed: the frozen virtual MVP passed. v0.3 makes M14 GUI MVP the main path. M13 Cosmos is Optional Extension O1 and must not be installed on this RTX 2080 Ti (Turing, 11 GB). See `docs/roadmap_v0.3.md`, `docs/m14_gui_architecture.md`, and `docs/m13_cosmos.md`.
 
 ### After reboot → Windows
 
 ```powershell
 cd C:\dev\robot-dev-ai
 git fetch --prune
-git switch feature/m4-nav2
+git switch feature/m12-full-mvp
 git pull --ff-only
-git fetch --tags
 git status
 git log -5 --oneline
-git tag -l "g*" "m*"
 ```
 
-Confirm G4 files: `docs/m4_nav2.md`, `experiments/raw/M4-G4.md`, and `ros_ws/src/simple_diff_nav/`.
-Read: https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/windows_next.md
+Confirm M12/G12 files plus M14 documents: `agent/mvp_pipeline/`, `agent/auto_debug/repairer.py`, `docs/roadmap_v0.3.md`, and `docs/m14_gui_architecture.md`. Do not pull Cosmos models on Windows.
 
 ### After reboot → Ubuntu
 
 ```bash
 cd ~/dev/robot-dev-ai
 git fetch --prune
-git switch develop
+git switch feature/m12-full-mvp
 git pull --ff-only
 git fetch --tags
 git status
 ```
 
-Then create a `feature/m5-*` branch before beginning M5.
+Read `docs/AI_HANDOFF.md`, `docs/roadmap_v0.3.md`, and `docs/m14_gui_architecture.md`. Do not attempt Cosmos execution until using supported hardware.
 
 ## Every reboot
 

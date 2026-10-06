@@ -15,7 +15,9 @@ Ubuntu and Windows each keep an independent clone. GitHub is the only sync point
 
 ## Current milestone
 
-G0–G4 **PASS**. Current work: **M5 Isaac ROS** next. Windows: `docs/windows_next.md`.
+G0–G12 **PASS**. Current work: **M14 GUI MVP** over the frozen virtual core.
+Cosmos is Optional Extension O1; M13 preflight is complete but G13 is deferred
+on the local Turing GPU. See `docs/roadmap_v0.3.md`.
 
 ## Start here
 
@@ -27,6 +29,9 @@ G0–G4 **PASS**. Current work: **M5 Isaac ROS** next. Windows: `docs/windows_ne
 6. `docs/os_handoff.md` (live dual-boot packet; open on GitHub after every reboot)
 7. `.cursor/rules/robotics.mdc`
 
-## Scope freeze (MVP)
+## Scope and roadmap
 
-No extra ROS distributions, no Windows ROS/Isaac as the official stack, no extra robot morphologies, no training a foundation model, and no Cosmos in place of Isaac Sim physics. GUI work waits until after M12.
+No extra ROS distributions, no Windows ROS/Isaac as the official stack, no
+extra robot morphologies, no training a foundation model, and no Cosmos in
+place of Isaac Sim physics. The main path is GUI MVP → Jetson/real robot →
+sim-to-real experiments → thesis → release.

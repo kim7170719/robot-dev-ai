@@ -146,12 +146,15 @@ from nav_msgs.msg import Odometry
 from rclpy.executors import MultiThreadedExecutor
 from rosgraph_msgs.msg import Clock
 from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import CameraInfo, Image
 
 rclpy.init()
 node = rclpy.create_node("m4_lidar")
 clock_pub = node.create_publisher(Clock, "clock", 10)
 odom_pub = node.create_publisher(Odometry, "odom", 10)
 scan_pub = node.create_publisher(LaserScan, "scan", 10)
+camera_pub = node.create_publisher(Image, "camera/image_raw", 10)
+camera_info_pub = node.create_publisher(CameraInfo, "camera/camera_info", 10)
 
 cmd = [0.0, 0.0]
 cmd_stamp = [0.0]
@@ -168,6 +171,7 @@ executor = MultiThreadedExecutor()
 executor.add_node(node)
 threading.Thread(target=executor.spin, daemon=True).start()
 print("[M4L] rclpy thread. Topics: /clock /odom /scan /cmd_vel", flush=True)
+print("[M4L] Camera topics: /camera/image_raw /camera/camera_info", flush=True)
 
 state = {"frame": 0, "x": 0.0, "y": 0.0, "yaw": 0.0, "sim_t": 0.0}
 
@@ -235,6 +239,28 @@ def on_update(_e):
         scan.range_max = RANGE_MAX
         scan.ranges = ranges_from_pose(state["x"], state["y"], state["yaw"])
         scan_pub.publish(scan)
+
+        image = Image()
+        image.header.stamp = stamp
+        image.header.frame_id = "camera_link"
+        image.height = 48
+        image.width = 64
+        image.encoding = "rgb8"
+        image.is_bigendian = 0
+        image.step = image.width * 3
+        red = int(max(0.0, min(255.0, (state["x"] + 4.0) * 31.0)))
+        green = int(max(0.0, min(255.0, (state["y"] + 3.0) * 42.0)))
+        image.data = bytes([red, green, 96]) * (image.width * image.height)
+        camera_pub.publish(image)
+
+        camera_info = CameraInfo()
+        camera_info.header = image.header
+        camera_info.height = image.height
+        camera_info.width = image.width
+        camera_info.distortion_model = "plumb_bob"
+        camera_info.k = [48.0, 0.0, 32.0, 0.0, 48.0, 24.0, 0.0, 0.0, 1.0]
+        camera_info.p = [48.0, 0.0, 32.0, 0.0, 0.0, 48.0, 24.0, 0.0, 0.0, 0.0, 1.0, 0.0]
+        camera_info_pub.publish(camera_info)
 
     if n % 60 == 0:
         print(

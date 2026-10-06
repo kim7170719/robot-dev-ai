@@ -22,7 +22,99 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **G4 PASS** on `feature/m4-nav2` (Isaac Sim navigate-to-pose). Windows: pull after merge; do not install Nav2.
+Current work: **M14 GUI MVP architecture and typed API**. G12 remains frozen and runnable without Cosmos; M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
+
+## M8 Template Engine / Gate G8
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Registry-authorized template selection | PASS | `TemplateExpander.expand()` rejects capabilities not declared by selected hardware |
+| Differential-drive project skeleton | PASS | package metadata, Python node, resource marker, config, and launch template |
+| Sensor/navigation/GPU fragments | PASS | LiDAR, camera, Nav2, and Isaac ROS image-processing templates expand deterministically |
+| Generated ROS package builds | PASS | generated `demo_diff_drive` passed Jazzy `colcon build --packages-select demo_diff_drive` |
+
+Automated test suite: `.venv/bin/pytest` → 51 passed (2026-10-06).
+
+## M9 Requirement Agent / Gate G9
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Explicit requirement parsing | PASS | `RequirementAgent.parse()` recognizes MVP capability phrases |
+| Structured specification and provenance | PASS | Pydantic `RobotSpecification` / `RequirementResult` |
+| Ambiguity handling | PASS | unspecified capabilities produce a question rather than invented hardware |
+| Provider validation and retry | PASS | injectable structured-output provider retries once after invalid output |
+| Gemini Free Tier structured output | PASS | real `gemini-3.5-flash-lite` request returned registry-compatible MVP IDs |
+
+## M10 Compatibility Resolver / Gate G10
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Capability and dependency reasoning | PASS | selects validated packages; blocks undeclared or unpackaged capabilities |
+| ROS distro and target platform | PASS | requires a Jazzy driver and filters platform-restricted packages |
+| Message type conversion | PASS | selects validated `Twist → TwistStamped` conversion package |
+| Explainable output | PASS | returns selected package IDs and rule-derived issue strings |
+| M9 → M10 integration | PASS | parsed differential-drive + Nav2 specification resolves to validated packages |
+| GPU support classification | PASS | Turing Isaac ROS path is experimental only with M5 evidence; otherwise below-Ampere is blocked |
+
+## M11 Auto Debug Agent / Gate G11
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Build and launch package diagnosis | PASS | detects CMake and `ros2 launch` missing-package evidence |
+| Restricted build collection | PASS | only valid package names can form `colcon build --packages-select`; real selected-package build returned `build-succeeded` |
+| Successful build classification | PASS | real `simple_diff_robot` + `simple_diff_nav` build exited 0 and returned `build-succeeded` |
+| Topic/type validation | PASS | reports a `Twist` versus `TwistStamped` mismatch |
+| TF validation | PASS | identifies a required but absent parent-to-child edge |
+| Controller validation | PASS | identifies required controllers not in `active` state |
+| Bounded repair policy | PASS | stops at the configured maximum and emits reviewable failure evidence |
+| Read-only runtime collection | PASS | allowlisted node, topic, and controller commands return captured evidence |
+| Runtime snapshot | PASS | one read-only collection returns parsed node, topic-type, controller-state, and per-command evidence |
+| Runtime snapshot diagnosis | PASS | command failures, missing required nodes, topic-type mismatches, and inactive controllers are diagnosed from one snapshot; failed collection is not treated as absent state |
+| TF runtime collection and diagnosis | PASS | parses fixed one-shot `/tf` and `/tf_static` observations; required edges are checked only when both collections succeed |
+| Collector timeout diagnosis | PASS | live `ros2 control list_controllers` 10-second timeout is classified safely |
+| Failure report | PASS | diagnosis includes command, exit code, evidence, repair budget, and null/no patch diff |
+| Patch proposal | PASS | produces a reviewable, path-constrained `package.xml` dependency diff |
+| Patch application | NOT IMPLEMENTED | recommendations are intentionally non-mutating |
+
+**Gate G11: PASS (2026-10-06).** The M11 gate requires evidence-backed build and ROS diagnostics, bounded repair recommendations, reviewable diffs, and failure reports. Automated patch application is deliberately excluded from this gate.
+
+## M12 MVP Freeze
+
+| Capability | Status | Evidence |
+|---|---|---|
+| Prompt-to-build orchestration | PASS | `MvpPipeline.run()` parses a differential-drive + Nav2 request, resolves packages, renders templates, and materializes an isolated ROS workspace |
+| Generated-project build | PASS | a temporary generated `mvp_diff_drive` workspace passed restricted `colcon build --packages-select mvp_diff_drive` |
+| Frozen four-capability request | PASS | the exact Chinese NVIDIA differential-drive + LiDAR + Camera + navigation request resolves all four capabilities and materializes their templates |
+| Generated-package runtime integration | PASS | corrected package-share launch rerun had no config-path warning; observer received Nav2 `/cmd_vel` count `3`, and fixed `(1.0, 0.0)` validator returned `SUCCEEDED` |
+| Fixed simulation validator | PASS | `IsaacSimulationValidator.validate(m4-navigation)` maps the fixed G4 navigation goal outcome to explicit PASS/FAIL evidence without a shell |
+| Live Isaac Sim PASS/FAIL | PASS | isolated G4 Isaac Sim + SLAM + Nav2 stack reached `(1.0, 0.0)`; fixed validator received `SUCCEEDED` |
+| Virtual camera integration | PASS | G4 now publishes RGB8 `/camera/image_raw` and `/camera/camera_info` at `camera_link`; the existing `base_link → camera_link` TF was observed |
+| Bounded automatic repair | PASS | verified `package.xml` dependency diff applied only in a temporary generated workspace; restricted rebuild returned `build-succeeded` |
+| Exact generated workspace launch | PASS | the exact four-capability workspace launched in G4; its non-controlling observer received Nav2 `/cmd_vel` count `1411` while the fixed validator returned `SUCCEEDED` |
+
+**Gate G12: PASS (2026-10-06).** The frozen request completed deterministic parsing, registry resolution, template/workspace generation, restricted build, generated-package launch, isolated Isaac Sim graph and TF validation, fixed navigation PASS/FAIL evidence, and one constrained reproducible repair. This gate covers virtual LiDAR and Camera only; no physical hardware was used.
+
+## M13 Cosmos scenario generation (Optional Extension O1)
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Scope choice | PASS | scenario generation selected; Isaac Sim remains the physics and validator authority |
+| Independent environment plan | PASS | documented Docker-only isolation; no ROS or system-Python mutation |
+| Official hardware preflight | DEFERRED | RTX 2080 Ti is Turing / 11 GB; current Cosmos Predict prerequisites require Ampere+ |
+| Core MVP without Cosmos | PASS | G12 remains runnable and has no Cosmos dependency |
+
+**Gate G13: DEFERRED.** See `docs/m13_cosmos.md` and ADR 0006; no model/container pull was attempted on unsupported hardware, and G13 no longer blocks the main roadmap.
+
+## M14 GUI MVP (started)
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| Roadmap re-baseline | PASS | `docs/roadmap_v0.3.md` moves Cosmos to Optional Extension O1 and makes GUI the main path |
+| API / GUI safety boundary | PASS | ADR 0007 and `docs/m14_gui_architecture.md`: GUI reaches core only through a typed API; no arbitrary shell, direct ROS, or Isaac viewport |
+| Project and requirement API | PASS | `GET /api/v1/project/summary` exposes frozen-MVP metadata; `POST /api/v1/requirements/parse` returns the existing typed specification/provenance without ROS or shell execution |
+| Five GUI views | NOT STARTED | Dashboard, Requirement, Robot Configuration, Runtime, Validation/Experience |
+
+**Gate G14: NOT RUN.**
 
 ## Gate 0 checklist
 

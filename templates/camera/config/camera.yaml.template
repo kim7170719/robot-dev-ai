@@ -1,0 +1,5 @@
+camera:
+  ros__parameters:
+    frame_id: ${frame_id}
+    image_topic: ${image_topic}
+    camera_info_topic: ${camera_info_topic}

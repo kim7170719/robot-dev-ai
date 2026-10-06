@@ -34,6 +34,8 @@ Do not change ROS distribution, system Python, or core frameworks without a writ
 
 ## Architecture layers in this repo
 
+- `api/`: typed Robot Dev AI presentation boundary (M14)
+- `gui/`: web presentation layer (M14)
 - `ros_ws/`: ROS 2 workspace
 - `agent/`: AI orchestration (planner, tools, prompts, schemas)
 - `registry/`: hardware / package / capability / compatibility knowledge
@@ -44,4 +46,7 @@ Do not change ROS distribution, system Python, or core frameworks without a writ
 
 ## Current phase
 
-M0 Environment Audit. After Gate 0, the next issue is M1-01: install and verify ROS 2 Jazzy. Do not start Cosmos before M13.
+G0–G12 virtual MVP is frozen. M14 exposes existing core capabilities through a
+typed API and GUI without rewriting them. Cosmos is Optional Extension O1;
+G13 is deferred on the local Turing GPU. See `docs/roadmap_v0.3.md` and
+`docs/m14_gui_architecture.md`.
