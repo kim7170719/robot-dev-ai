@@ -10,6 +10,7 @@ https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 |---|---|
 | Last writer | Ubuntu |
 | Ubuntu branch | `feature/m12-full-mvp` |
+| Last pushed commit | `bc8929c` — M12 freeze + M14 API start |
 | Windows branch | `feature/m12-full-mvp` |
 | G0–G12 | ALL PASS |
 | Tags | `g0-environment-baseline`, `m2-g2-simple-diff-robot`, `m3-g3-isaac-sim` |

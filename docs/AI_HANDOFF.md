@@ -130,9 +130,9 @@ FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host�
 | Branch | `feature/m12-full-mvp` |
 | `develop` | `d3fdd40` — M5 handoff merged |
 | `main` | `c771bf1` — do not develop here |
-| Working tree | M12 implementation, M13 preflight, and M14 roadmap/architecture are uncommitted; commit before reboot or OS switch |
+| Working tree | clean at `bc8929c` on `feature/m12-full-mvp`; generated status DOCX is intentionally ignored |
 
 ## Suggested next step
 
-1. Review and commit/push the M12/G12 freeze plus M13/M14 roadmap documents before changing branches. Then implement the read-only M14 project-summary API contract.
+1. Review the M12/M14 PR into `develop`; then create `feature/gui-mvp` from updated `develop` for the next M14 API/UI slices.
 M12 simulation-validator evidence (2026-10-06): isolated G4 Isaac Sim, SLAM, and Nav2 were started; `/controller_server`, `/planner_server`, and `/bt_navigator` reached `active [3]`. The fixed `m4-navigation` validator sent the `(1.0, 0.0)` map goal and received `SUCCEEDED`. The Isaac container and host launch processes remain running for interactive testing.
