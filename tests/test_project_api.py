@@ -1,15 +1,27 @@
 from starlette.testclient import TestClient
 
-from api.app import create_app
+from api.app import ProjectSummary, create_app
 
 
 def test_project_summary_exposes_the_frozen_mvp_status() -> None:
-    response = TestClient(create_app()).get("/api/v1/project/summary")
+    response = TestClient(
+        create_app(
+            project_summary=ProjectSummary(
+                project_name="robot-dev-ai",
+                branch="test-branch",
+                ros_distro="jazzy",
+                isaac_sim_version="4.5.0",
+                latest_passed_gate="G12",
+                evidence_scope="virtual-only",
+                cosmos_status="deferred",
+            )
+        )
+    ).get("/api/v1/project/summary")
 
     assert response.status_code == 200
     assert response.json() == {
         "project_name": "robot-dev-ai",
-        "branch": "feature/m12-full-mvp",
+        "branch": "test-branch",
         "ros_distro": "jazzy",
         "isaac_sim_version": "4.5.0",
         "latest_passed_gate": "G12",
@@ -37,4 +49,64 @@ def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:
         },
         "ambiguities": [],
         "provenance": {"capability_ids": "user"},
+    }
+
+
+def test_compatibility_endpoint_returns_selected_packages() -> None:
+    response = TestClient(create_app()).post(
+        "/api/v1/compatibility/resolve",
+        json={
+            "registry": {
+                "hardware": [
+                    {
+                        "id": "generic-diff-base",
+                        "kind": "mobile-base",
+                        "vendor": "Robot Dev AI",
+                        "capability_ids": ["differential-drive"],
+                    }
+                ],
+                "drivers": [
+                    {
+                        "id": "generic-diff-driver",
+                        "hardware_id": "generic-diff-base",
+                        "ros_distro": "jazzy",
+                    }
+                ],
+                "capabilities": [
+                    {
+                        "id": "differential-drive",
+                        "interface_ids": [],
+                        "template_id": "differential-drive",
+                    }
+                ],
+                "packages": [
+                    {
+                        "id": "diff-drive-controller",
+                        "required_capability_ids": ["differential-drive"],
+                    }
+                ],
+                "compatibility": [
+                    {
+                        "hardware_id": "generic-diff-base",
+                        "package_id": "diff-drive-controller",
+                        "status": "validated",
+                    }
+                ],
+            },
+            "request": {
+                "hardware_id": "generic-diff-base",
+                "specification": {"capability_ids": ["differential-drive"]},
+                "ros_distro": "jazzy",
+                "target_platform": "ubuntu-x86-64",
+            },
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "compatible": True,
+        "status": "validated",
+        "package_ids": ["diff-drive-controller"],
+        "issues": [],
+        "warnings": [],
     }

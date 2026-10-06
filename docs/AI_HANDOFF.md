@@ -86,6 +86,7 @@ M12 virtual-camera evidence (2026-10-06): isolated G4 Isaac Sim was restarted wi
 M13 preflight evidence (2026-10-06): local inspection found RTX 2080 Ti (Turing, compute capability 7.5, 11,264 MiB), Docker 29.8.1, NVIDIA runtime, and 347 GB free disk. Current official Cosmos Predict prerequisites require Ampere-or-newer GPUs, so no image, model, Conda environment, or system-Python change was attempted. Scope and isolated-container plan: `docs/m13_cosmos.md`.
 
 M14 first API evidence (2026-10-06): FastAPI provides `GET /api/v1/project/summary` for frozen-MVP metadata and `POST /api/v1/requirements/parse` for the existing Requirement Agent's typed result. Both endpoints are in-process/read-only and do not invoke ROS or a shell. API tests plus the full suite pass: 51 tests.
+M14 compatibility evidence (2026-10-06): `POST /api/v1/compatibility/resolve` accepts an explicit validated registry and deployment context and returns the existing resolver result. Project summary now reads Git HEAD without a Git shell invocation. Full suite: 52 tests.
 
 M12 exact-workspace evidence (2026-10-06): a fresh temporary workspace generated from the exact frozen Chinese request selected all four packages, rendered differential-drive, LiDAR, Camera, and Nav2 templates, and passed restricted `colcon build --packages-select mvp_diff_drive`. That same generated workspace then launched its observer in the isolated G4 stack. During the fixed validator goal it received `/cmd_vel` count `1411`; the validator returned `SUCCEEDED`.
 
@@ -127,7 +128,7 @@ FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host�
 
 | Field | Value |
 |---|---|
-| Branch | `feature/m12-full-mvp` |
+| Branch | `feature/gui-mvp` (from merged `develop`) |
 | `develop` | `d3fdd40` — M5 handoff merged |
 | `main` | `c771bf1` — do not develop here |
 | Working tree | clean at `bc8929c` on `feature/m12-full-mvp`; generated status DOCX is intentionally ignored |

@@ -47,6 +47,8 @@ does not exist; it never invents runtime state.
 The first implemented paths are `GET /api/v1/project/summary` and
 `POST /api/v1/requirements/parse`; both are in-process, typed, and do not
 invoke ROS or a shell.
+The next path, `POST /api/v1/compatibility/resolve`, accepts an explicit
+registry and deployment request, then returns the existing resolver result.
 
 The first GUI views are Dashboard, Requirement, Robot Configuration, Runtime,
 and Validation/Experience. View implementation is downstream of the API
@@ -84,6 +86,6 @@ contract and does not add a new robotics capability.
 The next technical slice defines and tests the initial API response schemas
 and a read-only project-summary endpoint. A frontend technology is deliberately
 not selected until the API contract is proven.
-The next technical slice adds compatibility resolution to the typed API. A
-frontend technology is deliberately not selected until the API contract is
-proven.
+The next technical slice adds template/workspace-generation evidence to the
+typed API. A frontend technology is deliberately not selected until the API
+contract is proven.
