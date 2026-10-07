@@ -3,6 +3,7 @@ from pathlib import Path
 from starlette.testclient import TestClient
 
 from agent.auto_debug.build_collector import BuildCommandCollector
+from agent.auto_debug.collector import CommandEvidence, RosRuntimeCollector
 from agent.auto_debug.diagnoser import BuildEvidence
 from api.app import ProjectSummary, create_app
 
@@ -152,6 +153,43 @@ def test_template_preview_returns_rendered_files_without_workspace_writes() -> N
             "config/lidar.yaml": "scan_topic: /scan\nframe_id: lidar_link\n"
         },
     }
+
+
+def test_runtime_snapshot_returns_read_only_collector_evidence() -> None:
+    observed_commands: list[tuple[str, ...]] = []
+    outputs = {
+        ("ros2", "node", "list"): "/controller_server\n/robot_state_publisher\n",
+        ("ros2", "topic", "list", "-t"): "/scan [sensor_msgs/msg/LaserScan]\n",
+        ("ros2", "control", "list_controllers"): "diff_cont active\n",
+        ("ros2", "topic", "echo", "/tf", "--once"): (
+            "frame_id: odom\nchild_frame_id: base_link\n"
+        ),
+        ("ros2", "topic", "echo", "/tf_static", "--once"): (
+            "frame_id: base_link\nchild_frame_id: lidar_link\n"
+        ),
+    }
+
+    def collect(arguments: tuple[str, ...]) -> CommandEvidence:
+        observed_commands.append(arguments)
+        return CommandEvidence(
+            command=" ".join(arguments), exit_code=0, stdout=outputs[arguments]
+        )
+
+    response = TestClient(
+        create_app(
+            runtime_collector_factory=lambda: RosRuntimeCollector(runner=collect)
+        )
+    ).get("/api/v1/runtime/snapshot")
+
+    assert response.status_code == 200
+    assert response.json()["nodes"] == ["/controller_server", "/robot_state_publisher"]
+    assert response.json()["topic_types"] == {"/scan": "sensor_msgs/msg/LaserScan"}
+    assert response.json()["controller_states"] == {"diff_cont": "active"}
+    assert response.json()["tf_edges"] == [
+        ["odom", "base_link"],
+        ["base_link", "lidar_link"],
+    ]
+    assert observed_commands == list(outputs)
 
 
 def test_workspace_plan_requires_confirmation_before_generating_files(

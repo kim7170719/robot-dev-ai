@@ -92,6 +92,8 @@ M14 workspace evidence (2026-10-06): `POST /api/v1/workspaces/plan` returns prev
 
 M14 workspace-build evidence (2026-10-06): generated packages are restricted to `<workspace>/src/<ros_package_name>`. `POST /api/v1/workspaces/build` accepts only the confirmation ID of an already generated package plus a third `confirmed=true`, then runs the existing `colcon build --packages-select <package>` collector in the configured workspace and returns its typed diagnosis. Full suite: 55 tests.
 
+M14 runtime-snapshot evidence (2026-10-07): `GET /api/v1/runtime/snapshot` returns the existing fixed read-only ROS inspection snapshot: nodes, topic types, controller states, TF edges, and raw command evidence. It neither starts ROS nodes nor publishes messages. Full suite: 56 tests.
+
 M12 exact-workspace evidence (2026-10-06): a fresh temporary workspace generated from the exact frozen Chinese request selected all four packages, rendered differential-drive, LiDAR, Camera, and Nav2 templates, and passed restricted `colcon build --packages-select mvp_diff_drive`. That same generated workspace then launched its observer in the isolated G4 stack. During the fixed validator goal it received `/cmd_vel` count `1411`; the validator returned `SUCCEEDED`.
 
 **Gate G12 PASS (2026-10-06):** M12 has reproducible virtual-only evidence for parsing, structured spec, registry lookup, compatibility, template/workspace generation, restricted build, generated launch, isolated Isaac Sim start, ROS graph/topic inspection, TF validation, navigation PASS/FAIL, and constrained repair. No physical robot was commanded or required.
@@ -139,5 +141,5 @@ FastDDS Humble 2.x â†” Jazzy 3.x is one-way; do not go back to FastDDS for hostâ
 
 ## Suggested next step
 
-1. Review PR #13 into `develop`; then add the read-only runtime-snapshot API slice before choosing a frontend framework.
+1. Review PR #13 into `develop`; then add validation and repair-proposal evidence endpoints before choosing a frontend framework.
 M12 simulation-validator evidence (2026-10-06): isolated G4 Isaac Sim, SLAM, and Nav2 were started; `/controller_server`, `/planner_server`, and `/bt_navigator` reached `active [3]`. The fixed `m4-navigation` validator sent the `(1.0, 0.0)` map goal and received `SUCCEEDED`. The Isaac container and host launch processes remain running for interactive testing.

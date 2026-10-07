@@ -59,6 +59,9 @@ map without writing. Only `POST /api/v1/workspaces/apply` with that ID and
 existing restricted `colcon build --packages-select <package>` collector in
 that configured workspace and returns its typed diagnosis; it never repairs
 or executes arbitrary commands.
+`GET /api/v1/runtime/snapshot` exposes the existing fixed, read-only ROS
+inspection set: nodes, topic types, controller states, and TF edges together
+with the raw command evidence. It starts no nodes and publishes no messages.
 
 The first GUI views are Dashboard, Requirement, Robot Configuration, Runtime,
 and Validation/Experience. View implementation is downstream of the API
@@ -94,6 +97,6 @@ contract and does not add a new robotics capability.
 
 ## Downstream work
 
-The next technical slice exposes read-only runtime snapshots through the same
-typed boundary. A frontend technology is deliberately not selected until the
-API contract is proven.
+The next technical slice exposes existing validation and repair-proposal
+evidence through the same typed boundary. A frontend technology is deliberately
+not selected until the API contract is proven.

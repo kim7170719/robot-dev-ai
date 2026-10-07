@@ -13,6 +13,7 @@ from agent.compatibility_resolver import (
     ResolutionResult,
 )
 from agent.auto_debug.build_collector import BuildCommandCollector
+from agent.auto_debug.collector import RosRuntimeCollector, RosRuntimeSnapshot
 from agent.auto_debug.diagnoser import AutoDebugAgent, DiagnosisResult
 from agent.requirement_agent import RequirementAgent
 from agent.schemas import RequirementResult
@@ -122,6 +123,7 @@ def create_app(
     project_summary: ProjectSummary | None = None,
     workspace_root: Path | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
+    runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
 ) -> FastAPI:
     """Create the presentation API without starting ROS or shell commands."""
 
@@ -129,6 +131,7 @@ def create_app(
     pending_plans: dict[str, WorkspacePlan] = {}
     generated_plans: dict[str, WorkspacePlan] = {}
     collector_factory = build_collector_factory or BuildCommandCollector
+    snapshot_collector_factory = runtime_collector_factory or RosRuntimeCollector
     app = FastAPI(
         title="Robot Dev AI API",
         version="0.1.0",
@@ -151,6 +154,10 @@ def create_app(
     def preview_template(request: TemplatePreviewRequest) -> ExpansionResult:
         template_root = Path(__file__).parents[1] / "templates"
         return TemplateExpander(template_root).expand(request.registry, request.request)
+
+    @app.get("/api/v1/runtime/snapshot", response_model=RosRuntimeSnapshot)
+    def read_runtime_snapshot() -> RosRuntimeSnapshot:
+        return snapshot_collector_factory().collect_snapshot()
 
     @app.post("/api/v1/workspaces/plan", response_model=WorkspacePlan)
     def plan_workspace(request: WorkspacePlanRequest) -> WorkspacePlan:
