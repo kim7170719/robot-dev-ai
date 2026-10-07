@@ -7,11 +7,11 @@
 - **Status (2026-10-06):** DEFERRED. The local RTX 2080 Ti is Turing with 11 GB VRAM; current Cosmos Predict requires Ampere+ GPUs. No model image or checkpoint was downloaded. This extension no longer blocks M14–M18.
 - **Done when:** a supported independent environment reproduces one official scenario-generation example, produces a reviewable Isaac-world candidate, and G12 still runs without Cosmos.
 
-## P0 — M14 GUI MVP
+## Completed — M14 GUI MVP
 
 - **Purpose:** Make the frozen G7–G12 core usable through a typed API and web GUI without changing robotics behavior.
 - **Files:** `api/`, `gui/`, `docs/m14_gui_architecture.md`, API tests
-- **Status (2026-10-07):** Started. Project summary, deterministic requirement parsing, explicit-registry compatibility resolution, template preview, confirmation-gated workspace generation, restricted build, and read-only runtime snapshot endpoints are tested. Next: validation and repair-proposal evidence.
+- **Status (2026-10-07):** **G14 PASS.** The same-origin GUI provides Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience views over the typed API. Workspace/build and the frozen virtual validation remain confirmation-gated; repair stays proposal-only. See `docs/m14_demo.md`.
 - **Done when:** the five core views consume typed API evidence for project, requirement, compatibility, generation/build, runtime, validation, and repair without direct ROS/shell access or a Cosmos dependency.
 
 

@@ -97,6 +97,7 @@ contract and does not add a new robotics capability.
 
 ## Downstream work
 
-The next technical slice exposes existing validation and repair-proposal
-evidence through the same typed boundary. A frontend technology is deliberately
-not selected until the API contract is proven.
+The implemented GUI is a same-origin, build-less ES-module application served
+by FastAPI. Its five views consume only `/api/v1/*`; it has no browser-side ROS
+or shell integration. The GUI renders JSON evidence as text, so command output
+and generated diffs are not interpreted as HTML.

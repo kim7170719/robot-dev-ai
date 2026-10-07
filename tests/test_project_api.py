@@ -5,6 +5,11 @@ from starlette.testclient import TestClient
 from agent.auto_debug.build_collector import BuildCommandCollector
 from agent.auto_debug.collector import CommandEvidence, RosRuntimeCollector
 from agent.auto_debug.diagnoser import BuildEvidence
+from agent.mvp_pipeline import (
+    IsaacScenario,
+    IsaacSimulationValidator,
+    SimulationCommandEvidence,
+)
 from api.app import ProjectSummary, create_app
 
 
@@ -190,6 +195,77 @@ def test_runtime_snapshot_returns_read_only_collector_evidence() -> None:
         ["base_link", "lidar_link"],
     ]
     assert observed_commands == list(outputs)
+
+
+def test_fixed_navigation_validation_requires_confirmation() -> None:
+    observed_commands: list[tuple[str, ...]] = []
+
+    def validate(arguments: tuple[str, ...]) -> SimulationCommandEvidence:
+        observed_commands.append(arguments)
+        return SimulationCommandEvidence(
+            command=" ".join(arguments),
+            exit_code=0,
+            stdout="Goal finished with status: SUCCEEDED\n",
+        )
+
+    client = TestClient(
+        create_app(
+            simulation_validator_factory=lambda: IsaacSimulationValidator(
+                runner=validate
+            )
+        )
+    )
+
+    rejected = client.post("/api/v1/validation/m4-navigation", json={})
+    assert rejected.status_code == 422
+
+    response = client.post(
+        "/api/v1/validation/m4-navigation", json={"confirmed": True}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "pass"
+    assert response.json()["scenario"] == "m4-navigation"
+    assert observed_commands == [
+        (
+            "ros2",
+            "action",
+            "send_goal",
+            "/navigate_to_pose",
+            "nav2_msgs/action/NavigateToPose",
+            "{pose: {header: {frame_id: 'map'}, pose: {position: {x: 1.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}}",
+        )
+    ]
+
+
+def test_repair_proposal_returns_a_reviewable_diff_without_writing_files() -> None:
+    response = TestClient(create_app()).post(
+        "/api/v1/repairs/propose",
+        json={
+            "path": "src/demo_robot/package.xml",
+            "contents": '<package format="3">\n  <name>demo_robot</name>\n</package>\n',
+            "missing_dependency": "geometry_msgs",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["category"] == "missing-package-dependency"
+    assert response.json()["safe_to_apply"] is False
+    assert "+  <depend>geometry_msgs</depend>" in response.json()["proposed_diff"]
+
+
+def test_gui_entrypoint_exposes_all_m14_views() -> None:
+    response = TestClient(create_app()).get("/")
+
+    assert response.status_code == 200
+    for view_name in (
+        "Dashboard",
+        "Requirement",
+        "Robot Configuration",
+        "Runtime",
+        "Validation / Experience",
+    ):
+        assert view_name in response.text
 
 
 def test_workspace_plan_requires_confirmation_before_generating_files(

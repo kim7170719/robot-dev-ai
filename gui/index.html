@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Robot Dev AI M14 virtual MVP dashboard">
+    <title>Robot Dev AI — M14</title>
+    <link rel="stylesheet" href="./index.css?v=1">
+  </head>
+  <body>
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">VIRTUAL-ONLY MVP · ROS 2 JAZZY · ISAAC SIM 4.5</p>
+        <h1>Robot Dev AI</h1>
+      </div>
+      <span class="badge">M14 GUI MVP</span>
+    </header>
+    <nav aria-label="M14 views" class="nav-tabs">
+      <a href="#dashboard">Dashboard</a>
+      <a href="#requirement">Requirement</a>
+      <a href="#configuration">Robot Configuration</a>
+      <a href="#runtime">Runtime</a>
+      <a href="#validation">Validation / Experience</a>
+    </nav>
+    <main>
+      <p class="safety-note">This interface reaches the robot core only through typed API calls. It does not expose arbitrary shell commands, direct ROS control, an Isaac viewport, Cosmos, or physical-hardware controls.</p>
+
+      <section id="dashboard" class="panel">
+        <h2>Dashboard</h2>
+        <p>Frozen project and gate metadata.</p>
+        <button data-action="load-summary">Refresh project summary</button>
+        <output id="summary-result"></output>
+      </section>
+
+      <section id="requirement" class="panel">
+        <h2>Requirement</h2>
+        <p>Turn a natural-language robot request into the existing structured specification.</p>
+        <form id="requirement-form">
+          <label for="requirement-input">Robot request</label>
+          <textarea id="requirement-input" required>我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。</textarea>
+          <button type="submit">Parse requirement</button>
+        </form>
+        <output id="requirement-result"></output>
+      </section>
+
+      <section id="configuration" class="panel">
+        <h2>Robot Configuration</h2>
+        <p>Resolve a validated differential-drive configuration and preview its authorized template in memory.</p>
+        <div class="actions">
+          <button data-action="resolve-configuration">Resolve package compatibility</button>
+          <button data-action="preview-template" class="secondary">Preview controller template</button>
+        </div>
+        <output id="configuration-result"></output>
+      </section>
+
+      <section id="runtime" class="panel">
+        <h2>Runtime</h2>
+        <p>Collect the fixed read-only ROS snapshot: nodes, topics, controllers, and TF evidence.</p>
+        <button data-action="runtime-snapshot">Collect runtime snapshot</button>
+        <output id="runtime-result"></output>
+      </section>
+
+      <section id="validation" class="panel">
+        <h2>Validation / Experience</h2>
+        <p>Run only the frozen virtual <code>m4-navigation</code> validator, or inspect a repair proposal without applying it.</p>
+        <label class="confirm"><input type="checkbox" id="validation-confirm"> I confirm this runs the fixed Isaac/ROS virtual navigation validation.</label>
+        <div class="actions">
+          <button data-action="validate-navigation">Run fixed validation</button>
+          <button data-action="propose-repair" class="secondary">Show sample repair proposal</button>
+        </div>
+        <output id="validation-result"></output>
+      </section>
+    </main>
+    <footer>Evidence remains virtual-only. G12 is the latest passed robotics gate; G13 Cosmos is deferred.</footer>
+    <script type="module" src="./app.js?v=1"></script>
+  </body>
+</html>

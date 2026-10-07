@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **M14 GUI MVP architecture and typed API**. G12 remains frozen and runnable without Cosmos; M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
+Current work: **M14 GUI MVP complete (G14 PASS)**. G12 remains frozen and runnable without Cosmos; M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
 
 ## M8 Template Engine / Gate G8
 
@@ -33,7 +33,7 @@ Current work: **M14 GUI MVP architecture and typed API**. G12 remains frozen and
 | Sensor/navigation/GPU fragments | PASS | LiDAR, camera, Nav2, and Isaac ROS image-processing templates expand deterministically |
 | Generated ROS package builds | PASS | generated `demo_diff_drive` passed Jazzy `colcon build --packages-select demo_diff_drive` |
 
-Automated test suite: `.venv/bin/pytest` → 54 passed (2026-10-06).
+Automated test suite: `.venv/bin/pytest` → 59 passed (2026-10-07).
 
 ## M9 Requirement Agent / Gate G9
 
@@ -105,7 +105,7 @@ Automated test suite: `.venv/bin/pytest` → 54 passed (2026-10-06).
 
 **Gate G13: DEFERRED.** See `docs/m13_cosmos.md` and ADR 0006; no model/container pull was attempted on unsupported hardware, and G13 no longer blocks the main roadmap.
 
-## M14 GUI MVP (started)
+## M14 GUI MVP (completed)
 
 | Criterion | Status | Evidence |
 |---|---|---|
@@ -113,9 +113,10 @@ Automated test suite: `.venv/bin/pytest` → 54 passed (2026-10-06).
 | API / GUI safety boundary | PASS | ADR 0007 and `docs/m14_gui_architecture.md`: GUI reaches core only through a typed API; no arbitrary shell, direct ROS, or Isaac viewport |
 | Project, requirement, compatibility, template preview, confirmed workspace generation, and restricted build API | PASS | Typed core behavior is exposed without ROS; generated ROS packages are confined to `<workspace>/src/`, and only an already generated package with a third `confirmed=true` can run `colcon build --packages-select`; typed diagnosis preserves build failures |
 | Read-only runtime snapshot API | PASS | `GET /api/v1/runtime/snapshot` returns the existing allowlisted ROS node, topic-type, controller, and TF evidence; it does not start nodes or publish messages |
-| Five GUI views | NOT STARTED | Dashboard, Requirement, Robot Configuration, Runtime, Validation/Experience |
+| Fixed simulation validation and repair-proposal APIs | PASS | The fixed `m4-navigation` scenario requires explicit confirmation; repair proposals return typed diffs without applying them |
+| Five GUI views | PASS | Same-origin build-less GUI exposes Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience; `docs/m14_demo.md` records the local HTTP smoke demo |
 
-**Gate G14: NOT RUN.**
+**Gate G14: PASS (2026-10-07).** The five-view GUI consumes the typed API only, preserves confirmation gates for workspace/build/virtual validation, and renders runtime, validation, and repair evidence without direct browser ROS, shell, Isaac viewport, Cosmos, Jetson, or physical-hardware access. Full suite: 59 tests; local HTTP demo passed.
 
 ## Gate 0 checklist
 

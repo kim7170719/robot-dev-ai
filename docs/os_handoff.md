@@ -10,15 +10,15 @@ https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 |---|---|
 | Last writer | Ubuntu |
 | Ubuntu branch | `feature/gui-mvp` |
-| Last pushed series | M12 freeze and M14 typed API through read-only runtime snapshot; inspect `git log -3 --oneline` after pull |
+| Last pushed series | M14 G14 GUI MVP completion and local demo; inspect `git log -3 --oneline` after pull |
 | Windows branch | `feature/gui-mvp` after fetching this branch |
-| G0–G12 | ALL PASS |
+| G0–G12, G14 | ALL PASS |
 | Tags | `g0-environment-baseline`, `m2-g2-simple-diff-robot`, `m3-g3-isaac-sim` |
-| Next milestone | M14 GUI MVP — typed API first; Cosmos O1 deferred |
+| Next milestone | M15 Jetson + real-robot bring-up; Cosmos O1 remains deferred |
 | Windows todo | Fetch `feature/gui-mvp`; use Windows only for Git, Cursor, and docs |
 | Do not do | ROS on Windows; Isaac Sim on Windows; Cosmos |
 
-G12 completed: the frozen virtual MVP passed. v0.3 makes M14 GUI MVP the main path. M13 Cosmos is Optional Extension O1 and must not be installed on this RTX 2080 Ti (Turing, 11 GB). See `docs/roadmap_v0.3.md`, `docs/m14_gui_architecture.md`, and `docs/m13_cosmos.md`.
+G12 and G14 completed: the frozen virtual MVP and its typed five-view GUI passed. M13 Cosmos is Optional Extension O1 and must not be installed on this RTX 2080 Ti (Turing, 11 GB). See `docs/roadmap_v0.3.md`, `docs/m14_gui_architecture.md`, `docs/m14_demo.md`, and `docs/m13_cosmos.md`.
 
 ### After reboot → Windows
 

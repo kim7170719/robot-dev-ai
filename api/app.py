@@ -5,6 +5,7 @@ from typing import Callable, Literal
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
 from agent.compatibility_resolver import (
@@ -14,7 +15,16 @@ from agent.compatibility_resolver import (
 )
 from agent.auto_debug.build_collector import BuildCommandCollector
 from agent.auto_debug.collector import RosRuntimeCollector, RosRuntimeSnapshot
-from agent.auto_debug.diagnoser import AutoDebugAgent, DiagnosisResult
+from agent.auto_debug.diagnoser import (
+    AutoDebugAgent,
+    DiagnosisResult,
+    PackageManifestEvidence,
+)
+from agent.mvp_pipeline import (
+    IsaacScenario,
+    IsaacSimulationValidator,
+    SimulationValidationResult,
+)
 from agent.requirement_agent import RequirementAgent
 from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
@@ -119,11 +129,20 @@ class WorkspaceBuildResult(BaseModel):
     diagnosis: DiagnosisResult
 
 
+class SimulationValidationRequest(BaseModel):
+    """Explicit confirmation for the one frozen virtual validation scenario."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    confirmed: Literal[True]
+
+
 def create_app(
     project_summary: ProjectSummary | None = None,
     workspace_root: Path | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
+    simulation_validator_factory: Callable[[], IsaacSimulationValidator] | None = None,
 ) -> FastAPI:
     """Create the presentation API without starting ROS or shell commands."""
 
@@ -132,6 +151,7 @@ def create_app(
     generated_plans: dict[str, WorkspacePlan] = {}
     collector_factory = build_collector_factory or BuildCommandCollector
     snapshot_collector_factory = runtime_collector_factory or RosRuntimeCollector
+    validator_factory = simulation_validator_factory or IsaacSimulationValidator
     app = FastAPI(
         title="Robot Dev AI API",
         version="0.1.0",
@@ -158,6 +178,19 @@ def create_app(
     @app.get("/api/v1/runtime/snapshot", response_model=RosRuntimeSnapshot)
     def read_runtime_snapshot() -> RosRuntimeSnapshot:
         return snapshot_collector_factory().collect_snapshot()
+
+    @app.post(
+        "/api/v1/validation/m4-navigation",
+        response_model=SimulationValidationResult,
+    )
+    def validate_fixed_navigation(
+        request: SimulationValidationRequest,
+    ) -> SimulationValidationResult:
+        return validator_factory().validate(IsaacScenario.M4_NAVIGATION)
+
+    @app.post("/api/v1/repairs/propose", response_model=DiagnosisResult)
+    def propose_repair(evidence: PackageManifestEvidence) -> DiagnosisResult:
+        return AutoDebugAgent().diagnose(evidence)
 
     @app.post("/api/v1/workspaces/plan", response_model=WorkspacePlan)
     def plan_workspace(request: WorkspacePlanRequest) -> WorkspacePlan:
@@ -239,6 +272,8 @@ def create_app(
             diagnosis=diagnosis,
         )
 
+    gui_root = Path(__file__).parents[1] / "gui"
+    app.mount("/", StaticFiles(directory=gui_root, html=True), name="gui")
     return app
 
 
