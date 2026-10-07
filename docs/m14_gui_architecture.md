@@ -1,6 +1,6 @@
 # M14 GUI MVP architecture
 
-Version: 0.5 (2026-10-07)
+Version: 0.6 (2026-10-07)
 
 ## Scope and boundary
 
@@ -167,3 +167,12 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 - Added purposeful motion to explain workspace changes, live sensor sampling,
   and newly received status evidence. `prefers-reduced-motion` keeps the same
   state information without spatial motion; no API behavior changed.
+
+### 0.6 — 2026-10-07
+
+- Added a separate, full-viewport Robot Dev AI entry surface. A self-contained
+  SVG differential-drive robot performs a sensor-readiness animation before an
+  operator enters the existing workspace or opens Design directly.
+- Root navigation now resolves safely to the entry surface when no URL hash is
+  supplied; explicit `#dashboard`, `#requirement`, and other workspace hashes
+  remain supported. The landing animation has a static reduced-motion state.

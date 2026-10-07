@@ -318,3 +318,14 @@ reduced-motion alternative. At tablet and mobile widths the workflow is a
 3+2 stage grid, replacing the previous horizontally scrollable navigation.
 No API/ROS behavior changed. Automated suite:
 `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 animated robot entry surface (2026-10-07)
+
+Root navigation now opens a dedicated, full-viewport Robot Dev AI landing
+surface instead of dropping immediately into the dashboard. Its self-contained
+SVG differential-drive robot communicates sensor readiness with a LiDAR sweep,
+camera response, and bounded signal-path motion; it has no external asset or
+network dependency. Operators can enter Overview or go directly to Design.
+Explicit workspace hashes remain supported, and `prefers-reduced-motion` uses a
+still scene. Desktop (1500px) and mobile (390px) renders were inspected.
+Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.

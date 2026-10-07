@@ -66,6 +66,15 @@ the only persistent loop; it means sampling is active. Routine controls respond
 within 180ms. Motion is reduced to static state changes under
 `prefers-reduced-motion`.
 
+## Landing Surface
+
+The entry surface is intentionally separate from the operator workspace. Its
+single SVG robot performs an environment-readiness sequence: a differential
+drive body settles in space while its LiDAR sweep, camera glint, and two signal
+points communicate sensor readiness. “進入工作區” moves directly to the
+existing Overview; “直接建立方案” opens Design. The scene has no external image
+dependency and reduces to a still, readable robot under `prefers-reduced-motion`.
+
 ## Shapes
 
 - Small control radius: 12px.

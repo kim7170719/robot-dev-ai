@@ -36,6 +36,7 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matc
 function activateView(id) {
   document.querySelectorAll("[data-view]").forEach((view) => view.classList.toggle("active", view.id === id));
   document.querySelectorAll("[data-view-link]").forEach((link) => link.classList.toggle("active", link.dataset.viewLink === id));
+  document.body.classList.toggle("is-landing", id === "landing");
   document.querySelector("#view-title").textContent = document.querySelector(`#${id} h1, #${id} h2`)?.textContent || id;
   history.replaceState(null, "", `#${id}`);
   window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
@@ -223,7 +224,8 @@ bindAction('[data-action="validate-navigation"]', "validation-result", async () 
 }, "FIXED SCENARIO VALIDATION");
 bindAction('[data-action="propose-repair"]', "validation-result", () => request("/repairs/propose", { method: "POST", body: JSON.stringify({ path: "src/demo_robot/package.xml", contents: '<package format="3">\n  <name>demo_robot</name>\n</package>\n', missing_dependency: "geometry_msgs" }) }), "REPAIR PROPOSAL · REVIEW ONLY");
 const initial = location.hash.slice(1);
-if (document.querySelector(`#${initial}[data-view]`)) activateView(initial);
-else activateView("dashboard");
+const initialView = initial ? document.getElementById(initial) : null;
+if (initialView?.matches("[data-view]")) activateView(initial);
+else activateView("landing");
 refreshSimulation();
 window.setInterval(() => { if (document.querySelector("#live-preview").checked) refreshSimulationFrame(); }, 4000);
