@@ -31,24 +31,43 @@ function showDesignPlan(plan) {
   card.innerHTML = `<header><div><p class="eyebrow">VALIDATED DESIGN PLAN</p><h2>${plan.status}</h2></div><span class="pill">${plan.resolution?.status || "blocked"}</span></header><div class="design-plan-grid"><section><small>CAPABILITIES</small><div class="chip-row">${plan.requirements.specification.capability_ids.map((item) => `<span>${item}</span>`).join("")}</div></section><section><small>RECOMMENDED PACKAGES</small><ul>${packages.map((item) => `<li>${item}</li>`).join("")}</ul></section><section><small>TEMPLATE PREVIEWS</small><ul>${templates.map((item) => `<li>${item.template_id} · ${Object.keys(item.files).length} files</li>`).join("")}</ul></section></div><p class="design-plan-note">Preview only — no workspace has been generated. Continue to Build only after reviewing this plan.</p>`;
   output.append(card);
 }
-function setView(id) {
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function activateView(id) {
   document.querySelectorAll("[data-view]").forEach((view) => view.classList.toggle("active", view.id === id));
   document.querySelectorAll("[data-view-link]").forEach((link) => link.classList.toggle("active", link.dataset.viewLink === id));
   document.querySelector("#view-title").textContent = document.querySelector(`#${id} h1, #${id} h2`)?.textContent || id;
   history.replaceState(null, "", `#${id}`);
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+}
+function setView(id) {
+  if (!reducedMotion && document.startViewTransition) {
+    document.startViewTransition(() => activateView(id));
+  } else {
+    activateView(id);
+  }
 }
 function bindAction(selector, resultId, handler, label) {
   const target = document.querySelector(selector);
   if (!target) return;
   target.addEventListener("click", async (event) => {
     const button = event.currentTarget; const original = button.innerHTML;
-    button.disabled = true; button.textContent = "處理中…";
+    button.disabled = true; button.setAttribute("aria-busy", "true"); button.classList.add("is-working"); button.textContent = "處理中…";
     try { showResult(resultId, await handler(), label); } catch (error) { showError(resultId, error); }
-    finally { button.disabled = false; button.innerHTML = original; }
+    finally { button.disabled = false; button.removeAttribute("aria-busy"); button.classList.remove("is-working"); button.innerHTML = original; }
   });
 }
-function setText(id, text) { document.querySelector(`#${id}`).textContent = text; }
+function setText(id, text) {
+  const target = document.querySelector(`#${id}`);
+  if (!target || target.textContent === String(text)) return;
+  target.textContent = text;
+  if (!reducedMotion && target.closest(".metric, .health-indicator, .run-timeline")) {
+    const surface = target.closest(".metric, .health-indicator, .run-timeline li");
+    surface.classList.remove("is-updated");
+    requestAnimationFrame(() => surface.classList.add("is-updated"));
+    window.setTimeout(() => surface.classList.remove("is-updated"), 620);
+  }
+}
 function setTimeline(stage, state, text) {
   const row = document.querySelector(`[data-stage="${stage}"]`);
   if (!row) return;
@@ -107,6 +126,7 @@ let frameRequestActive = false;
 async function refreshSimulationFrame() {
   if (frameRequestActive) return;
   frameRequestActive = true;
+  document.querySelector(".camera-stage")?.classList.add("is-refreshing");
   try {
     const source = document.querySelector("#camera-source")?.value || "isaac";
     const frame = await request(`/simulation/frame?source=${source}`);
@@ -125,7 +145,10 @@ async function refreshSimulationFrame() {
     document.querySelector("#camera-frame").hidden = true;
     document.querySelector("#camera-empty").hidden = false;
     setText("pose-label", error.message);
-  } finally { frameRequestActive = false; }
+  } finally {
+    frameRequestActive = false;
+    document.querySelector(".camera-stage")?.classList.remove("is-refreshing");
+  }
 }
 async function refreshSimulation() {
   try {
@@ -200,6 +223,7 @@ bindAction('[data-action="validate-navigation"]', "validation-result", async () 
 }, "FIXED SCENARIO VALIDATION");
 bindAction('[data-action="propose-repair"]', "validation-result", () => request("/repairs/propose", { method: "POST", body: JSON.stringify({ path: "src/demo_robot/package.xml", contents: '<package format="3">\n  <name>demo_robot</name>\n</package>\n', missing_dependency: "geometry_msgs" }) }), "REPAIR PROPOSAL · REVIEW ONLY");
 const initial = location.hash.slice(1);
-if (document.querySelector(`#${initial}[data-view]`)) setView(initial);
+if (document.querySelector(`#${initial}[data-view]`)) activateView(initial);
+else activateView("dashboard");
 refreshSimulation();
 window.setInterval(() => { if (document.querySelector("#live-preview").checked) refreshSimulationFrame(); }, 4000);

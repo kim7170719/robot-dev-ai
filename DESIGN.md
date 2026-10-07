@@ -57,6 +57,15 @@ operator action. Dark surfaces are evidence contexts, not a second app theme.
 - Shadows are neutral and soft; do not use coloured glows or card stacks to
   fabricate hierarchy.
 
+## Motion
+
+The authored moment is an evidence signal travelling through the robot-workflow
+surface: a view change is a short clipped workspace transition, and a freshly
+received runtime value briefly confirms its own card. The live-camera dot is
+the only persistent loop; it means sampling is active. Routine controls respond
+within 180ms. Motion is reduced to static state changes under
+`prefers-reduced-motion`.
+
 ## Shapes
 
 - Small control radius: 12px.

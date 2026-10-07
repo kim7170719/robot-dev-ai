@@ -307,3 +307,14 @@ simulation evidence. `PRODUCT.md` records the real product constraints and
 accessibility rules. The redesigned Overview and Design views were visually
 reviewed at 1500px and 390px. Automated suite:
 `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 workflow-motion and compact-navigation pass (2026-10-07)
+
+The M14 presentation now communicates state changes rather than behaving as a
+static dashboard: workspace navigation uses a short clipped transition,
+runtime updates confirm their affected surface, and the live camera indicator
+signals sampling. The only persistent motion is that live signal and it has a
+reduced-motion alternative. At tablet and mobile widths the workflow is a
+3+2 stage grid, replacing the previous horizontally scrollable navigation.
+No API/ROS behavior changed. Automated suite:
+`.venv/bin/python -m pytest -q` → 64 passed.

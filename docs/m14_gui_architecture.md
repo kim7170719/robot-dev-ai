@@ -164,3 +164,6 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 - Added a keyboard skip link, visible focus treatment, responsive single-column
   controls, and decorative-icon cleanup. The product brief and reusable visual
   rules are captured in `PRODUCT.md` and `DESIGN.md`.
+- Added purposeful motion to explain workspace changes, live sensor sampling,
+  and newly received status evidence. `prefers-reduced-motion` keeps the same
+  state information without spatial motion; no API behavior changed.
