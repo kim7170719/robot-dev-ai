@@ -1,6 +1,7 @@
 """Typed FastAPI boundary for the frozen Robot Dev AI core."""
 
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Callable, Literal
 from uuid import uuid4
 
@@ -23,6 +24,8 @@ from agent.auto_debug.diagnoser import (
 from agent.mvp_pipeline import (
     IsaacScenario,
     IsaacSimulationValidator,
+    MvpPipeline,
+    MvpPipelineResult,
     SimulationValidationResult,
 )
 from agent.requirement_agent import RequirementAgent
@@ -137,12 +140,34 @@ class SimulationValidationRequest(BaseModel):
     confirmed: Literal[True]
 
 
+class FullMvpRunRequest(BaseModel):
+    """Explicitly run the frozen MVP pipeline in an ephemeral workspace."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    natural_language: str = Field(min_length=1, max_length=10_000)
+    confirmed: Literal[True]
+    include_validation: bool = False
+
+
+class FullMvpRunResult(BaseModel):
+    """Evidence from one bounded full MVP run without retained artifacts."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    pipeline: MvpPipelineResult
+    runtime: RosRuntimeSnapshot
+    validation: SimulationValidationResult | None = None
+    workspace_lifecycle: Literal["ephemeral-cleaned"]
+
+
 def create_app(
     project_summary: ProjectSummary | None = None,
     workspace_root: Path | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
     simulation_validator_factory: Callable[[], IsaacSimulationValidator] | None = None,
+    mvp_pipeline_factory: Callable[[Path], MvpPipeline] | None = None,
 ) -> FastAPI:
     """Create the presentation API without starting ROS or shell commands."""
 
@@ -152,6 +177,7 @@ def create_app(
     collector_factory = build_collector_factory or BuildCommandCollector
     snapshot_collector_factory = runtime_collector_factory or RosRuntimeCollector
     validator_factory = simulation_validator_factory or IsaacSimulationValidator
+    pipeline_factory = mvp_pipeline_factory or _default_mvp_pipeline
     app = FastAPI(
         title="Robot Dev AI API",
         version="0.1.0",
@@ -192,6 +218,24 @@ def create_app(
         request: SimulationValidationRequest,
     ) -> SimulationValidationResult:
         return validator_factory().validate(IsaacScenario.M4_NAVIGATION)
+
+    @app.post("/api/v1/mvp/full-run", response_model=FullMvpRunResult)
+    def run_full_mvp(request: FullMvpRunRequest) -> FullMvpRunResult:
+        with TemporaryDirectory(prefix="robot-dev-ai-mvp-") as directory:
+            raw_pipeline = pipeline_factory(Path(directory)).run(request.natural_language)
+            pipeline = raw_pipeline.model_copy(
+                update={"generated_package_root": None}
+            )
+            runtime = snapshot_collector_factory().collect_snapshot()
+            validation = None
+            if request.include_validation and pipeline.status == "build-succeeded":
+                validation = validator_factory().validate(IsaacScenario.M4_NAVIGATION)
+        return FullMvpRunResult(
+            pipeline=pipeline,
+            runtime=runtime,
+            validation=validation,
+            workspace_lifecycle="ephemeral-cleaned",
+        )
 
     @app.post("/api/v1/repairs/propose", response_model=DiagnosisResult)
     def propose_repair(evidence: PackageManifestEvidence) -> DiagnosisResult:
@@ -316,3 +360,106 @@ def _workspace_target(workspace_root: Path, output_name: str) -> Path:
     if not target.is_relative_to(source_root):
         raise HTTPException(status_code=422, detail="workspace target escapes root")
     return target
+
+
+def _default_mvp_pipeline(workspace_root: Path) -> MvpPipeline:
+    """Compose the frozen four-capability MVP in a caller-owned temp workspace."""
+
+    return MvpPipeline(
+        registry=_frozen_mvp_registry(),
+        hardware_id="generic-diff-base",
+        template_root=Path(__file__).parents[1] / "templates",
+        output_root=workspace_root / "src",
+        build_collector=BuildCommandCollector(workspace_root),
+    )
+
+
+def _frozen_mvp_registry() -> RobotKnowledgeRegistry:
+    """Return the validated registry used by the frozen M12 virtual MVP."""
+
+    return RobotKnowledgeRegistry.model_validate(
+        {
+            "hardware": [
+                {
+                    "id": "generic-diff-base",
+                    "kind": "mobile-base",
+                    "vendor": "Robot Dev AI",
+                    "capability_ids": [
+                        "differential-drive",
+                        "planar-lidar",
+                        "rgb-camera",
+                        "navigation",
+                    ],
+                }
+            ],
+            "drivers": [
+                {
+                    "id": "generic-diff-driver",
+                    "hardware_id": "generic-diff-base",
+                    "ros_distro": "jazzy",
+                }
+            ],
+            "capabilities": [
+                {
+                    "id": "differential-drive",
+                    "interface_ids": [],
+                    "template_id": "differential-drive",
+                },
+                {
+                    "id": "navigation",
+                    "interface_ids": [],
+                    "template_id": "nav2",
+                },
+                {
+                    "id": "planar-lidar",
+                    "interface_ids": [],
+                    "template_id": "lidar",
+                },
+                {
+                    "id": "rgb-camera",
+                    "interface_ids": [],
+                    "template_id": "camera",
+                },
+            ],
+            "packages": [
+                {
+                    "id": "diff-drive-controller",
+                    "required_capability_ids": ["differential-drive"],
+                },
+                {
+                    "id": "nav2-bringup",
+                    "required_capability_ids": ["navigation"],
+                },
+                {
+                    "id": "lidar-driver",
+                    "required_capability_ids": ["planar-lidar"],
+                },
+                {
+                    "id": "camera-driver",
+                    "required_capability_ids": ["rgb-camera"],
+                },
+            ],
+            "compatibility": [
+                {
+                    "hardware_id": "generic-diff-base",
+                    "package_id": "diff-drive-controller",
+                    "status": "validated",
+                },
+                {
+                    "hardware_id": "generic-diff-base",
+                    "package_id": "nav2-bringup",
+                    "status": "validated",
+                },
+                {
+                    "hardware_id": "generic-diff-base",
+                    "package_id": "lidar-driver",
+                    "status": "validated",
+                },
+                {
+                    "hardware_id": "generic-diff-base",
+                    "package_id": "camera-driver",
+                    "status": "validated",
+                },
+            ],
+        }
+    )

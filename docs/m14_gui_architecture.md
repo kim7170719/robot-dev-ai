@@ -62,6 +62,11 @@ or executes arbitrary commands.
 `GET /api/v1/runtime/snapshot` exposes the existing fixed, read-only ROS
 inspection set: nodes, topic types, controller states, and TF edges together
 with the raw command evidence. It starts no nodes and publishes no messages.
+`POST /api/v1/mvp/full-run` composes the frozen M12 pipeline in a temporary
+workspace. It requires explicit confirmation, uses the fixed four-capability
+registry and existing restricted build collector, removes generated files
+before returning, and includes runtime evidence. Fixed simulation validation
+is opt-in in the same confirmed request.
 
 The first GUI views are Dashboard, Requirement, Robot Configuration, Runtime,
 and Validation/Experience. View implementation is downstream of the API
@@ -109,3 +114,9 @@ reviewed at 1440px and 390px widths; mobile uses a single-column evidence-card
 layout. There was no pre-existing design-system or wireframe artifact, so the
 small CSS token map in `gui/index.css` is a M14-local visual foundation rather
 than a project-wide design-system decision.
+
+The dashboard uses a conventional latest-run layout: a Full Run CTA, pipeline
+timeline, build status, and a three-state simulation-health summary (Online,
+Partial, Unavailable). `scripts/run_m14_demo.sh` sources Jazzy and the
+repository workspace before starting uvicorn, so an API service without `ros2`
+on `PATH` is not confused with a simulation failure.

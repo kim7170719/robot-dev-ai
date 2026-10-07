@@ -33,7 +33,7 @@ Current work: **M14 GUI MVP complete (G14 PASS)**. G12 remains frozen and runnab
 | Sensor/navigation/GPU fragments | PASS | LiDAR, camera, Nav2, and Isaac ROS image-processing templates expand deterministically |
 | Generated ROS package builds | PASS | generated `demo_diff_drive` passed Jazzy `colcon build --packages-select demo_diff_drive` |
 
-Automated test suite: `.venv/bin/pytest` → 60 passed (2026-10-07).
+Automated test suite: `.venv/bin/pytest` → 61 passed (2026-10-07).
 
 ## M9 Requirement Agent / Gate G9
 
@@ -114,9 +114,10 @@ Automated test suite: `.venv/bin/pytest` → 60 passed (2026-10-07).
 | Project, requirement, compatibility, template preview, confirmed workspace generation, and restricted build API | PASS | Typed core behavior is exposed without ROS; generated ROS packages are confined to `<workspace>/src/`, and only an already generated package with a third `confirmed=true` can run `colcon build --packages-select`; typed diagnosis preserves build failures |
 | Read-only runtime snapshot API | PASS | `GET /api/v1/runtime/snapshot` returns the existing allowlisted ROS node, topic-type, controller, and TF evidence; it does not start nodes or publish messages |
 | Fixed simulation validation and repair-proposal APIs | PASS | The fixed `m4-navigation` scenario requires explicit confirmation; repair proposals return typed diffs without applying them |
-| Five GUI views | PASS | Same-origin build-less GUI exposes Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience through a responsive control-room presentation; `docs/m14_demo.md` records the local HTTP smoke and 1440px/390px visual review |
+| Full Run orchestration and live simulation health | PASS | Confirmed `POST /api/v1/mvp/full-run` uses the frozen M12 pipeline in an ephemeral workspace, then returns build and runtime evidence; dashboard distinguishes Online, Partial, and Unavailable runtime states |
+| Five GUI views | PASS | Same-origin build-less GUI exposes Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience through a responsive latest-run dashboard; `docs/m14_demo.md` records the local HTTP smoke and 1440px/390px visual review |
 
-**Gate G14: PASS (2026-10-07).** The five-view GUI consumes the typed API only, preserves confirmation gates for workspace/build/virtual validation, and renders runtime, validation, and repair evidence without direct browser ROS, shell, Isaac viewport, Cosmos, Jetson, or physical-hardware access. Full suite: 60 tests; local HTTP demo passed.
+**Gate G14: PASS (2026-10-07).** The five-view GUI consumes the typed API only, preserves confirmation gates for workspace/build/virtual validation, and renders runtime, validation, and repair evidence without direct browser ROS, shell, Isaac viewport, Cosmos, Jetson, or physical-hardware access. Full suite: 61 tests; local HTTP demo passed. A verified Full Run parsed four capabilities, passed restricted build, cleaned its temporary workspace, and observed 25 nodes / 80 topics / 3 TF edges with a truthful Partial status for one timed-out TF inspection.
 
 ## Gate 0 checklist
 

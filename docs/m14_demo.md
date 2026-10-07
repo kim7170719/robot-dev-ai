@@ -9,21 +9,26 @@ viewport and it does not command physical hardware.
 ```bash
 cd ~/dev/robot-dev-ai
 .venv/bin/pip install -e .
-.venv/bin/uvicorn api.app:create_app --factory --host 127.0.0.1 --port 8000
+bash scripts/run_m14_demo.sh
 ```
 
 Open <http://127.0.0.1:8000> on the Ubuntu host.
 
 ## Safe walkthrough
 
-1. **Dashboard** → refresh the frozen project metadata.
+1. **Dashboard** → inspect the latest-run timeline and live simulation health.
+   Choose **Run full pipeline** to parse, resolve, generate in a temporary
+   workspace, perform the restricted build, and collect runtime evidence. The
+   temporary workspace is removed before the result returns. Select the
+   validation checkbox only when the fixed simulation goal is intended.
 2. **Requirement** → parse the supplied Chinese differential-drive, LiDAR,
    Camera, and navigation request.
 3. **Robot Configuration** → resolve the bundled validated differential-drive
    example or preview its template in memory.
-4. **Runtime** → collect only the fixed read-only ROS evidence. If ROS is not
-   running, the command evidence reports that condition; the GUI does not
-   infer a healthy runtime.
+4. **Runtime** → collect only the fixed read-only ROS evidence. The launcher
+   sources Jazzy and the repository workspace before starting the API. If ROS
+   is not running, the command evidence reports that condition; the GUI does
+   not infer a healthy runtime.
 5. **Validation / Experience** → inspect the sample repair proposal. The
    frozen `m4-navigation` virtual validator remains behind a checkbox and an
    explicit API confirmation; it is the only action that may send the
@@ -45,3 +50,12 @@ not configured in this repository yet.
 Template-preview errors are returned as typed HTTP 422 JSON evidence. The GUI
 demo provides the complete differential-drive template values, so its template
 preview renders eight files rather than returning a server-error page.
+
+## Full Run evidence
+
+On 2026-10-07, `POST /api/v1/mvp/full-run` executed the frozen Chinese
+differential-drive + LiDAR + Camera + navigation request without requesting
+simulation validation. It parsed all four capabilities, returned
+`build-succeeded`, cleaned the temporary workspace, and observed 25 ROS nodes,
+80 topics, and 3 TF edges. One `/tf_static --once` inspection timed out, so the
+dashboard truthfully presents the runtime as **Partial**.

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Robot Dev AI M14 virtual robot development console">
     <title>Robot Dev AI — Control Room</title>
-    <link rel="stylesheet" href="./index.css?v=3">
+    <link rel="stylesheet" href="./index.css?v=5">
   </head>
   <body>
     <div class="app-shell">
@@ -29,24 +29,24 @@
         <header class="topbar"><div class="breadcrumb"><span>Robot Dev AI</span><i>/</i><strong id="view-title">Dashboard</strong></div><div><span class="shield">◈ Safety boundary active</span><span class="avatar">YU</span></div></header>
 
         <section class="view active" id="dashboard" data-view>
-          <div class="hero">
-            <div><p class="eyebrow">ROBOT DEVELOPMENT PLATFORM</p><h1>從需求到可驗證的<br><em>Virtual Robot</em></h1><p class="hero-copy">將硬體知識、ROS 2 模板、受限建置與 Isaac Sim 證據整合為可追溯的開發工作流。</p><div class="actions"><button class="primary" data-go="requirement">開始建立需求 <b>→</b></button><button class="secondary" data-action="load-summary">同步專案狀態</button></div></div>
-            <div class="bot-stage" aria-hidden="true"><span class="orbit orbit-a"></span><span class="orbit orbit-b"></span><div class="bot"><i></i><i></i><b></b></div><span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span></div>
-          </div>
-          <div class="metric-grid">
-            <article class="metric accent"><small>LATEST PASSED GATE</small><strong>G12</strong><span>Virtual MVP frozen</span><b>✓</b></article>
-            <article class="metric"><small>SIMULATION STACK</small><strong>Isaac Sim 4.5</strong><span>ROS 2 Jazzy · Docker</span><b>◌</b></article>
-            <article class="metric"><small>M14 INTERFACE</small><strong>5 views online</strong><span>Typed API boundary</span><b>▦</b></article>
+          <div class="run-header"><div><p class="eyebrow">RUNS / VIRTUAL MVP</p><h1>Latest run</h1><p>執行既有 M12 pipeline，並將 build、runtime 與 simulation evidence 集中在同一份可審閱結果。</p></div><div class="run-actions"><label><input type="checkbox" id="full-run-validation"><span>完成 build 後執行固定 simulation validation</span></label><button class="primary" data-action="full-run">Run full pipeline <b>→</b></button></div></div>
+          <div class="metric-grid run-metrics">
+            <article class="metric accent"><small>PIPELINE</small><strong id="pipeline-status">Ready</strong><span id="pipeline-detail">Awaiting explicit run</span><b>✓</b></article>
+            <article class="metric"><small>BUILD</small><strong id="build-status">Not run</strong><span id="build-detail">Restricted colcon only</span><b>⌘</b></article>
+            <article class="metric"><small>SIMULATION HEALTH</small><strong id="simulation-status">Checking…</strong><span id="simulation-detail">Read-only ROS snapshot</span><b>◌</b></article>
           </div>
           <div class="dashboard-grid">
-            <article class="card journey"><header><div><p class="eyebrow">GUIDED WORKFLOW</p><h2>開發旅程</h2></div><span class="pill">SAFE BY DESIGN</span></header><ol>
-              <li><em>01</em><div><strong>描述機器人</strong><small>自然語言 → 結構化規格</small></div><button data-go="requirement" aria-label="前往需求">→</button></li>
-              <li><em>02</em><div><strong>確認相容性</strong><small>硬體、能力與套件證據</small></div><button data-go="configuration" aria-label="前往設定">→</button></li>
-              <li><em>03</em><div><strong>檢視執行環境</strong><small>ROS graph、TF 與控制器快照</small></div><button data-go="runtime" aria-label="前往執行環境">→</button></li>
-              <li><em>04</em><div><strong>驗證與學習</strong><small>固定情境、可審閱修復提案</small></div><button data-go="validation" aria-label="前往驗證">→</button></li>
+            <article class="card journey"><header><div><p class="eyebrow">PIPELINE TIMELINE</p><h2>Full Run progress</h2></div><span class="pill" id="run-phase">READY</span></header><ol class="run-timeline">
+              <li data-stage="requirements"><em>01</em><div><strong>Requirement parsed</strong><small>Natural language → structured spec</small></div><span>Pending</span></li>
+              <li data-stage="compatibility"><em>02</em><div><strong>Compatibility resolved</strong><small>Registry packages selected</small></div><span>Pending</span></li>
+              <li data-stage="generation"><em>03</em><div><strong>Workspace generated</strong><small>Ephemeral workspace only</small></div><span>Pending</span></li>
+              <li data-stage="build"><em>04</em><div><strong>Restricted build</strong><small>colcon --packages-select</small></div><span>Pending</span></li>
+              <li data-stage="runtime"><em>05</em><div><strong>Runtime snapshot</strong><small>Nodes · topics · controllers · TF</small></div><span>Checking</span></li>
+              <li data-stage="validation"><em>06</em><div><strong>Simulation validation</strong><small>Fixed m4-navigation scenario</small></div><span>Optional</span></li>
             </ol></article>
-            <article class="card boundary"><header><div><p class="eyebrow">SYSTEM CONTRACT</p><h2>安全邊界</h2></div><b>⌾</b></header><ul><li>✓ 瀏覽器只使用 typed API</li><li>✓ 不提供任意 shell 或 ROS 命令</li><li>✓ 生成、建置與驗證均需確認</li><li>✓ Cosmos 與實體硬體不在此介面</li></ul><output id="summary-result" class="compact-result" aria-live="polite"></output></article>
+            <article class="card boundary simulation-card"><header><div><p class="eyebrow">LIVE SIMULATION</p><h2>Runtime snapshot</h2></div><button data-action="refresh-simulation" class="icon-button" aria-label="重新整理 simulation 狀態">↻</button></header><div class="health-indicator"><i id="health-dot"></i><strong id="health-label">Loading runtime evidence…</strong></div><dl><div><dt>ROS nodes</dt><dd id="runtime-nodes">—</dd></div><div><dt>Topics</dt><dd id="runtime-topics">—</dd></div><div><dt>TF edges</dt><dd id="runtime-tf">—</dd></div></dl><p class="simulation-note">僅讀取現有 ROS graph；不啟動 simulator、不嵌入 viewport。</p><output id="summary-result" class="compact-result" aria-live="polite"></output></article>
           </div>
+          <output id="full-run-result" class="result-panel" aria-live="polite"></output>
         </section>
 
         <section class="view" id="requirement" data-view>
@@ -75,6 +75,6 @@
         </section>
       </main>
     </div>
-    <script type="module" src="./app.js?v=4"></script>
+    <script type="module" src="./app.js?v=6"></script>
   </body>
 </html>

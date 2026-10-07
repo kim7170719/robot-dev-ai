@@ -8,6 +8,7 @@ from agent.auto_debug.diagnoser import BuildEvidence
 from agent.mvp_pipeline import (
     IsaacScenario,
     IsaacSimulationValidator,
+    MvpPipelineResult,
     SimulationCommandEvidence,
 )
 from api.app import ProjectSummary, create_app
@@ -269,6 +270,57 @@ def test_fixed_navigation_validation_requires_confirmation() -> None:
             "{pose: {header: {frame_id: 'map'}, pose: {position: {x: 1.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}}",
         )
     ]
+
+
+def test_full_mvp_run_returns_pipeline_and_runtime_evidence(tmp_path: Path) -> None:
+    received_requests: list[str] = []
+    received_workspaces: list[Path] = []
+
+    class SuccessfulPipeline:
+        def run(self, natural_language: str) -> MvpPipelineResult:
+            received_requests.append(natural_language)
+            return MvpPipelineResult.model_validate(
+                {
+                    "status": "build-succeeded",
+                    "requirements": {
+                        "specification": {"capability_ids": ["differential-drive"]},
+                        "ambiguities": [],
+                        "provenance": {"capability_ids": "user"},
+                    },
+                    "build_diagnosis": {"category": "build-succeeded"},
+                }
+            )
+
+    def runtime_evidence(arguments: tuple[str, ...]) -> CommandEvidence:
+        return CommandEvidence(command=" ".join(arguments), exit_code=0)
+
+    client = TestClient(
+        create_app(
+            mvp_pipeline_factory=lambda workspace: (
+                received_workspaces.append(workspace) or SuccessfulPipeline()
+            ),
+            runtime_collector_factory=lambda: RosRuntimeCollector(
+                runner=runtime_evidence
+            ),
+        )
+    )
+
+    response = client.post(
+        "/api/v1/mvp/full-run",
+        json={
+            "natural_language": "Build a differential-drive robot.",
+            "confirmed": True,
+            "include_validation": False,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["pipeline"]["status"] == "build-succeeded"
+    assert response.json()["workspace_lifecycle"] == "ephemeral-cleaned"
+    assert response.json()["validation"] is None
+    assert received_requests == ["Build a differential-drive robot."]
+    assert len(received_workspaces) == 1
+    assert not received_workspaces[0].exists()
 
 
 def test_repair_proposal_returns_a_reviewable_diff_without_writing_files() -> None:

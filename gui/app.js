@@ -32,16 +32,83 @@ function setView(id) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function bindAction(selector, resultId, handler, label) {
-  document.querySelector(selector).addEventListener("click", async (event) => {
+  const target = document.querySelector(selector);
+  if (!target) return;
+  target.addEventListener("click", async (event) => {
     const button = event.currentTarget; const original = button.innerHTML;
     button.disabled = true; button.textContent = "處理中…";
     try { showResult(resultId, await handler(), label); } catch (error) { showError(resultId, error); }
     finally { button.disabled = false; button.innerHTML = original; }
   });
 }
+function setText(id, text) { document.querySelector(`#${id}`).textContent = text; }
+function setTimeline(stage, state, text) {
+  const row = document.querySelector(`[data-stage="${stage}"]`);
+  row.dataset.state = state;
+  row.querySelector("span").textContent = text;
+}
+function updateSimulation(snapshot) {
+  const commands = Object.values(snapshot.commands);
+  const complete = commands.length > 0 && commands.every((command) => command.exit_code === 0) && snapshot.nodes.length > 0;
+  const partial = !complete && snapshot.nodes.length > 0;
+  const state = complete ? "healthy" : partial ? "partial" : "unavailable";
+  setText("simulation-status", complete ? "Online" : partial ? "Partial" : "Unavailable");
+  setText("simulation-detail", complete ? `${snapshot.nodes.length} nodes detected` : partial ? `${snapshot.nodes.length} nodes; some evidence timed out` : "Read command evidence for details");
+  setText("health-label", complete ? "Simulation runtime is fully observable" : partial ? "Simulation graph is partially observable" : "Runtime evidence is unavailable");
+  document.querySelector("#health-dot").dataset.state = state;
+  setText("runtime-nodes", snapshot.nodes.length);
+  setText("runtime-topics", Object.keys(snapshot.topic_types).length);
+  setText("runtime-tf", snapshot.tf_edges.length);
+  setTimeline("runtime", complete ? "passed" : partial ? "partial" : "blocked", complete ? "Observed" : partial ? "Partial" : "Unavailable");
+  return complete;
+}
+async function refreshSimulation() {
+  try {
+    return updateSimulation(await request("/runtime/snapshot"));
+  } catch (error) {
+    setText("simulation-status", "Unavailable");
+    setText("simulation-detail", error.message);
+    setText("health-label", "Could not collect runtime evidence");
+    document.querySelector("#health-dot").dataset.state = "unavailable";
+    setTimeline("runtime", "blocked", "Unavailable");
+    return false;
+  }
+}
+function updateFullRun(run) {
+  const pipeline = run.pipeline;
+  const buildPassed = pipeline.build_diagnosis?.category === "build-succeeded";
+  setText("pipeline-status", pipeline.status);
+  setText("pipeline-detail", run.workspace_lifecycle.replace("-", " "));
+  setText("build-status", buildPassed ? "Succeeded" : "Blocked");
+  setText("build-detail", buildPassed ? "Restricted package build passed" : (pipeline.issues?.[0] || "See run evidence"));
+  setTimeline("requirements", "passed", "Passed");
+  setTimeline("compatibility", pipeline.resolution?.compatible ? "passed" : "blocked", pipeline.resolution?.compatible ? "Passed" : "Blocked");
+  setTimeline("generation", pipeline.templates.length ? "passed" : "blocked", pipeline.templates.length ? "Cleaned" : "Skipped");
+  setTimeline("build", buildPassed ? "passed" : "blocked", buildPassed ? "Passed" : "Blocked");
+  updateSimulation(run.runtime);
+  if (run.validation) {
+    setTimeline("validation", run.validation.status === "pass" ? "passed" : "blocked", run.validation.status);
+  } else {
+    setTimeline("validation", "", "Not requested");
+  }
+  setText("run-phase", pipeline.status.toUpperCase());
+}
 document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); setView(link.dataset.viewLink); }));
 document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go)));
 bindAction('[data-action="load-summary"]', "summary-result", () => request("/project/summary"), "PROJECT SNAPSHOT");
+document.querySelector('[data-action="refresh-simulation"]').addEventListener("click", refreshSimulation);
+bindAction('[data-action="full-run"]', "full-run-result", async () => {
+  const result = await request("/mvp/full-run", {
+    method: "POST",
+    body: JSON.stringify({
+      natural_language: "我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。",
+      confirmed: true,
+      include_validation: document.querySelector("#full-run-validation").checked,
+    }),
+  });
+  updateFullRun(result);
+  return result;
+}, "FULL RUN EVIDENCE");
 document.querySelector("#requirement-form").addEventListener("submit", async (event) => {
   event.preventDefault(); const button = event.currentTarget.querySelector("button[type=submit]"); button.disabled = true;
   try { showResult("requirement-result", await request("/requirements/parse", { method: "POST", body: JSON.stringify({ natural_language: document.querySelector("#requirement-input").value }) }), "STRUCTURED REQUIREMENT"); }
@@ -57,3 +124,4 @@ bindAction('[data-action="validate-navigation"]', "validation-result", async () 
 bindAction('[data-action="propose-repair"]', "validation-result", () => request("/repairs/propose", { method: "POST", body: JSON.stringify({ path: "src/demo_robot/package.xml", contents: '<package format="3">\n  <name>demo_robot</name>\n</package>\n', missing_dependency: "geometry_msgs" }) }), "REPAIR PROPOSAL · REVIEW ONLY");
 const initial = location.hash.slice(1);
 if (document.querySelector(`#${initial}[data-view]`)) setView(initial);
+refreshSimulation();
