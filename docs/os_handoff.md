@@ -10,7 +10,7 @@ https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 |---|---|
 | Last writer | Ubuntu |
 | Ubuntu branch | `feature/gui-mvp` |
-| Last pushed series | M14 Full Run dashboard, live simulation health, and ROS-aware demo launcher; inspect `git log -3 --oneline` after pull |
+| Last pushed series | M14 Full Run dashboard plus read-only Isaac camera/odometry telemetry; inspect `git log -3 --oneline` after pull |
 | Windows branch | `feature/gui-mvp` after fetching this branch |
 | G0–G12, G14 | ALL PASS |
 | Tags | `g0-environment-baseline`, `m2-g2-simple-diff-robot`, `m3-g3-isaac-sim` |
@@ -18,7 +18,7 @@ https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 | Windows todo | Fetch `feature/gui-mvp`; use Windows only for Git, Cursor, and docs |
 | Do not do | ROS on Windows; Isaac Sim on Windows; Cosmos |
 
-G12 and G14 completed: the frozen virtual MVP and its typed five-view GUI passed. M13 Cosmos is Optional Extension O1 and must not be installed on this RTX 2080 Ti (Turing, 11 GB). See `docs/roadmap_v0.3.md`, `docs/m14_gui_architecture.md`, `docs/m14_demo.md`, and `docs/m13_cosmos.md`.
+G12 and G14 completed: the frozen virtual MVP and its typed five-view GUI passed. Dashboard telemetry is a read-only extension that renders `/odom` and the M4 synthetic `/camera/image_raw` sample; it is not a viewport or a controller. M13 Cosmos is Optional Extension O1 and must not be installed on this RTX 2080 Ti (Turing, 11 GB). See `docs/roadmap_v0.3.md`, `docs/m14_gui_architecture.md`, `docs/m14_demo.md`, and `docs/m13_cosmos.md`.
 
 ### After reboot → Windows
 

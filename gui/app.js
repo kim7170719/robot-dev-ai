@@ -62,9 +62,59 @@ function updateSimulation(snapshot) {
   setTimeline("runtime", complete ? "passed" : partial ? "partial" : "blocked", complete ? "Observed" : partial ? "Partial" : "Unavailable");
   return complete;
 }
+function drawSimulationMap(frame) {
+  const canvas = document.querySelector("#simulation-map");
+  const context = canvas.getContext("2d");
+  const { width, height } = canvas;
+  context.clearRect(0, 0, width, height);
+  context.fillStyle = "#091827";
+  context.fillRect(0, 0, width, height);
+  context.strokeStyle = "#29465c";
+  context.lineWidth = 1;
+  for (let x = 20; x < width; x += 48) { context.beginPath(); context.moveTo(x, 0); context.lineTo(x, height); context.stroke(); }
+  for (let y = 18; y < height; y += 48) { context.beginPath(); context.moveTo(0, y); context.lineTo(width, y); context.stroke(); }
+  context.strokeStyle = "#7693a2";
+  context.lineWidth = 3;
+  context.strokeRect(24, 22, width - 48, height - 44);
+  context.fillStyle = "#29465c";
+  context.fillRect(width * .62, height * .37, 70, 44);
+  const scale = 52;
+  const robotX = Math.max(42, Math.min(width - 42, width / 2 + frame.x_m * scale));
+  const robotY = Math.max(40, Math.min(height - 40, height / 2 - frame.y_m * scale));
+  context.save();
+  context.translate(robotX, robotY);
+  context.rotate(-frame.yaw_rad);
+  context.fillStyle = "#59e1b4";
+  context.strokeStyle = "#d9fff0";
+  context.lineWidth = 2;
+  context.beginPath(); context.moveTo(24, 0); context.lineTo(-16, -15); context.lineTo(-16, 15); context.closePath(); context.fill(); context.stroke();
+  context.fillStyle = "#07111f";
+  context.fillRect(-9, -22, 18, 6);
+  context.restore();
+  context.fillStyle = "#9db4bf";
+  context.font = "11px system-ui";
+  context.fillText("M4 virtual room · 1 grid = 1 m", 32, height - 12);
+}
+let frameRequestActive = false;
+async function refreshSimulationFrame() {
+  if (frameRequestActive) return;
+  frameRequestActive = true;
+  try {
+    const frame = await request("/simulation/frame");
+    document.querySelector("#camera-frame").src = `data:image/png;base64,${frame.image_png_base64}`;
+    setText("camera-label", `${frame.width} × ${frame.height} · live`);
+    setText("pose-label", `x ${frame.x_m.toFixed(2)} m · y ${frame.y_m.toFixed(2)} m · ${frame.yaw_rad.toFixed(2)} rad`);
+    drawSimulationMap(frame);
+  } catch (error) {
+    setText("camera-label", "Camera unavailable");
+    setText("pose-label", error.message);
+  } finally { frameRequestActive = false; }
+}
 async function refreshSimulation() {
   try {
-    return updateSimulation(await request("/runtime/snapshot"));
+    const result = updateSimulation(await request("/runtime/snapshot"));
+    refreshSimulationFrame();
+    return result;
   } catch (error) {
     setText("simulation-status", "Unavailable");
     setText("simulation-detail", error.message);
@@ -97,6 +147,7 @@ document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventLis
 document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go)));
 bindAction('[data-action="load-summary"]', "summary-result", () => request("/project/summary"), "PROJECT SNAPSHOT");
 document.querySelector('[data-action="refresh-simulation"]').addEventListener("click", refreshSimulation);
+document.querySelector("#live-preview").addEventListener("change", (event) => { if (event.currentTarget.checked) refreshSimulationFrame(); });
 bindAction('[data-action="full-run"]', "full-run-result", async () => {
   const result = await request("/mvp/full-run", {
     method: "POST",
@@ -125,3 +176,4 @@ bindAction('[data-action="propose-repair"]', "validation-result", () => request(
 const initial = location.hash.slice(1);
 if (document.querySelector(`#${initial}[data-view]`)) setView(initial);
 refreshSimulation();
+window.setInterval(() => { if (document.querySelector("#live-preview").checked) refreshSimulationFrame(); }, 4000);

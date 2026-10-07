@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Robot Dev AI M14 virtual robot development console">
     <title>Robot Dev AI — Control Room</title>
-    <link rel="stylesheet" href="./index.css?v=5">
+    <link rel="stylesheet" href="./index.css?v=6">
   </head>
   <body>
     <div class="app-shell">
@@ -44,7 +44,7 @@
               <li data-stage="runtime"><em>05</em><div><strong>Runtime snapshot</strong><small>Nodes · topics · controllers · TF</small></div><span>Checking</span></li>
               <li data-stage="validation"><em>06</em><div><strong>Simulation validation</strong><small>Fixed m4-navigation scenario</small></div><span>Optional</span></li>
             </ol></article>
-            <article class="card boundary simulation-card"><header><div><p class="eyebrow">LIVE SIMULATION</p><h2>Runtime snapshot</h2></div><button data-action="refresh-simulation" class="icon-button" aria-label="重新整理 simulation 狀態">↻</button></header><div class="health-indicator"><i id="health-dot"></i><strong id="health-label">Loading runtime evidence…</strong></div><dl><div><dt>ROS nodes</dt><dd id="runtime-nodes">—</dd></div><div><dt>Topics</dt><dd id="runtime-topics">—</dd></div><div><dt>TF edges</dt><dd id="runtime-tf">—</dd></div></dl><p class="simulation-note">僅讀取現有 ROS graph；不啟動 simulator、不嵌入 viewport。</p><output id="summary-result" class="compact-result" aria-live="polite"></output></article>
+            <article class="card boundary simulation-card"><header><div><p class="eyebrow">LIVE SIMULATION</p><h2>Robot telemetry view</h2></div><button data-action="refresh-simulation" class="icon-button" aria-label="重新整理 simulation 狀態">↻</button></header><div class="health-indicator"><i id="health-dot"></i><strong id="health-label">Loading runtime evidence…</strong></div><div class="simulation-visual"><div class="topdown-panel"><div class="visual-label"><span>ODOMETRY MAP</span><strong id="pose-label">Waiting for pose…</strong></div><canvas id="simulation-map" width="520" height="270" aria-label="依真實 odometry 繪製的機器車俯視位置圖"></canvas></div><div class="camera-panel"><div class="visual-label"><span>ROS CAMERA</span><strong id="camera-label">Waiting for image…</strong></div><img id="camera-frame" alt="來自 /camera/image_raw 的最新模擬相機影像"><p>Source: <code>/camera/image_raw</code> · read-only</p></div></div><label class="live-toggle"><input type="checkbox" id="live-preview" checked><span>Live preview · 每 4 秒讀取一次</span></label><dl><div><dt>ROS nodes</dt><dd id="runtime-nodes">—</dd></div><div><dt>Topics</dt><dd id="runtime-topics">—</dd></div><div><dt>TF edges</dt><dd id="runtime-tf">—</dd></div></dl><p class="simulation-note">畫面由既有 <code>/odom</code> 與 <code>/camera/image_raw</code> 唯讀取得；不控制 ROS、Isaac 或機器車。相機為目前 M4 合成 RGB 感測器，不是 Isaac viewport 串流。</p><output id="summary-result" class="compact-result" aria-live="polite"></output></article>
           </div>
           <output id="full-run-result" class="result-panel" aria-live="polite"></output>
         </section>
@@ -75,6 +75,6 @@
         </section>
       </main>
     </div>
-    <script type="module" src="./app.js?v=6"></script>
+    <script type="module" src="./app.js?v=7"></script>
   </body>
 </html>

@@ -17,6 +17,10 @@ Open <http://127.0.0.1:8000> on the Ubuntu host.
 ## Safe walkthrough
 
 1. **Dashboard** → inspect the latest-run timeline and live simulation health.
+   When the G4 Isaac container is running, **Robot telemetry view** samples
+   `/odom` and `/camera/image_raw` every four seconds. The map marker is driven
+   by real odometry; the 64×48 camera image is the current M4 synthetic RGB8
+   diagnostic sensor rather than an Isaac viewport. It cannot drive the robot.
    Choose **Run full pipeline** to parse, resolve, generate in a temporary
    workspace, perform the restricted build, and collect runtime evidence. The
    temporary workspace is removed before the result returns. Select the
@@ -59,3 +63,12 @@ simulation validation. It parsed all four capabilities, returned
 `build-succeeded`, cleaned the temporary workspace, and observed 25 ROS nodes,
 80 topics, and 3 TF edges. One `/tf_static --once` inspection timed out, so the
 dashboard truthfully presents the runtime as **Partial**.
+
+## Simulation telemetry evidence
+
+On 2026-10-07, `scripts/start_m4_isaac_sim.sh` started the pinned Isaac Sim
+4.5 G4 container. Host ROS observed one publisher each for `/camera/image_raw`,
+`/odom`, and `/scan`. `GET /api/v1/simulation/frame` returned a valid 64×48
+RGB PNG and pose. A bounded 1.5-second virtual `/cmd_vel` test moved the
+simulated vehicle from origin to `x=0.350 m`, `y=0.080 m`, `yaw=0.452 rad`.
+The GUI uses these read-only samples; it does not expose that command path.

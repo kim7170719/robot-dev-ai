@@ -8,7 +8,9 @@ M14 turns the verified G7–G12 core into a usable presentation layer. It
 includes a typed Python API and a web GUI consuming that API. It excludes an
 Isaac viewport, arbitrary shell execution, direct ROS control from the
 browser, new robot morphologies, Cosmos installation, Jetson deployment, and
-real hardware.
+real hardware. A later M14 extension adds a **read-only telemetry view**: one
+ROS camera image and current odometry are sampled through a fixed host helper.
+It is not a viewport or a remote-control channel.
 
 Actors are an operator using the GUI, the API process on the Ubuntu host, and
 the existing ROS/Isaac runtime. The browser never owns a ROS or Docker
@@ -67,6 +69,11 @@ workspace. It requires explicit confirmation, uses the fixed four-capability
 registry and existing restricted build collector, removes generated files
 before returning, and includes runtime evidence. Fixed simulation validation
 is opt-in in the same confirmed request.
+`GET /api/v1/simulation/frame` invokes only the fixed system-Python ROS
+subscriber helper. It waits for one RGB8 `/camera/image_raw` sample and one
+`/odom` sample, encodes the image as PNG, and returns it with x/y/yaw. It has
+no request parameters, constructs no shell command, publishes nothing, and
+returns HTTP 503 when either topic cannot be observed.
 
 The first GUI views are Dashboard, Requirement, Robot Configuration, Runtime,
 and Validation/Experience. View implementation is downstream of the API
@@ -120,3 +127,9 @@ timeline, build status, and a three-state simulation-health summary (Online,
 Partial, Unavailable). `scripts/run_m14_demo.sh` sources Jazzy and the
 repository workspace before starting uvicorn, so an API service without `ros2`
 on `PATH` is not confused with a simulation failure.
+
+The dashboard's Robot telemetry view draws the M4 room and robot marker from
+the returned odometry and displays the returned camera image. The M4 script's
+camera is a 64×48 synthetic RGB8 sensor whose current image is a diagnostic
+colour field, not a photorealistic render or an Isaac viewport. This explicit
+label prevents the GUI from overstating the visual fidelity of the simulation.

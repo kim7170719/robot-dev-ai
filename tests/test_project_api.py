@@ -4,6 +4,7 @@ from starlette.testclient import TestClient
 
 from agent.auto_debug.build_collector import BuildCommandCollector
 from agent.auto_debug.collector import CommandEvidence, RosRuntimeCollector
+from agent.auto_debug.simulation_view import SimulationFrame
 from agent.auto_debug.diagnoser import BuildEvidence
 from agent.mvp_pipeline import (
     IsaacScenario,
@@ -229,6 +230,50 @@ def test_runtime_snapshot_returns_read_only_collector_evidence() -> None:
         ["base_link", "lidar_link"],
     ]
     assert observed_commands == list(outputs)
+
+
+def test_simulation_view_returns_camera_frame_and_robot_pose() -> None:
+    class FrameCollector:
+        def collect_frame(self) -> SimulationFrame:
+            return SimulationFrame(
+                image_png_base64="iVBORw0KGgo=",
+                width=64,
+                height=48,
+                x_m=1.25,
+                y_m=-0.5,
+                yaw_rad=0.3,
+                source_topic="/camera/image_raw",
+            )
+
+    response = TestClient(
+        create_app(simulation_frame_collector_factory=FrameCollector)
+    ).get("/api/v1/simulation/frame")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "image_png_base64": "iVBORw0KGgo=",
+        "width": 64,
+        "height": 48,
+        "x_m": 1.25,
+        "y_m": -0.5,
+        "yaw_rad": 0.3,
+        "source_topic": "/camera/image_raw",
+    }
+
+
+def test_simulation_view_returns_typed_unavailable_evidence() -> None:
+    class UnavailableFrameCollector:
+        def collect_frame(self) -> SimulationFrame:
+            raise RuntimeError("timed out waiting for /camera/image_raw and /odom")
+
+    response = TestClient(
+        create_app(simulation_frame_collector_factory=UnavailableFrameCollector)
+    ).get("/api/v1/simulation/frame")
+
+    assert response.status_code == 503
+    assert response.json() == {
+        "detail": "timed out waiting for /camera/image_raw and /odom"
+    }
 
 
 def test_fixed_navigation_validation_requires_confirmation() -> None:

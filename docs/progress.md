@@ -236,3 +236,19 @@ Full commands: `docs/m2_simple_diff_robot.md`.
 | Gate G4 | PASS | `experiments/raw/M4-G4.md` |
 
 Commands: `docs/m4_nav2.md`. Decision: `docs/decisions/0004-synthetic-2d-lidar.md`.
+
+## M14 simulation telemetry extension (2026-10-07)
+
+| Item | Status | Evidence |
+|---|---|---|
+| Fixed camera/odometry API | PASS | `GET /api/v1/simulation/frame`; no request parameters and no ROS publication |
+| Isaac camera, odometry, LiDAR publishers | PASS | one publisher each on `/camera/image_raw`, `/odom`, `/scan` |
+| GUI telemetry view | PASS | dashboard renders returned odometry marker and ROS camera PNG |
+| Motion proof | PASS | bounded virtual command yielded `x=0.350 m`, `y=0.080 m`, `yaw=0.452 rad` |
+| Automated suite | PASS | `pytest -q` → 63 passed |
+
+The M4 camera sample is a 64×48 synthetic RGB8 diagnostic colour field. It is
+shown honestly as sensor evidence, not presented as an Isaac viewport or a
+photorealistic vehicle view. Start the pinned container with
+`bash scripts/start_m4_isaac_sim.sh` and the GUI with
+`bash scripts/run_m14_demo.sh`.

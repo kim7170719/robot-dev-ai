@@ -16,6 +16,7 @@ from agent.compatibility_resolver import (
 )
 from agent.auto_debug.build_collector import BuildCommandCollector
 from agent.auto_debug.collector import RosRuntimeCollector, RosRuntimeSnapshot
+from agent.auto_debug.simulation_view import SimulationFrame, SimulationFrameCollector
 from agent.auto_debug.diagnoser import (
     AutoDebugAgent,
     DiagnosisResult,
@@ -166,6 +167,7 @@ def create_app(
     workspace_root: Path | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
+    simulation_frame_collector_factory: Callable[[], SimulationFrameCollector] | None = None,
     simulation_validator_factory: Callable[[], IsaacSimulationValidator] | None = None,
     mvp_pipeline_factory: Callable[[Path], MvpPipeline] | None = None,
 ) -> FastAPI:
@@ -176,6 +178,9 @@ def create_app(
     generated_plans: dict[str, WorkspacePlan] = {}
     collector_factory = build_collector_factory or BuildCommandCollector
     snapshot_collector_factory = runtime_collector_factory or RosRuntimeCollector
+    frame_collector_factory = (
+        simulation_frame_collector_factory or SimulationFrameCollector
+    )
     validator_factory = simulation_validator_factory or IsaacSimulationValidator
     pipeline_factory = mvp_pipeline_factory or _default_mvp_pipeline
     app = FastAPI(
@@ -209,6 +214,13 @@ def create_app(
     @app.get("/api/v1/runtime/snapshot", response_model=RosRuntimeSnapshot)
     def read_runtime_snapshot() -> RosRuntimeSnapshot:
         return snapshot_collector_factory().collect_snapshot()
+
+    @app.get("/api/v1/simulation/frame", response_model=SimulationFrame)
+    def read_simulation_frame() -> SimulationFrame:
+        try:
+            return frame_collector_factory().collect_frame()
+        except RuntimeError as error:
+            raise HTTPException(status_code=503, detail=str(error)) from error
 
     @app.post(
         "/api/v1/validation/m4-navigation",
