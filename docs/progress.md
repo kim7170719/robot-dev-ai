@@ -273,3 +273,13 @@ Recovery sequence: stop the complete old Nav2 launch process tree, verify no
 Nav2 server/lifecycle process remains, then start exactly one
 `nav2_launch.py` instance after SLAM has map/TF data. Do not use the action
 name advertised through stale DDS discovery as evidence that navigation works.
+
+## AI-assisted Design first slice (2026-10-07)
+
+`POST /api/v1/design/plan` now composes the existing requirement parser,
+frozen validated registry, compatibility resolver, and in-memory template
+expander. It returns capability IDs, selected packages, and template previews
+with no generated workspace. The GUI Design workspace presents that reviewable
+plan rather than raw parser JSON. The existing structured-provider contract can
+later connect a local or external model, but no key, provider, workspace write,
+or build is enabled by this endpoint. Full suite: 64 tests.

@@ -61,6 +61,10 @@ class RequirementRequest(BaseModel):
     natural_language: str = Field(min_length=1, max_length=10_000)
 
 
+class DesignPlanRequest(RequirementRequest):
+    """Natural-language request for a non-mutating validated design plan."""
+
+
 class CompatibilityRequest(BaseModel):
     """Explicit registry and deployment context from Robot Configuration."""
 
@@ -200,6 +204,15 @@ def create_app(
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)
     def parse_requirement(request: RequirementRequest) -> RequirementResult:
         return RequirementAgent().parse(request.natural_language)
+
+    @app.post("/api/v1/design/plan", response_model=MvpPipelineResult)
+    def create_design_plan(request: DesignPlanRequest) -> MvpPipelineResult:
+        """Recommend only registry-authorized templates without workspace writes."""
+        return MvpPipeline(
+            registry=_frozen_mvp_registry(),
+            hardware_id="generic-diff-base",
+            template_root=Path(__file__).parents[1] / "templates",
+        ).run(request.natural_language)
 
     @app.post("/api/v1/compatibility/resolve", response_model=ResolutionResult)
     def resolve_compatibility(request: CompatibilityRequest) -> ResolutionResult:

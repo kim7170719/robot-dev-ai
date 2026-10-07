@@ -18,7 +18,7 @@
         <nav class="workflow-nav" aria-label="M14 視圖">
           <p>WORKFLOW</p>
           <a href="#dashboard" data-view-link="dashboard"><i>⌂</i>Dashboard</a>
-          <a href="#requirement" data-view-link="requirement"><i>✦</i>Requirement</a>
+          <a href="#requirement" data-view-link="requirement"><i>✦</i>Design</a>
           <a href="#configuration" data-view-link="configuration"><i>▦</i>Robot Configuration</a>
           <a href="#runtime" data-view-link="runtime"><i>⌁</i>Runtime</a>
           <a href="#validation" data-view-link="validation"><i>✓</i>Validation / Experience</a>
@@ -51,8 +51,8 @@
         </section>
 
         <section class="view" id="requirement" data-view>
-          <div class="page-header"><div><p class="eyebrow">STEP 01 · REQUIREMENT INTAKE</p><h1>把想法轉成機器人規格</h1><p>輸入自然語言需求。解析結果由既有 Requirement Agent 產生並保留來源。</p></div><span>01</span></div>
-          <div class="split"><form id="requirement-form" class="card input-card"><label for="requirement-input">你想建立什麼機器人？</label><textarea id="requirement-input" required>我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。</textarea><footer><small>支援中文與英文描述</small><button type="submit" class="primary">解析需求 <b>→</b></button></footer></form><article class="card guide"><b>✦</b><h2>提示</h2><p>描述底盤、感測器與目標能力，例如「差速車、LiDAR、Camera、室內導航」。</p><div><span>DIFFERENTIAL DRIVE</span><span>LIDAR</span><span>NAV2</span></div></article></div>
+          <div class="page-header"><div><p class="eyebrow">STEP 01 · AI-ASSISTED DESIGN</p><h1>把需求變成可審閱方案</h1><p>需求先經 schema、registry 與相容性規則驗證；AI provider 只能協助結構化，不能直接生成檔案。</p></div><span>01</span></div>
+          <div class="split"><form id="requirement-form" class="card input-card"><label for="requirement-input">描述你想建立的機器人</label><textarea id="requirement-input" required>我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。</textarea><footer><small>中文、英文皆可 · 不會寫入 workspace</small><button type="submit" class="primary">建立 Design Plan <b>→</b></button></footer></form><article class="card guide"><b>01</b><h2>安全的 AI 工作流</h2><p>AI 結構化需求 → registry 選擇已驗證模板 → 顯示相容性與缺口 → 你確認後才進入 Build。</p><div><span>SCHEMA VALIDATED</span><span>REGISTRY BOUNDED</span><span>REVIEW FIRST</span></div></article></div>
           <output id="requirement-result" class="result-panel" aria-live="polite"></output>
         </section>
 

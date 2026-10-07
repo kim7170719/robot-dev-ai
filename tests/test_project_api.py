@@ -64,6 +64,32 @@ def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:
     }
 
 
+def test_design_plan_recommends_only_validated_templates_without_writing() -> None:
+    response = TestClient(create_app()).post(
+        "/api/v1/design/plan",
+        json={
+            "natural_language": "我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。"
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "ready-for-build"
+    assert body["resolution"]["package_ids"] == [
+        "diff-drive-controller",
+        "nav2-bringup",
+        "lidar-driver",
+        "camera-driver",
+    ]
+    assert [template["template_id"] for template in body["templates"]] == [
+        "differential-drive",
+        "lidar",
+        "camera",
+        "nav2",
+    ]
+    assert body["generated_package_root"] is None
+
+
 def test_compatibility_endpoint_returns_selected_packages() -> None:
     response = TestClient(create_app()).post(
         "/api/v1/compatibility/resolve",

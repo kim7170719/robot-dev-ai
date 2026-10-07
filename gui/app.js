@@ -24,6 +24,13 @@ async function request(path, options = {}) {
   return body;
 }
 function showError(id, error) { showResult(id, { error: error.message }, "API RESPONSE"); }
+function showDesignPlan(plan) {
+  const output = document.querySelector("#requirement-result"); output.replaceChildren();
+  const card = document.createElement("article"); card.className = "design-plan card";
+  const packages = plan.resolution?.package_ids || []; const templates = plan.templates || [];
+  card.innerHTML = `<header><div><p class="eyebrow">VALIDATED DESIGN PLAN</p><h2>${plan.status}</h2></div><span class="pill">${plan.resolution?.status || "blocked"}</span></header><div class="design-plan-grid"><section><small>CAPABILITIES</small><div class="chip-row">${plan.requirements.specification.capability_ids.map((item) => `<span>${item}</span>`).join("")}</div></section><section><small>RECOMMENDED PACKAGES</small><ul>${packages.map((item) => `<li>${item}</li>`).join("")}</ul></section><section><small>TEMPLATE PREVIEWS</small><ul>${templates.map((item) => `<li>${item.template_id} · ${Object.keys(item.files).length} files</li>`).join("")}</ul></section></div><p class="design-plan-note">Preview only — no workspace has been generated. Continue to Build only after reviewing this plan.</p>`;
+  output.append(card);
+}
 function setView(id) {
   document.querySelectorAll("[data-view]").forEach((view) => view.classList.toggle("active", view.id === id));
   document.querySelectorAll("[data-view-link]").forEach((link) => link.classList.toggle("active", link.dataset.viewLink === id));
@@ -180,7 +187,7 @@ bindAction('[data-action="full-run"]', "full-run-result", async () => {
 }, "FULL RUN EVIDENCE");
 document.querySelector("#requirement-form").addEventListener("submit", async (event) => {
   event.preventDefault(); const button = event.currentTarget.querySelector("button[type=submit]"); button.disabled = true;
-  try { showResult("requirement-result", await request("/requirements/parse", { method: "POST", body: JSON.stringify({ natural_language: document.querySelector("#requirement-input").value }) }), "STRUCTURED REQUIREMENT"); }
+  try { showDesignPlan(await request("/design/plan", { method: "POST", body: JSON.stringify({ natural_language: document.querySelector("#requirement-input").value }) })); }
   catch (error) { showError("requirement-result", error); } finally { button.disabled = false; }
 });
 bindAction('[data-action="resolve-configuration"]', "configuration-result", () => request("/compatibility/resolve", { method: "POST", body: JSON.stringify({ registry: demoRegistry, request: { hardware_id: "generic-diff-base", specification: { capability_ids: ["differential-drive"] }, ros_distro: "jazzy", target_platform: "ubuntu-x86-64" } }) }), "COMPATIBILITY EVIDENCE");
