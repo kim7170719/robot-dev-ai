@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import base64
+import argparse
 import json
 import math
 import struct
@@ -44,11 +45,11 @@ def _rgb8_png(image: Image) -> bytes:
 
 
 class CaptureNode(Node):
-    def __init__(self) -> None:
+    def __init__(self, image_topic: str) -> None:
         super().__init__("robot_dev_ai_camera_capture")
         self.image: Image | None = None
         self.pose: Odometry | None = None
-        self.create_subscription(Image, "/camera/image_raw", self._on_image, 10)
+        self.create_subscription(Image, image_topic, self._on_image, 10)
         self.create_subscription(Odometry, "/odom", self._on_odom, 10)
 
     def _on_image(self, message: Image) -> None:
@@ -59,14 +60,19 @@ class CaptureNode(Node):
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("image_topic")
+    arguments = parser.parse_args()
     rclpy.init()
-    node = CaptureNode()
+    node = CaptureNode(arguments.image_topic)
     try:
         deadline = time.monotonic() + 2.5
         while time.monotonic() < deadline and (node.image is None or node.pose is None):
             rclpy.spin_once(node, timeout_sec=0.1)
         if node.image is None or node.pose is None:
-            raise RuntimeError("timed out waiting for /camera/image_raw and /odom")
+            raise RuntimeError(
+                f"timed out waiting for {arguments.image_topic} and /odom"
+            )
         orientation = node.pose.pose.pose.orientation
         yaw = math.atan2(
             2 * (orientation.w * orientation.z + orientation.x * orientation.y),
@@ -82,7 +88,7 @@ def main() -> int:
                     "x_m": node.pose.pose.pose.position.x,
                     "y_m": node.pose.pose.pose.position.y,
                     "yaw_rad": yaw,
-                    "source_topic": "/camera/image_raw",
+                    "source_topic": arguments.image_topic,
                 }
             )
         )

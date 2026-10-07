@@ -252,3 +252,10 @@ shown honestly as sensor evidence, not presented as an Isaac viewport or a
 photorealistic vehicle view. Start the pinned container with
 `bash scripts/start_m4_isaac_sim.sh` and the GUI with
 `bash scripts/run_m14_demo.sh`.
+
+M14 Sensor Workbench extension (2026-10-07): the Dashboard now separates
+runtime health from a full-width camera workbench. It offers a fixed,
+read-only source selector for Isaac `/camera/image_raw` and RealSense D455
+`/webcam/color/image_raw`, a large RGB frame stage, per-source status/topic/
+resolution metadata, live-refresh control, and odometry map. A selected source
+without a publisher returns typed HTTP 503; it is never represented as live.

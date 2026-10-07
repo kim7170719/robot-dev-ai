@@ -16,7 +16,11 @@ from agent.compatibility_resolver import (
 )
 from agent.auto_debug.build_collector import BuildCommandCollector
 from agent.auto_debug.collector import RosRuntimeCollector, RosRuntimeSnapshot
-from agent.auto_debug.simulation_view import SimulationFrame, SimulationFrameCollector
+from agent.auto_debug.simulation_view import (
+    CameraSource,
+    SimulationFrame,
+    SimulationFrameCollector,
+)
 from agent.auto_debug.diagnoser import (
     AutoDebugAgent,
     DiagnosisResult,
@@ -216,9 +220,9 @@ def create_app(
         return snapshot_collector_factory().collect_snapshot()
 
     @app.get("/api/v1/simulation/frame", response_model=SimulationFrame)
-    def read_simulation_frame() -> SimulationFrame:
+    def read_simulation_frame(source: CameraSource = "isaac") -> SimulationFrame:
         try:
-            return frame_collector_factory().collect_frame()
+            return frame_collector_factory().collect_frame(source)
         except RuntimeError as error:
             raise HTTPException(status_code=503, detail=str(error)) from error
 

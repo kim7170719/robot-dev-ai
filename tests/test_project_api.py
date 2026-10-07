@@ -233,8 +233,11 @@ def test_runtime_snapshot_returns_read_only_collector_evidence() -> None:
 
 
 def test_simulation_view_returns_camera_frame_and_robot_pose() -> None:
+    observed_sources: list[str] = []
+
     class FrameCollector:
-        def collect_frame(self) -> SimulationFrame:
+        def collect_frame(self, source: str) -> SimulationFrame:
+            observed_sources.append(source)
             return SimulationFrame(
                 image_png_base64="iVBORw0KGgo=",
                 width=64,
@@ -247,7 +250,7 @@ def test_simulation_view_returns_camera_frame_and_robot_pose() -> None:
 
     response = TestClient(
         create_app(simulation_frame_collector_factory=FrameCollector)
-    ).get("/api/v1/simulation/frame")
+    ).get("/api/v1/simulation/frame?source=webcam")
 
     assert response.status_code == 200
     assert response.json() == {
@@ -259,11 +262,12 @@ def test_simulation_view_returns_camera_frame_and_robot_pose() -> None:
         "yaw_rad": 0.3,
         "source_topic": "/camera/image_raw",
     }
+    assert observed_sources == ["webcam"]
 
 
 def test_simulation_view_returns_typed_unavailable_evidence() -> None:
     class UnavailableFrameCollector:
-        def collect_frame(self) -> SimulationFrame:
+        def collect_frame(self, source: str) -> SimulationFrame:
             raise RuntimeError("timed out waiting for /camera/image_raw and /odom")
 
     response = TestClient(

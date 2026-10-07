@@ -7,8 +7,17 @@ import json
 import subprocess
 from collections.abc import Callable
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+
+CameraSource = Literal["isaac", "webcam"]
+
+CAMERA_TOPICS: dict[CameraSource, str] = {
+    "isaac": "/camera/image_raw",
+    "webcam": "/webcam/color/image_raw",
+}
 
 
 class SimulationFrame(BaseModel):
@@ -25,7 +34,7 @@ class SimulationFrame(BaseModel):
     source_topic: str
 
 
-FrameRunner = Callable[[], SimulationFrame]
+FrameRunner = Callable[[CameraSource], SimulationFrame]
 
 
 class SimulationFrameCollector:
@@ -34,15 +43,15 @@ class SimulationFrameCollector:
     def __init__(self, runner: FrameRunner | None = None) -> None:
         self._runner = runner or _collect_frame
 
-    def collect_frame(self) -> SimulationFrame:
-        return self._runner()
+    def collect_frame(self, source: CameraSource = "isaac") -> SimulationFrame:
+        return self._runner(source)
 
 
-def _collect_frame() -> SimulationFrame:
+def _collect_frame(source: CameraSource) -> SimulationFrame:
     helper = Path(__file__).with_name("camera_frame_capture.py")
     try:
         completed = subprocess.run(
-            ("/usr/bin/python3", str(helper)),
+            ("/usr/bin/python3", str(helper), CAMERA_TOPICS[source]),
             check=False,
             capture_output=True,
             text=True,

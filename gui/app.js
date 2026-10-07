@@ -100,13 +100,22 @@ async function refreshSimulationFrame() {
   if (frameRequestActive) return;
   frameRequestActive = true;
   try {
-    const frame = await request("/simulation/frame");
-    document.querySelector("#camera-frame").src = `data:image/png;base64,${frame.image_png_base64}`;
+    const source = document.querySelector("#camera-source")?.value || "isaac";
+    const frame = await request(`/simulation/frame?source=${source}`);
+    const image = document.querySelector("#camera-frame");
+    image.src = `data:image/png;base64,${frame.image_png_base64}`;
+    image.hidden = false;
+    document.querySelector("#camera-empty").hidden = true;
     setText("camera-label", `${frame.width} × ${frame.height} · live`);
+    setText("camera-resolution", `${frame.width} × ${frame.height} RGB8`);
+    setText("camera-topic", frame.source_topic);
     setText("pose-label", `x ${frame.x_m.toFixed(2)} m · y ${frame.y_m.toFixed(2)} m · ${frame.yaw_rad.toFixed(2)} rad`);
     drawSimulationMap(frame);
   } catch (error) {
     setText("camera-label", "Camera unavailable");
+    setText("camera-resolution", "No frame");
+    document.querySelector("#camera-frame").hidden = true;
+    document.querySelector("#camera-empty").hidden = false;
     setText("pose-label", error.message);
   } finally { frameRequestActive = false; }
 }
@@ -147,6 +156,15 @@ document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventLis
 document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go)));
 bindAction('[data-action="load-summary"]', "summary-result", () => request("/project/summary"), "PROJECT SNAPSHOT");
 document.querySelector('[data-action="refresh-simulation"]').addEventListener("click", refreshSimulation);
+document.querySelector('[data-action="refresh-camera"]').addEventListener("click", refreshSimulationFrame);
+document.querySelector("#camera-source").addEventListener("change", (event) => {
+  const source = event.currentTarget.value;
+  const webcam = source === "webcam";
+  setText("camera-source-name", webcam ? "RealSense D455 · USB colour" : "Isaac Sim · M4 RGB camera");
+  setText("camera-topic", webcam ? "/webcam/color/image_raw" : "/camera/image_raw");
+  document.querySelectorAll("[data-camera-device]").forEach((card) => card.classList.toggle("active", card.dataset.cameraDevice === source));
+  refreshSimulationFrame();
+});
 document.querySelector("#live-preview").addEventListener("change", (event) => { if (event.currentTarget.checked) refreshSimulationFrame(); });
 bindAction('[data-action="full-run"]', "full-run-result", async () => {
   const result = await request("/mvp/full-run", {

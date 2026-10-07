@@ -71,9 +71,11 @@ before returning, and includes runtime evidence. Fixed simulation validation
 is opt-in in the same confirmed request.
 `GET /api/v1/simulation/frame` invokes only the fixed system-Python ROS
 subscriber helper. It waits for one RGB8 `/camera/image_raw` sample and one
-`/odom` sample, encodes the image as PNG, and returns it with x/y/yaw. It has
-no request parameters, constructs no shell command, publishes nothing, and
-returns HTTP 503 when either topic cannot be observed.
+`/odom` sample, encodes the image as PNG, and returns it with x/y/yaw. Its
+`source` query is a fixed literal: `isaac` maps to `/camera/image_raw` and
+`webcam` maps to `/webcam/color/image_raw`; it never accepts an arbitrary ROS
+topic, constructs no shell command, or publishes. It returns HTTP 503 when the
+selected source cannot be observed.
 
 The first GUI views are Dashboard, Requirement, Robot Configuration, Runtime,
 and Validation/Experience. View implementation is downstream of the API
@@ -133,3 +135,11 @@ the returned odometry and displays the returned camera image. The M4 script's
 camera is a 64×48 synthetic RGB8 sensor whose current image is a diagnostic
 colour field, not a photorealistic render or an Isaac viewport. This explicit
 label prevents the GUI from overstating the visual fidelity of the simulation.
+
+## Changelog
+
+### 0.3 — 2026-10-07
+
+- Added the Dashboard Sensor Workbench with a large camera stage, source
+  selector, device metadata, live-refresh control, and odometry panel.
+- Added the fixed `isaac` / `webcam` camera-source API selection boundary.

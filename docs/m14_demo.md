@@ -18,7 +18,10 @@ Open <http://127.0.0.1:8000> on the Ubuntu host.
 
 1. **Dashboard** → inspect the latest-run timeline and live simulation health.
    When the G4 Isaac container is running, **Robot telemetry view** samples
-   `/odom` and `/camera/image_raw` every four seconds. The map marker is driven
+   `/odom` and the selected camera source every four seconds. The available
+   sources are **Isaac Sim** (`/camera/image_raw`) and **RealSense D455**
+   (`/webcam/color/image_raw`); the latter remains unavailable until its ROS
+   driver is installed and launched. The map marker is driven
    by real odometry; the 64×48 camera image is the current M4 synthetic RGB8
    diagnostic sensor rather than an Isaac viewport. It cannot drive the robot.
    Choose **Run full pipeline** to parse, resolve, generate in a temporary
@@ -72,3 +75,9 @@ On 2026-10-07, `scripts/start_m4_isaac_sim.sh` started the pinned Isaac Sim
 RGB PNG and pose. A bounded 1.5-second virtual `/cmd_vel` test moved the
 simulated vehicle from origin to `x=0.350 m`, `y=0.080 m`, `yaw=0.452 rad`.
 The GUI uses these read-only samples; it does not expose that command path.
+
+The Dashboard Sensor Workbench uses a large camera stage and a fixed source
+selector. It displays topic, RGB resolution, source status, fixed-refresh
+control, device metadata, and the simulation odometry panel. It deliberately
+does not expose arbitrary topics, camera settings, recording, or ROS command
+publishing.
