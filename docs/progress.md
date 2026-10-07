@@ -33,7 +33,7 @@ Current work: **M14 GUI MVP complete (G14 PASS)**. G12 remains frozen and runnab
 | Sensor/navigation/GPU fragments | PASS | LiDAR, camera, Nav2, and Isaac ROS image-processing templates expand deterministically |
 | Generated ROS package builds | PASS | generated `demo_diff_drive` passed Jazzy `colcon build --packages-select demo_diff_drive` |
 
-Automated test suite: `.venv/bin/pytest` → 59 passed (2026-10-07).
+Automated test suite: `.venv/bin/pytest` → 60 passed (2026-10-07).
 
 ## M9 Requirement Agent / Gate G9
 
@@ -116,7 +116,7 @@ Automated test suite: `.venv/bin/pytest` → 59 passed (2026-10-07).
 | Fixed simulation validation and repair-proposal APIs | PASS | The fixed `m4-navigation` scenario requires explicit confirmation; repair proposals return typed diffs without applying them |
 | Five GUI views | PASS | Same-origin build-less GUI exposes Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience through a responsive control-room presentation; `docs/m14_demo.md` records the local HTTP smoke and 1440px/390px visual review |
 
-**Gate G14: PASS (2026-10-07).** The five-view GUI consumes the typed API only, preserves confirmation gates for workspace/build/virtual validation, and renders runtime, validation, and repair evidence without direct browser ROS, shell, Isaac viewport, Cosmos, Jetson, or physical-hardware access. Full suite: 59 tests; local HTTP demo passed.
+**Gate G14: PASS (2026-10-07).** The five-view GUI consumes the typed API only, preserves confirmation gates for workspace/build/virtual validation, and renders runtime, validation, and repair evidence without direct browser ROS, shell, Isaac viewport, Cosmos, Jetson, or physical-hardware access. Full suite: 60 tests; local HTTP demo passed.
 
 ## Gate 0 checklist
 

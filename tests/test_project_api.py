@@ -160,6 +160,39 @@ def test_template_preview_returns_rendered_files_without_workspace_writes() -> N
     }
 
 
+def test_template_preview_returns_json_validation_error_for_missing_values() -> None:
+    response = TestClient(create_app()).post(
+        "/api/v1/templates/preview",
+        json={
+            "registry": {
+                "hardware": [
+                    {
+                        "id": "generic-diff-base",
+                        "kind": "mobile-base",
+                        "vendor": "Robot Dev AI",
+                        "capability_ids": ["differential-drive"],
+                    }
+                ],
+                "capabilities": [
+                    {
+                        "id": "differential-drive",
+                        "interface_ids": [],
+                        "template_id": "differential-drive",
+                    }
+                ],
+            },
+            "request": {
+                "hardware_id": "generic-diff-base",
+                "capability_id": "differential-drive",
+                "values": {"package_name": "demo_robot"},
+            },
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "missing template value: cmd_vel_topic"
+
+
 def test_runtime_snapshot_returns_read_only_collector_evidence() -> None:
     observed_commands: list[tuple[str, ...]] = []
     outputs = {

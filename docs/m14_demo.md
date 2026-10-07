@@ -33,7 +33,7 @@ Open <http://127.0.0.1:8000> on the Ubuntu host.
 
 On 2026-10-07 the local demo served all five views over HTTP. Project summary,
 requirement parsing, and the non-mutating repair proposal were exercised
-against the live server. The automated suite passed with 59 tests. No runtime
+against the live server. The automated suite passed with 60 tests. No runtime
 collection or navigation-validation request was issued during this demo.
 
 The v0.2 visual pass was rendered and inspected in local Chrome at 1440px and
@@ -41,3 +41,7 @@ The v0.2 visual pass was rendered and inspected in local Chrome at 1440px and
 workflow, focused evidence panels, keyboard focus styling, reduced-motion
 support, and a mobile single-column card layout. Formal axe-core auditing is
 not configured in this repository yet.
+
+Template-preview errors are returned as typed HTTP 422 JSON evidence. The GUI
+demo provides the complete differential-drive template values, so its template
+preview renders eight files rather than returning a server-error page.

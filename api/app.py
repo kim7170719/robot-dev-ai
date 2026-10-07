@@ -173,7 +173,12 @@ def create_app(
     @app.post("/api/v1/templates/preview", response_model=ExpansionResult)
     def preview_template(request: TemplatePreviewRequest) -> ExpansionResult:
         template_root = Path(__file__).parents[1] / "templates"
-        return TemplateExpander(template_root).expand(request.registry, request.request)
+        try:
+            return TemplateExpander(template_root).expand(
+                request.registry, request.request
+            )
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
 
     @app.get("/api/v1/runtime/snapshot", response_model=RosRuntimeSnapshot)
     def read_runtime_snapshot() -> RosRuntimeSnapshot:
