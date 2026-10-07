@@ -259,3 +259,17 @@ read-only source selector for Isaac `/camera/image_raw` and RealSense D455
 `/webcam/color/image_raw`, a large RGB frame stage, per-source status/topic/
 resolution metadata, live-refresh control, and odometry map. A selected source
 without a publisher returns typed HTTP 503; it is never represented as live.
+
+## M4 navigation runtime recovery (2026-10-07)
+
+| Check | Status | Evidence |
+|---|---|---|
+| Root cause isolated | PASS | stale Nav2 process group plus orphan lifecycle manager competed with a new instance's DDS services |
+| Prerequisite graph | PASS | `/scan`, `/odom`, `/map`, TF and `map → base_link` were present |
+| Fresh Nav2 lifecycle | PASS | `controller_server`, `planner_server`, `bt_navigator` each reported `active [3]` |
+| Fixed virtual goal | PASS | `(1.0, 0.0)` `NavigateToPose` returned `SUCCEEDED` |
+
+Recovery sequence: stop the complete old Nav2 launch process tree, verify no
+Nav2 server/lifecycle process remains, then start exactly one
+`nav2_launch.py` instance after SLAM has map/TF data. Do not use the action
+name advertised through stale DDS discovery as evidence that navigation works.
