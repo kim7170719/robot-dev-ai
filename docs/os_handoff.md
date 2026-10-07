@@ -10,7 +10,7 @@ https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 |---|---|
 | Last writer | Ubuntu |
 | Ubuntu branch | `feature/gui-mvp` |
-| Last pushed series | M14 Sensor Workbench with fixed Isaac / RealSense camera selection; inspect `git log -3 --oneline` after pull |
+| Last pushed series | M14 GUI presentation refinement: Overview → Design → Build → Run → Diagnose; inspect `git log -3 --oneline` after pull |
 | Windows branch | `feature/gui-mvp` after fetching this branch |
 | G0–G12, G14 | ALL PASS |
 | Tags | `g0-environment-baseline`, `m2-g2-simple-diff-robot`, `m3-g3-isaac-sim` |
@@ -18,7 +18,7 @@ https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
 | Windows todo | Fetch `feature/gui-mvp`; use Windows only for Git, Cursor, and docs |
 | Do not do | ROS on Windows; Isaac Sim on Windows; Cosmos |
 
-G12 and G14 completed: the frozen virtual MVP and its typed five-view GUI passed. Dashboard Sensor Workbench offers fixed read-only sources: Isaac `/camera/image_raw` and RealSense D455 `/webcam/color/image_raw`; D455 device nodes are visible but the Jazzy driver still awaits privileged installation. It is not a viewport or a controller. M4 runtime was recovered on Ubuntu: run only one Nav2 launch after SLAM map/TF is ready; the fixed `(1.0, 0.0)` virtual navigation goal now returns `SUCCEEDED`. M13 Cosmos is Optional Extension O1 and must not be installed on this RTX 2080 Ti (Turing, 11 GB). See `docs/roadmap_v0.3.md`, `docs/m14_gui_architecture.md`, `docs/m14_demo.md`, and `docs/m13_cosmos.md`.
+G12 and G14 completed: the frozen virtual MVP and its typed five-view GUI passed. The refined GUI uses Overview, Design, Build, Run, and Diagnose, with a Design-first landing flow; it is presentation-only and does not change API/ROS safety boundaries. Dashboard Sensor Workbench offers fixed read-only sources: Isaac `/camera/image_raw` and RealSense D455 `/webcam/color/image_raw`; D455 device nodes are visible but the Jazzy driver still awaits privileged installation. It is not a viewport or a controller. M4 runtime was recovered on Ubuntu: run only one Nav2 launch after SLAM map/TF is ready; the fixed `(1.0, 0.0)` virtual navigation goal now returns `SUCCEEDED`. M13 Cosmos is Optional Extension O1 and must not be installed on this RTX 2080 Ti (Turing, 11 GB). See `docs/roadmap_v0.3.md`, `docs/m14_gui_architecture.md`, `docs/m14_demo.md`, and `docs/m13_cosmos.md`.
 
 ### After reboot → Windows
 

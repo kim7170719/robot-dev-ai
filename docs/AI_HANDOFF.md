@@ -1,6 +1,6 @@
 # AI handoff (live)
 
-Updated: 2026-10-06. Next editor should refresh this file after the next real task.
+Updated: 2026-10-07. Next editor should refresh this file after the next real task.
 
 ## Where we are
 
@@ -101,6 +101,8 @@ M14 GUI visual pass (2026-10-07): the initial functional page was replaced by a 
 M14 Full Run evidence (2026-10-07): `POST /api/v1/mvp/full-run` requires explicit confirmation and composes the frozen M12 parser, resolver, template generation, restricted build, and runtime snapshot in a temporary workspace that is removed before returning. A real run of the frozen Chinese four-capability request returned `build-succeeded`, then observed 25 nodes, 80 topics, and 3 TF edges. One `/tf_static --once` command timed out; the dashboard reports the simulation as Partial rather than healthy. `scripts/run_m14_demo.sh` sources ROS Jazzy and `ros_ws/install` before starting uvicorn. Full suite: 61 tests.
 
 M14 simulation-telemetry evidence (2026-10-07): `GET /api/v1/simulation/frame` uses a fixed system-Python ROS subscriber helper to return one `/camera/image_raw` RGB8 PNG and `/odom` pose; it publishes nothing. With the pinned Isaac 4.5 G4 container running, host ROS observed one publisher on each of `/camera/image_raw`, `/odom`, and `/scan`; the endpoint returned a valid 64×48 PNG. A bounded virtual velocity test moved odometry from origin to `x=0.350 m`, `y=0.080 m`, `yaw=0.452 rad`, which the dashboard's top-down marker can render. The camera remains the M4 synthetic diagnostic colour field, not an Isaac viewport. Full suite: 63 tests.
+
+M14 GUI presentation refinement (2026-10-07): the same five typed-API views now present as Overview, Design, Build, Run, and Diagnose. The landing page makes Design Plan the clear first action and reduces the visible workflow to plan → review/generate → run in simulation. The local M14 token map received a restrained typography-first polish; desktop (1500px) and mobile (390px) Chrome renders were reviewed. The mobile action layout is stacked and no longer causes page-level horizontal overflow. No API, ROS, build, or safety behavior changed. Full suite: 64 tests with `.venv/bin/python -m pytest -q`.
 
 M14 Sensor Workbench extension (2026-10-07): Dashboard camera observation is now a full-width workbench with fixed source selection: `isaac` maps to `/camera/image_raw`; `webcam` maps to the pending D455 `/webcam/color/image_raw`. The typed API refuses unavailable sources with 503 and accepts no arbitrary topic. The D455 USB device is visible as RealSense D455 V4L2 nodes but its Jazzy driver awaits privileged package installation. Full suite: 63 tests.
 

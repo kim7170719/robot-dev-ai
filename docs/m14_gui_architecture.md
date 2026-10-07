@@ -1,6 +1,6 @@
 # M14 GUI MVP architecture
 
-Version: 0.2 (2026-10-07)
+Version: 0.4 (2026-10-07)
 
 ## Scope and boundary
 
@@ -143,3 +143,14 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 - Added the Dashboard Sensor Workbench with a large camera stage, source
   selector, device metadata, live-refresh control, and odometry panel.
 - Added the fixed `isaac` / `webcam` camera-source API selection boundary.
+
+### 0.4 — 2026-10-07
+
+- Simplified the five-view language to Overview, Design, Build, Run, and
+  Diagnose; the landing view now prioritizes a three-step task flow.
+- Applied a restrained, typography-first visual refinement using the existing
+  M14-local token map: one clear next action, reduced card chrome, and a
+  responsive mobile action layout.
+- Rendered and reviewed the changed landing view at 1500px and 390px. No
+  upstream wireframes or project-wide design system exist; this remains a
+  scoped M14 presentation refinement, not a new design-system decision.

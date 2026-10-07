@@ -283,3 +283,16 @@ with no generated workspace. The GUI Design workspace presents that reviewable
 plan rather than raw parser JSON. The existing structured-provider contract can
 later connect a local or external model, but no key, provider, workspace write,
 or build is enabled by this endpoint. Full suite: 64 tests.
+
+## M14 GUI presentation refinement (2026-10-07)
+
+The five existing, typed-API GUI views now use the operator-facing labels
+Overview, Design, Build, Run, and Diagnose. The landing view narrows the
+workflow to three understandable stages: create a plan, review/generate, and
+run in simulation. Its Design CTA is the primary next action; operational
+evidence remains available without dominating the starting screen. The
+existing local CSS tokens were used for a typography-first, low-chrome visual
+pass. Chrome renders were reviewed at 1500px and 390px; the narrow layout now
+uses full-width stacked actions and has no page-level horizontal overflow.
+No robotics behavior, API contract, ROS topic, or safety boundary changed.
+Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.

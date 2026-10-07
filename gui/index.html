@@ -5,7 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Robot Dev AI M14 virtual robot development console">
     <title>Robot Dev AI — Control Room</title>
-    <link rel="stylesheet" href="./index.css?v=7">
+    <link rel="stylesheet" href="./index.css?v=8">
+    <style>
+      @media (max-width: 640px) {
+        html, body { overflow-x: hidden; }
+        .main-content, .view, .run-header { min-width: 0; }
+        .run-header h1 { font-size: clamp(32px, 9vw, 38px); letter-spacing: -.06em; overflow-wrap: anywhere; }
+        .run-header p:not(.eyebrow) { font-size: 16px; }
+        .run-actions { flex-direction: column; flex-wrap: nowrap; }
+        .run-actions .primary, .run-actions .secondary { min-width: 0; width: 100%; }
+        .sensor-actions { grid-template-columns: 1fr; }
+        .sensor-actions .secondary { width: 100%; }
+        .camera-stage-bar, .camera-stage footer { align-items: flex-start; flex-direction: column; gap: var(--s2); }
+        .camera-empty span { max-width: 260px; text-align: center; white-space: normal; }
+      }
+    </style>
   </head>
   <body>
     <div class="app-shell">
