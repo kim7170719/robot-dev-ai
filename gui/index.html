@@ -1,77 +1,80 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hant">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Robot Dev AI M14 virtual MVP dashboard">
-    <title>Robot Dev AI — M14</title>
-    <link rel="stylesheet" href="./index.css?v=1">
+    <meta name="description" content="Robot Dev AI M14 virtual robot development console">
+    <title>Robot Dev AI — Control Room</title>
+    <link rel="stylesheet" href="./index.css?v=3">
   </head>
   <body>
-    <header class="site-header">
-      <div>
-        <p class="eyebrow">VIRTUAL-ONLY MVP · ROS 2 JAZZY · ISAAC SIM 4.5</p>
-        <h1>Robot Dev AI</h1>
-      </div>
-      <span class="badge">M14 GUI MVP</span>
-    </header>
-    <nav aria-label="M14 views" class="nav-tabs">
-      <a href="#dashboard">Dashboard</a>
-      <a href="#requirement">Requirement</a>
-      <a href="#configuration">Robot Configuration</a>
-      <a href="#runtime">Runtime</a>
-      <a href="#validation">Validation / Experience</a>
-    </nav>
-    <main>
-      <p class="safety-note">This interface reaches the robot core only through typed API calls. It does not expose arbitrary shell commands, direct ROS control, an Isaac viewport, Cosmos, or physical-hardware controls.</p>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主要工作流">
+        <a class="brand" href="#dashboard" data-view-link="dashboard" aria-label="Robot Dev AI 首頁">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><b></b></span>
+          <span><strong>Robot Dev AI</strong><small>CONTROL ROOM</small></span>
+        </a>
+        <div class="workspace"><span class="dot"></span><span><small>WORKSPACE</small><strong>Virtual MVP</strong></span><b>⌄</b></div>
+        <nav class="workflow-nav" aria-label="M14 視圖">
+          <p>WORKFLOW</p>
+          <a href="#dashboard" data-view-link="dashboard"><i>⌂</i>Dashboard</a>
+          <a href="#requirement" data-view-link="requirement"><i>✦</i>Requirement</a>
+          <a href="#configuration" data-view-link="configuration"><i>▦</i>Robot Configuration</a>
+          <a href="#runtime" data-view-link="runtime"><i>⌁</i>Runtime</a>
+          <a href="#validation" data-view-link="validation"><i>✓</i>Validation / Experience</a>
+        </nav>
+        <div class="sidebar-footer"><span class="dot"></span><span><strong>Virtual-only evidence</strong><small>G12 frozen · G14 GUI</small></span></div>
+      </aside>
+      <main class="main-content">
+        <header class="topbar"><div class="breadcrumb"><span>Robot Dev AI</span><i>/</i><strong id="view-title">Dashboard</strong></div><div><span class="shield">◈ Safety boundary active</span><span class="avatar">YU</span></div></header>
 
-      <section id="dashboard" class="panel">
-        <h2>Dashboard</h2>
-        <p>Frozen project and gate metadata.</p>
-        <button data-action="load-summary">Refresh project summary</button>
-        <output id="summary-result"></output>
-      </section>
+        <section class="view active" id="dashboard" data-view>
+          <div class="hero">
+            <div><p class="eyebrow">ROBOT DEVELOPMENT PLATFORM</p><h1>從需求到可驗證的<br><em>Virtual Robot</em></h1><p class="hero-copy">將硬體知識、ROS 2 模板、受限建置與 Isaac Sim 證據整合為可追溯的開發工作流。</p><div class="actions"><button class="primary" data-go="requirement">開始建立需求 <b>→</b></button><button class="secondary" data-action="load-summary">同步專案狀態</button></div></div>
+            <div class="bot-stage" aria-hidden="true"><span class="orbit orbit-a"></span><span class="orbit orbit-b"></span><div class="bot"><i></i><i></i><b></b></div><span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span></div>
+          </div>
+          <div class="metric-grid">
+            <article class="metric accent"><small>LATEST PASSED GATE</small><strong>G12</strong><span>Virtual MVP frozen</span><b>✓</b></article>
+            <article class="metric"><small>SIMULATION STACK</small><strong>Isaac Sim 4.5</strong><span>ROS 2 Jazzy · Docker</span><b>◌</b></article>
+            <article class="metric"><small>M14 INTERFACE</small><strong>5 views online</strong><span>Typed API boundary</span><b>▦</b></article>
+          </div>
+          <div class="dashboard-grid">
+            <article class="card journey"><header><div><p class="eyebrow">GUIDED WORKFLOW</p><h2>開發旅程</h2></div><span class="pill">SAFE BY DESIGN</span></header><ol>
+              <li><em>01</em><div><strong>描述機器人</strong><small>自然語言 → 結構化規格</small></div><button data-go="requirement" aria-label="前往需求">→</button></li>
+              <li><em>02</em><div><strong>確認相容性</strong><small>硬體、能力與套件證據</small></div><button data-go="configuration" aria-label="前往設定">→</button></li>
+              <li><em>03</em><div><strong>檢視執行環境</strong><small>ROS graph、TF 與控制器快照</small></div><button data-go="runtime" aria-label="前往執行環境">→</button></li>
+              <li><em>04</em><div><strong>驗證與學習</strong><small>固定情境、可審閱修復提案</small></div><button data-go="validation" aria-label="前往驗證">→</button></li>
+            </ol></article>
+            <article class="card boundary"><header><div><p class="eyebrow">SYSTEM CONTRACT</p><h2>安全邊界</h2></div><b>⌾</b></header><ul><li>✓ 瀏覽器只使用 typed API</li><li>✓ 不提供任意 shell 或 ROS 命令</li><li>✓ 生成、建置與驗證均需確認</li><li>✓ Cosmos 與實體硬體不在此介面</li></ul><output id="summary-result" class="compact-result" aria-live="polite"></output></article>
+          </div>
+        </section>
 
-      <section id="requirement" class="panel">
-        <h2>Requirement</h2>
-        <p>Turn a natural-language robot request into the existing structured specification.</p>
-        <form id="requirement-form">
-          <label for="requirement-input">Robot request</label>
-          <textarea id="requirement-input" required>我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。</textarea>
-          <button type="submit">Parse requirement</button>
-        </form>
-        <output id="requirement-result"></output>
-      </section>
+        <section class="view" id="requirement" data-view>
+          <div class="page-header"><div><p class="eyebrow">STEP 01 · REQUIREMENT INTAKE</p><h1>把想法轉成機器人規格</h1><p>輸入自然語言需求。解析結果由既有 Requirement Agent 產生並保留來源。</p></div><span>01</span></div>
+          <div class="split"><form id="requirement-form" class="card input-card"><label for="requirement-input">你想建立什麼機器人？</label><textarea id="requirement-input" required>我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。</textarea><footer><small>支援中文與英文描述</small><button type="submit" class="primary">解析需求 <b>→</b></button></footer></form><article class="card guide"><b>✦</b><h2>提示</h2><p>描述底盤、感測器與目標能力，例如「差速車、LiDAR、Camera、室內導航」。</p><div><span>DIFFERENTIAL DRIVE</span><span>LIDAR</span><span>NAV2</span></div></article></div>
+          <output id="requirement-result" class="result-panel" aria-live="polite"></output>
+        </section>
 
-      <section id="configuration" class="panel">
-        <h2>Robot Configuration</h2>
-        <p>Resolve a validated differential-drive configuration and preview its authorized template in memory.</p>
-        <div class="actions">
-          <button data-action="resolve-configuration">Resolve package compatibility</button>
-          <button data-action="preview-template" class="secondary">Preview controller template</button>
-        </div>
-        <output id="configuration-result"></output>
-      </section>
+        <section class="view" id="configuration" data-view>
+          <div class="page-header"><div><p class="eyebrow">STEP 02 · KNOWLEDGE REGISTRY</p><h1>配置與相容性證據</h1><p>使用已驗證的差速底盤範例解析套件相容性，或在記憶體中預覽授權模板。</p></div><span>02</span></div>
+          <div class="two-up"><article class="card robot-card"><div class="schematic"><i class="wheel w1"></i><i class="wheel w2"></i><i class="chassis"></i><i class="sensor"></i></div><p class="eyebrow">DEMO CONFIGURATION</p><h2>Generic Diff Base</h2><p>Validated · Ubuntu x86_64 · Jazzy</p><div><span>DIFF DRIVE</span><span>ROS 2</span><span>VALIDATED</span></div></article><article class="card tool-card"><p class="eyebrow">EVIDENCE TOOLS</p><h2>檢查可用的整合項目</h2><p>所有結果都來自 registry 與 template engine，尚未寫入工作區。</p><button data-action="resolve-configuration" class="primary">解析套件相容性 <b>→</b></button><button data-action="preview-template" class="secondary full">預覽 controller template</button></article></div>
+          <output id="configuration-result" class="result-panel" aria-live="polite"></output>
+        </section>
 
-      <section id="runtime" class="panel">
-        <h2>Runtime</h2>
-        <p>Collect the fixed read-only ROS snapshot: nodes, topics, controllers, and TF evidence.</p>
-        <button data-action="runtime-snapshot">Collect runtime snapshot</button>
-        <output id="runtime-result"></output>
-      </section>
+        <section class="view" id="runtime" data-view>
+          <div class="page-header"><div><p class="eyebrow">STEP 03 · READ-ONLY INSPECTION</p><h1>Runtime observability</h1><p>擷取固定白名單的 nodes、topics、controllers 與 TF 證據，不啟動節點也不發布訊息。</p></div><span>03</span></div>
+          <article class="card runtime-hero"><div><p class="eyebrow"><i class="dot"></i>READ-ONLY ROS SNAPSHOT</p><h2>目前執行環境的可觀測性</h2><p>若 ROS 尚未啟動，結果會保留原始 command evidence，而不會假設 runtime 正常。</p></div><button data-action="runtime-snapshot" class="primary">收集快照 <b>→</b></button></article>
+          <div class="runtime-grid"><article>◫<strong>Nodes</strong><small>ROS node graph</small></article><article>⌁<strong>Topics</strong><small>Message types</small></article><article>◌<strong>Controllers</strong><small>Activation state</small></article><article>↔<strong>TF edges</strong><small>Frame relationships</small></article></div>
+          <output id="runtime-result" class="result-panel" aria-live="polite"></output>
+        </section>
 
-      <section id="validation" class="panel">
-        <h2>Validation / Experience</h2>
-        <p>Run only the frozen virtual <code>m4-navigation</code> validator, or inspect a repair proposal without applying it.</p>
-        <label class="confirm"><input type="checkbox" id="validation-confirm"> I confirm this runs the fixed Isaac/ROS virtual navigation validation.</label>
-        <div class="actions">
-          <button data-action="validate-navigation">Run fixed validation</button>
-          <button data-action="propose-repair" class="secondary">Show sample repair proposal</button>
-        </div>
-        <output id="validation-result"></output>
-      </section>
-    </main>
-    <footer>Evidence remains virtual-only. G12 is the latest passed robotics gate; G13 Cosmos is deferred.</footer>
-    <script type="module" src="./app.js?v=1"></script>
+        <section class="view" id="validation" data-view>
+          <div class="page-header"><div><p class="eyebrow">STEP 04 · EVIDENCE &amp; REVIEW</p><h1>驗證與經驗回饋</h1><p>固定 virtual navigation validator 與可審閱 dependency 修復提案，兩者都不會擴大權限。</p></div><span>04</span></div>
+          <div class="two-up"><article class="card validation primary-validation"><p class="eyebrow">FROZEN SCENARIO</p><h2>m4-navigation</h2><p>對既有 Isaac / Nav2 虛擬環境送出唯一預核准的 map goal。</p><label><input type="checkbox" id="validation-confirm"><span>我確認只執行這個固定 virtual validation。</span></label><button data-action="validate-navigation" class="primary">執行驗證 <b>→</b></button></article><article class="card validation"><p class="eyebrow">REVIEW ONLY</p><h2>Repair proposal</h2><p>展示 manifest dependency 的可審閱 diff。此動作不會寫入任何檔案或觸發 rebuild。</p><button data-action="propose-repair" class="secondary">檢視範例提案</button><small>⌾ Proposal-only by design</small></article></div>
+          <output id="validation-result" class="result-panel" aria-live="polite"></output>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="./app.js?v=3"></script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 # M14 GUI MVP architecture
 
-Version: 0.1 (2026-10-06)
+Version: 0.2 (2026-10-07)
 
 ## Scope and boundary
 
@@ -101,3 +101,11 @@ The implemented GUI is a same-origin, build-less ES-module application served
 by FastAPI. Its five views consume only `/api/v1/*`; it has no browser-side ROS
 or shell integration. The GUI renders JSON evidence as text, so command output
 and generated diffs are not interpreted as HTML.
+
+The v0.2 presentation layer uses a responsive control-room shell: a guided
+workflow sidebar, dashboard status cards, focused per-step screens, explicit
+confirmation messaging, and evidence panels. It was rendered and visually
+reviewed at 1440px and 390px widths; mobile uses a single-column evidence-card
+layout. There was no pre-existing design-system or wireframe artifact, so the
+small CSS token map in `gui/index.css` is a M14-local visual foundation rather
+than a project-wide design-system decision.

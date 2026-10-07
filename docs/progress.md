@@ -114,7 +114,7 @@ Automated test suite: `.venv/bin/pytest` → 59 passed (2026-10-07).
 | Project, requirement, compatibility, template preview, confirmed workspace generation, and restricted build API | PASS | Typed core behavior is exposed without ROS; generated ROS packages are confined to `<workspace>/src/`, and only an already generated package with a third `confirmed=true` can run `colcon build --packages-select`; typed diagnosis preserves build failures |
 | Read-only runtime snapshot API | PASS | `GET /api/v1/runtime/snapshot` returns the existing allowlisted ROS node, topic-type, controller, and TF evidence; it does not start nodes or publish messages |
 | Fixed simulation validation and repair-proposal APIs | PASS | The fixed `m4-navigation` scenario requires explicit confirmation; repair proposals return typed diffs without applying them |
-| Five GUI views | PASS | Same-origin build-less GUI exposes Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience; `docs/m14_demo.md` records the local HTTP smoke demo |
+| Five GUI views | PASS | Same-origin build-less GUI exposes Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience through a responsive control-room presentation; `docs/m14_demo.md` records the local HTTP smoke and 1440px/390px visual review |
 
 **Gate G14: PASS (2026-10-07).** The five-view GUI consumes the typed API only, preserves confirmation gates for workspace/build/virtual validation, and renders runtime, validation, and repair evidence without direct browser ROS, shell, Isaac viewport, Cosmos, Jetson, or physical-hardware access. Full suite: 59 tests; local HTTP demo passed.
 
