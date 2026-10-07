@@ -419,11 +419,11 @@ def test_gui_entrypoint_exposes_all_m14_views() -> None:
 
     assert response.status_code == 200
     for view_name in (
-        "Dashboard",
-        "Requirement",
-        "Robot Configuration",
-        "Runtime",
-        "Validation / Experience",
+        "Overview",
+        "Design",
+        "Build",
+        "Run",
+        "Diagnose",
     ):
         assert view_name in response.text
 

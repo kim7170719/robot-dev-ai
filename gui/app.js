@@ -51,6 +51,7 @@ function bindAction(selector, resultId, handler, label) {
 function setText(id, text) { document.querySelector(`#${id}`).textContent = text; }
 function setTimeline(stage, state, text) {
   const row = document.querySelector(`[data-stage="${stage}"]`);
+  if (!row) return;
   row.dataset.state = state;
   row.querySelector("span").textContent = text;
 }
