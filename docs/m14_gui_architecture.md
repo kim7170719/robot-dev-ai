@@ -1,6 +1,6 @@
 # M14 GUI MVP architecture
 
-Version: 0.4 (2026-10-07)
+Version: 0.5 (2026-10-07)
 
 ## Scope and boundary
 
@@ -154,3 +154,13 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 - Rendered and reviewed the changed landing view at 1500px and 390px. No
   upstream wireframes or project-wide design system exist; this remains a
   scoped M14 presentation refinement, not a new design-system decision.
+
+### 0.5 — 2026-10-07
+
+- Rebuilt the M14 presentation as a precision product surface: a soft titanium
+  canvas, ink controls, one signal-blue interaction state, and a dark runtime
+  evidence stage. The five typed-API views and their safety semantics are
+  unchanged.
+- Added a keyboard skip link, visible focus treatment, responsive single-column
+  controls, and decorative-icon cleanup. The product brief and reusable visual
+  rules are captured in `PRODUCT.md` and `DESIGN.md`.

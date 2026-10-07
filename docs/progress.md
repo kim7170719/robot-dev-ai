@@ -296,3 +296,14 @@ pass. Chrome renders were reviewed at 1500px and 390px; the narrow layout now
 uses full-width stacked actions and has no page-level horizontal overflow.
 No robotics behavior, API contract, ROS topic, or safety boundary changed.
 Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 precision product-surface redesign (2026-10-07)
+
+M14 was visually rebuilt without changing a robotics/API behavior or safety
+boundary. The workspace now uses a low-chrome titanium surface, ink-first
+typography, a single signal-blue active state, and a dark stage only for
+simulation evidence. `PRODUCT.md` records the real product constraints and
+`DESIGN.md` records the implemented tokens, responsive layout, components, and
+accessibility rules. The redesigned Overview and Design views were visually
+reviewed at 1500px and 390px. Automated suite:
+`.venv/bin/python -m pytest -q` → 64 passed.
