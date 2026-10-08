@@ -378,3 +378,15 @@ outside landing/in hidden tabs and retains a still render for reduced motion;
 the existing PNG is only a browser-WebGL failure fallback. The MIT notice for
 the local Three.js runtime and source model is in `docs/THIRD_PARTY_NOTICES.md`.
 No API, ROS, Isaac, or hardware behavior changed.
+
+## M14 original procedural humanoid entry (2026-10-08)
+
+The landing WebGL scene now renders an original humanoid constructed from
+native Three.js geometry rather than a downloaded rigged model. Its white
+ceramic shell, graphite joints, and cyan visor run six continuous, damped
+motion states—ready, scan, wave, acknowledgement, mobility, and ready stance.
+The scene remains locally served, pauses away from landing/in hidden tabs, and
+keeps a still frame for reduced motion; the local PNG is only a WebGL-failure
+fallback. The old model and GLTF helper files were removed, leaving only the
+MIT-licensed Three.js runtime. No API, ROS, Isaac, or hardware behavior
+changed.

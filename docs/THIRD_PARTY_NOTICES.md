@@ -1,10 +1,11 @@
 # Third-party notices
 
-## Three.js and RobotExpressive
+## Three.js
 
-The local landing-page WebGL runtime and `RobotExpressive.glb` source asset
-are derived from the [Three.js repository](https://github.com/mrdoob/three.js),
-which is released under the MIT License.
+The local landing-page WebGL runtime is derived from the
+[Three.js repository](https://github.com/mrdoob/three.js), which is released
+under the MIT License. The landing humanoid itself is original procedural
+geometry built by this project.
 
 Copyright © 2010–2026 Three.js authors
 

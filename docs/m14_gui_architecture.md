@@ -221,3 +221,13 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 - Three.js and the source model are covered by the MIT notice in
   `docs/THIRD_PARTY_NOTICES.md`. This stays decorative and has no ROS, Isaac,
   physical hardware, browser-control, or typed-API implication.
+
+### 0.12 — 2026-10-08
+
+- Replaced the downloaded rigged humanoid and its GLTF loader with an original
+  procedural Three.js character. The scene uses native shell, joint, visor,
+  limb, and floor geometry; the six bounded presentation states are damped
+  joint targets rather than imported motion clips.
+- Only the local Three.js runtime remains a third-party dependency. The robot
+  stays decorative, WebGL-failure fallback remains local, and no ROS, Isaac,
+  physical-hardware, browser-control, or typed-API behavior changed.
