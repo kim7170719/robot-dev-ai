@@ -86,12 +86,12 @@ within 180ms. Motion is reduced to static state changes under
 
 ## Landing Surface
 
-The entry surface is intentionally separate from the operator workspace. Its
-single SVG robot performs an environment-readiness sequence: a differential
-drive body settles in space while its LiDAR sweep, camera glint, and two signal
-points communicate sensor readiness. “進入工作區” moves directly to the
-existing Overview; “直接建立方案” opens Design. The scene has no external image
-dependency and reduces to a still, readable robot under `prefers-reduced-motion`.
+The entry surface is intentionally separate from the operator workspace. It is
+a dark, restrained product stage: a small product bar, one large headline, one
+original humanoid stage, and two direct actions. “進入工作區” moves directly to
+the existing Overview; “直接建立方案” opens Design. The scene has no external
+image dependency and reduces to a still, readable robot under
+`prefers-reduced-motion`.
 
 The current landing implementation is a locally served WebGL scene with an
 original procedural humanoid assembled from native geometry; it does not
@@ -106,8 +106,8 @@ after that the robot's own joint motion is the only persistent movement.
 ## Humanoid Motion Sequence
 
 The landing robot uses continuous, damped joint motion between system-ready,
-environment-scan, friendly-wave, acknowledgement, mobility-check, and
-ready-stance states. It never swaps a robot image mid-sequence. The motion
+environment-scan, acknowledgement, mobility-check, and ready-stance states.
+It never swaps a robot image mid-sequence. The motion
 stops outside the landing surface or in a hidden tab and remains a still,
 readable pose when reduced motion is requested.
 

@@ -287,6 +287,7 @@ def test_simulation_view_returns_camera_frame_and_robot_pose() -> None:
         "y_m": -0.5,
         "yaw_rad": 0.3,
         "source_topic": "/camera/image_raw",
+        "pose_available": True,
     }
     assert observed_sources == ["webcam"]
 

@@ -14,7 +14,7 @@ if (host && canvas && window.WebGLRenderingContext) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.domElement.setAttribute("role", "img");
-  renderer.domElement.setAttribute("aria-label", "原創三維人形機器人，以獨立外置肩軸執行掃描、招手與移動展示。");
+  renderer.domElement.setAttribute("aria-label", "原創三維人形機器人，以獨立外置肩軸執行掃描、確認與移動展示。");
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(27, 1, .1, 40);
@@ -144,7 +144,7 @@ if (host && canvas && window.WebGLRenderingContext) {
   const leftLeg = makeLeg(-1);
   const rightLeg = makeLeg(1);
 
-  const labels = ["SYSTEM READY", "ENVIRONMENT SCAN", "FRIENDLY WAVE", "ACKNOWLEDGED", "MOBILITY CHECK", "READY STANCE"];
+  const labels = ["SYSTEM READY", "ENVIRONMENT SCAN", "ACKNOWLEDGED", "MOBILITY CHECK", "READY STANCE"];
   const state = { headYaw: 0, headPitch: 0, leftArm: -.04, rightArm: .04, leftElbow: 0, rightElbow: 0, leftLeg: 0, rightLeg: 0, body: 0 };
   const target = { ...state };
   const clock = new THREE.Clock();
@@ -156,10 +156,9 @@ if (host && canvas && window.WebGLRenderingContext) {
     const rhythm = Math.sin(seconds * 3.4);
     Object.assign(target, { headYaw: 0, headPitch: 0, leftArm: -.04, rightArm: .04, leftElbow: 0, rightElbow: 0, leftLeg: 0, rightLeg: 0, body: 0 });
     if (pose === 1) target.headYaw = rhythm * .35;
-    if (pose === 2) { target.rightArm = .94 + rhythm * .14; target.rightElbow = -.62; }
-    if (pose === 3) target.headPitch = Math.sin(seconds * 4.2) * .13;
-    if (pose === 4) { target.leftLeg = rhythm * .24; target.rightLeg = -rhythm * .24; target.leftArm = -rhythm * .13; target.rightArm = rhythm * .13; target.body = rhythm * .028; }
-    if (pose === 5) { target.leftArm = -.13; target.rightArm = .13; target.body = .018; }
+    if (pose === 2) target.headPitch = Math.sin(seconds * 4.2) * .13;
+    if (pose === 3) { target.leftLeg = rhythm * .24; target.rightLeg = -rhythm * .24; target.leftArm = -rhythm * .13; target.rightArm = rhythm * .13; target.body = rhythm * .028; }
+    if (pose === 4) { target.leftArm = -.13; target.rightArm = .13; target.body = .018; }
   };
   const resize = () => {
     const { width, height } = host.getBoundingClientRect();

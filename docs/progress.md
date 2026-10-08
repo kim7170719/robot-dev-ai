@@ -413,3 +413,16 @@ arrival of the landing copy, calls to action, status, and robot. It honors
 `prefers-reduced-motion`; the existing continuous robot motion also remains
 still in that mode. Desktop WebGL rendering was reviewed with a software
 WebGL fallback. No API, ROS, Isaac, or hardware behavior changed.
+
+## M14 entry and D455 reliability pass (2026-10-08)
+
+The landing page now uses a restrained product-stage treatment: one large
+headline, a single robot stage, an explicit product bar, and a GSAP
+transform/opacity/clip-path arrival. The humanoid readiness sequence no longer
+includes a friendly-wave state. D455 capture no longer requires an unrelated
+`/odom` message before returning a camera frame; absent odometry is explicitly
+marked in the typed response and GUI. `scripts/start_d455_camera.sh` starts
+the colour-only driver at the fixed GUI topic `/webcam/color/image_raw`.
+On this host, live D455 verification is blocked by repeated USB 2.1
+disconnects (`VIDIOC_QBUF: No such device`) after stream start; reconnect it
+directly to USB 3.x before retrying. Full suite: 64 tests.

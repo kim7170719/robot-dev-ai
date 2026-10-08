@@ -20,7 +20,10 @@ Open <http://127.0.0.1:8000> on the Ubuntu host.
    When the G4 Isaac container is running, **Robot telemetry view** samples
    `/odom` and the selected camera source every four seconds. The available
    sources are **Isaac Sim** (`/camera/image_raw`) and **RealSense D455**
-   (`/webcam/color/image_raw`); the latter remains unavailable until its ROS
+   (`/webcam/color/image_raw`); start the D455 colour-only driver with
+   `bash scripts/start_d455_camera.sh`. The D455 must be on a stable USB 3.x
+   connection; a USB 2.x hub can enumerate it but repeatedly disconnect under
+   video load. The camera preview remains usable when `/odom` is unavailable.
    driver is installed and launched. The map marker is driven
    by real odometry; the 64×48 camera image is the current M4 synthetic RGB8
    diagnostic sensor rather than an Isaac viewport. It cannot drive the robot.

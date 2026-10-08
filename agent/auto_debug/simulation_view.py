@@ -21,7 +21,7 @@ CAMERA_TOPICS: dict[CameraSource, str] = {
 
 
 class SimulationFrame(BaseModel):
-    """One camera sample and its matching latest robot pose."""
+    """One camera sample and an optional latest robot pose."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -32,6 +32,7 @@ class SimulationFrame(BaseModel):
     y_m: float
     yaw_rad: float
     source_topic: str
+    pose_available: bool = True
 
 
 FrameRunner = Callable[[CameraSource], SimulationFrame]

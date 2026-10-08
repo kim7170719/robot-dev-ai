@@ -67,17 +67,21 @@ def main() -> int:
     node = CaptureNode(arguments.image_topic)
     try:
         deadline = time.monotonic() + 2.5
-        while time.monotonic() < deadline and (node.image is None or node.pose is None):
+        while time.monotonic() < deadline and node.image is None:
             rclpy.spin_once(node, timeout_sec=0.1)
-        if node.image is None or node.pose is None:
-            raise RuntimeError(
-                f"timed out waiting for {arguments.image_topic} and /odom"
+        if node.image is None:
+            raise RuntimeError(f"timed out waiting for {arguments.image_topic}")
+        pose_available = node.pose is not None
+        if node.pose is not None:
+            orientation = node.pose.pose.pose.orientation
+            yaw = math.atan2(
+                2 * (orientation.w * orientation.z + orientation.x * orientation.y),
+                1 - 2 * (orientation.y * orientation.y + orientation.z * orientation.z),
             )
-        orientation = node.pose.pose.pose.orientation
-        yaw = math.atan2(
-            2 * (orientation.w * orientation.z + orientation.x * orientation.y),
-            1 - 2 * (orientation.y * orientation.y + orientation.z * orientation.z),
-        )
+            x_m = node.pose.pose.pose.position.x
+            y_m = node.pose.pose.pose.position.y
+        else:
+            x_m = y_m = yaw = 0.0
         png = _rgb8_png(node.image)
         print(
             json.dumps(
@@ -85,10 +89,11 @@ def main() -> int:
                     "image_png_base64": base64.b64encode(png).decode("ascii"),
                     "width": node.image.width,
                     "height": node.image.height,
-                    "x_m": node.pose.pose.pose.position.x,
-                    "y_m": node.pose.pose.pose.position.y,
+                    "x_m": x_m,
+                    "y_m": y_m,
                     "yaw_rad": yaw,
                     "source_topic": arguments.image_topic,
+                    "pose_available": pose_available,
                 }
             )
         )

@@ -1,0 +1,110 @@
+/* The entry surface is a quiet product stage, distinct from the operating UI. */
+body.is-landing { background: #030609; }
+body.is-landing .main-content { background: #030609; }
+.landing {
+  background: #030609;
+  min-height: 100dvh;
+  padding: clamp(24px, 3.5vw, 52px) clamp(24px, 4vw, 64px);
+}
+.landing::before { display: none; }
+.landing::after {
+  background: #25303d;
+  content: "";
+  height: 1px;
+  left: clamp(24px, 4vw, 64px);
+  opacity: .72;
+  position: absolute;
+  right: clamp(24px, 4vw, 64px);
+  top: clamp(61px, 6.2vw, 82px);
+}
+.landing-topline {
+  color: #eef3fa;
+  font-size: 12px;
+  letter-spacing: -.015em;
+  position: relative;
+  z-index: 1;
+}
+.landing-topline span:last-child {
+  color: #9eabba;
+  font-size: 11px;
+  letter-spacing: .08em;
+}
+.landing-copy {
+  left: clamp(24px, 10.1vw, 154px);
+  max-width: min(47vw, 660px);
+  top: 48%;
+}
+.landing-copy > p:first-child { display: none; }
+.landing-copy h1 {
+  font-size: clamp(52px, 6.25vw, 94px);
+  font-weight: 680;
+  letter-spacing: -.045em;
+  line-height: .94;
+  max-width: 650px;
+}
+.landing-summary {
+  color: #b9c4d1;
+  font-size: 17px;
+  line-height: 1.62;
+  margin: 30px 0 34px;
+  max-width: 39ch;
+}
+.landing-actions { gap: 22px; }
+.landing-enter {
+  background: #f4f7fb;
+  border-color: #f4f7fb;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgb(0 0 0 / .22);
+  min-height: 54px;
+  padding: 0 22px;
+}
+.landing-enter:hover { background: #dcecff; border-color: #dcecff; transform: translateY(-2px); }
+.landing-text-action { color: #dce7f3; text-decoration-color: #71869d; }
+.humanoid-stage {
+  height: min(82vh, 780px);
+  right: clamp(-52px, 2.2vw, 42px);
+  top: 52%;
+  width: min(53vw, 650px);
+}
+.humanoid-stage::after {
+  border: 1px solid rgb(175 199 224 / .12);
+  border-radius: 50%;
+  content: "";
+  height: min(43vw, 620px);
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(43vw, 620px);
+  z-index: -1;
+}
+.humanoid-pose {
+  background: #080e15;
+  border-color: rgb(179 204 232 / .36);
+  bottom: 12%;
+  box-shadow: 0 14px 30px rgb(0 0 0 / .28);
+  right: 11%;
+}
+.landing-status {
+  bottom: clamp(24px, 3.7vw, 52px);
+  color: #c2cedb;
+  left: clamp(24px, 10.1vw, 154px);
+}
+.landing-status-dot { background: #8cbcff; }
+@media (max-width: 960px) {
+  .landing-copy { max-width: 640px; }
+  .humanoid-stage { right: -34px; top: 18%; }
+}
+@media (max-width: 640px) {
+  .landing { padding: 20px; }
+  .landing::after { left: 20px; right: 20px; top: 52px; }
+  .landing-topline { font-size: 11px; }
+  .landing-copy { bottom: 78px; left: 20px; max-width: none; right: 20px; top: auto; }
+  .landing-copy h1 { font-size: clamp(42px, 12.4vw, 53px); letter-spacing: -.04em; }
+  .landing-summary { font-size: 15px; margin: 20px 0 24px; max-width: 31ch; }
+  .landing-enter { border-radius: 13px; }
+  .humanoid-stage { height: min(74vw, 300px); right: 0; top: 4%; width: 100%; }
+  .humanoid-stage::after { height: 72vw; width: 72vw; }
+  .humanoid-pose { bottom: 2%; right: 13%; }
+}

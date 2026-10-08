@@ -163,7 +163,7 @@ async function refreshSimulationFrame() {
     setText("camera-label", `${frame.width} × ${frame.height} · live`);
     setText("camera-resolution", `${frame.width} × ${frame.height} RGB8`);
     setText("camera-topic", frame.source_topic);
-    setText("pose-label", `x ${frame.x_m.toFixed(2)} m · y ${frame.y_m.toFixed(2)} m · ${frame.yaw_rad.toFixed(2)} rad`);
+    setText("pose-label", frame.pose_available === false ? "Camera live · simulation pose unavailable" : `x ${frame.x_m.toFixed(2)} m · y ${frame.y_m.toFixed(2)} m · ${frame.yaw_rad.toFixed(2)} rad`);
     drawSimulationMap(frame);
   } catch (error) {
     setText("camera-label", "Camera unavailable");
