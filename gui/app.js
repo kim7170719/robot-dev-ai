@@ -54,29 +54,15 @@ function activateView(id) {
   document.querySelectorAll("[data-view-link]").forEach((link) => link.classList.toggle("active", link.dataset.viewLink === id));
   document.body.classList.toggle("is-landing", id === "landing");
   document.body.classList.toggle("is-control", id === "dashboard");
-  syncHumanoidSequence(id === "landing");
+  syncHumanoidMotion(id === "landing");
   document.querySelector("#view-title").textContent = translations[locale].views[id] || id;
   history.replaceState(null, "", `#${id}`);
   window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
 }
-const humanoidPoses = ["SYSTEM BOOT", "ENVIRONMENT SCAN", "FRIENDLY WAVE", "MOBILITY STEP"];
-let humanoidPose = 0;
-let humanoidTimer;
-function showHumanoidPose(index) {
-  const frames = document.querySelectorAll("[data-humanoid-frame]");
-  if (!frames.length) return;
-  humanoidPose = index % humanoidPoses.length;
-  frames.forEach((frame, frameIndex) => frame.classList.toggle("is-active", frameIndex === humanoidPose));
-  document.querySelector("#humanoid-pose-index").textContent = String(humanoidPose + 1).padStart(2, "0");
-  document.querySelector("#humanoid-pose-label").textContent = humanoidPoses[humanoidPose];
+function syncHumanoidMotion(shouldRun) {
+  document.body.classList.toggle("humanoid-motion-paused", !shouldRun || reducedMotion || document.hidden);
 }
-function syncHumanoidSequence(shouldRun) {
-  window.clearInterval(humanoidTimer);
-  showHumanoidPose(humanoidPose);
-  if (!shouldRun || reducedMotion || document.hidden) return;
-  humanoidTimer = window.setInterval(() => showHumanoidPose(humanoidPose + 1), 3200);
-}
-document.addEventListener("visibilitychange", () => syncHumanoidSequence(document.visibilityState === "visible" && document.body.classList.contains("is-landing")));
+document.addEventListener("visibilitychange", () => syncHumanoidMotion(document.visibilityState === "visible" && document.body.classList.contains("is-landing")));
 function setView(id) {
   if (!reducedMotion && document.startViewTransition) {
     document.startViewTransition(() => activateView(id));

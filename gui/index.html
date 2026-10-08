@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="./m14-topnav.css?v=5">
     <link rel="stylesheet" href="./m14-humanoid.css?v=3">
     <link rel="stylesheet" href="./m14-control.css?v=1">
-    <link rel="stylesheet" href="./m14-3d-hero.css?v=1">
+    <link rel="stylesheet" href="./m14-3d-hero.css?v=2">
   </head>
   <body>
     <a class="skip-link" href="#workspace-main">跳至主要內容</a>
@@ -83,10 +83,7 @@
             </svg>
           </div>
           <div class="humanoid-stage" aria-label="人形機器人動作展示">
-            <img class="humanoid-render is-active" data-humanoid-frame="0" src="./assets/humanoid-boot.png" alt="白色人形機器人站立啟動">
-            <img class="humanoid-render" data-humanoid-frame="1" src="./assets/humanoid-scan.png" alt="">
-            <img class="humanoid-render" data-humanoid-frame="2" src="./assets/humanoid-wave.png" alt="">
-            <img class="humanoid-render" data-humanoid-frame="3" src="./assets/humanoid-step.png" alt="">
+            <img class="humanoid-render" src="./assets/humanoid-boot.png" alt="白色人形機器人以連續待機動作準備啟動">
             <svg viewBox="0 0 520 680" role="img" aria-labelledby="humanoid-title humanoid-desc">
               <title id="humanoid-title">人形機器人啟動與姿勢展示</title><desc id="humanoid-desc">一台人形機器人依序執行啟動、掃描、揮手、平衡、跨步、查看、待命與完成八種姿勢。</desc>
               <g class="humanoid-rings" fill="none" stroke="#203149" stroke-width="1"><ellipse cx="270" cy="340" rx="205" ry="274"/><ellipse cx="270" cy="340" rx="245" ry="115"/><path d="M55 516Q270 620 484 516"/></g>
@@ -102,7 +99,7 @@
               </g>
               <g class="humanoid-labels" fill="#a6b9d1" font-family="system-ui, sans-serif" font-size="12" letter-spacing="1.6"><text x="64" y="550">BALANCE SYSTEM</text><text x="350" y="214">VISION ONLINE</text></g>
             </svg>
-            <p class="humanoid-pose" aria-live="polite"><span id="humanoid-pose-index">01</span><span id="humanoid-pose-label">SYSTEM BOOT</span></p>
+            <p class="humanoid-pose">SYSTEM READY</p>
           </div>
           <div class="landing-status"><span class="landing-status-dot" aria-hidden="true"></span><span data-i18n="landing.status">Virtual-first robot development</span><span>Jazzy · Isaac Sim 4.5</span></div>
         </section>

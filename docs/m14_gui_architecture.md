@@ -204,9 +204,10 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 
 ### 0.10 — 2026-10-08
 
-- Replaced the provisional SVG humanoid with four locally served, original 3D
-  product-render frames: boot, environment scan, greeting, and mobility step.
-  The frames crossfade only while the entry view is active; they pause when the
-  document is hidden, and reduced-motion retains the boot frame.
+- Replaced the provisional SVG humanoid with one locally served, original 3D
+  product render. A continuous idle sequence communicates a weight shift and
+  visor scan without swapping robot images. It runs only while the entry view
+  is active, pauses when the document is hidden, and retains the boot frame for
+  reduced motion.
 - The imagery is presentation-only. It is not a simulator viewport, a hardware
   claim, or a change to the GUI-to-typed-API safety boundary.

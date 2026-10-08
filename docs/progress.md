@@ -360,10 +360,10 @@ the task-form views stay light for readability. Automated suite:
 
 ## M14 3D humanoid entry refinement (2026-10-08)
 
-The landing robot now uses four locally served original 3D product-render
-frames rather than the provisional SVG line drawing: boot, environment scan,
-greeting, and mobility step. The real frames crossfade only while landing is
-visible and pause when the browser tab is hidden; reduced-motion leaves the
-boot frame still. This is an illustrative product surface, not an Isaac Sim
+The landing robot now uses one locally served original 3D product render rather
+than the provisional SVG line drawing. A continuous 7.2-second idle sequence
+communicates a weight shift and visor scan without cycling static pose images;
+it pauses outside landing or in a hidden browser tab, and reduced-motion leaves
+the boot pose still. This is an illustrative product surface, not an Isaac Sim
 viewport or a real-hardware representation. No API, ROS, simulator, or safety
 behavior changed.

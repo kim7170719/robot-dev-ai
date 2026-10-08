@@ -93,15 +93,16 @@ points communicate sensor readiness. “進入工作區” moves directly to the
 existing Overview; “直接建立方案” opens Design. The scene has no external image
 dependency and reduces to a still, readable robot under `prefers-reduced-motion`.
 
-The current landing implementation uses a local SVG humanoid rather than a
-video or external asset.
+The current landing implementation uses one locally served original 3D product
+render rather than a video or external asset. It is illustration, not a
+simulator viewport or a physical-hardware claim.
 
 ## Humanoid Motion Sequence
 
-The landing robot cycles every 2.6 seconds through eight legible poses: system
-boot, environment scan, friendly wave, balance check, mobility step, vision
-inspect, ready stance, and task complete. The cycle stops outside the landing
-surface and remains at boot when reduced motion is requested.
+The landing robot performs one continuous 7.2-second idle sequence: a quiet
+weight shift paired with a bounded visor-light scan. It never swaps the robot
+image mid-sequence. The motion stops outside the landing surface or in a hidden
+tab and remains a still readable boot pose when reduced motion is requested.
 
 ## Control Surface
 
