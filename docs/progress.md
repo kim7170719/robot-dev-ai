@@ -423,6 +423,8 @@ includes a friendly-wave state. D455 capture no longer requires an unrelated
 `/odom` message before returning a camera frame; absent odometry is explicitly
 marked in the typed response and GUI. `scripts/start_d455_camera.sh` starts
 the colour-only driver at the fixed GUI topic `/webcam/color/image_raw`.
-On this host, live D455 verification is blocked by repeated USB 2.1
-disconnects (`VIDIOC_QBUF: No such device`) after stream start; reconnect it
-directly to USB 3.x before retrying. Full suite: 64 tests.
+The D455 was subsequently restarted cleanly and its colour-only stream was
+verified twice through the GUI API: `200`, 640×480 RGB8 at 15 FPS on
+`/webcam/color/image_raw`, without odometry. The device still negotiates USB
+2.1, so USB 3.x remains required before enabling depth or higher-rate work.
+Full suite: 64 tests.

@@ -21,9 +21,10 @@ Open <http://127.0.0.1:8000> on the Ubuntu host.
    `/odom` and the selected camera source every four seconds. The available
    sources are **Isaac Sim** (`/camera/image_raw`) and **RealSense D455**
    (`/webcam/color/image_raw`); start the D455 colour-only driver with
-   `bash scripts/start_d455_camera.sh`. The D455 must be on a stable USB 3.x
-   connection; a USB 2.x hub can enumerate it but repeatedly disconnect under
-   video load. The camera preview remains usable when `/odom` is unavailable.
+   `bash scripts/start_d455_camera.sh`. The current colour-only profile works
+   at 640×480 RGB8 / 15 FPS on this host's USB 2.1 link; use a stable USB 3.x
+   connection before enabling depth, higher frame rates, or longer workloads.
+   The camera preview remains usable when `/odom` is unavailable.
    driver is installed and launched. The map marker is driven
    by real odometry; the 64×48 camera image is the current M4 synthetic RGB8
    diagnostic sensor rather than an Isaac viewport. It cannot drive the robot.
