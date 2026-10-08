@@ -26,3 +26,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## GSAP
+
+The landing-page entry choreography locally vendors GSAP 3.12.5 as
+`gui/vendor/gsap.min.js`. It is distributed by GreenSock under the
+[GSAP Standard License](https://gsap.com/standard-license/). The original
+copyright and license header remains in the vendored file. GSAP only
+orchestrates DOM entry motion; it has no ROS, API, or simulator access.

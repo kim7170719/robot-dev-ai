@@ -400,3 +400,16 @@ outward from a shoulder anchor outside the torso, including during the wave
 state. The head visor is inset and the feet use a continuous shoe profile.
 This remains original Three.js geometry and presentation-only; no ROS, Isaac,
 API, or hardware behavior changed.
+
+## M14 GSAP choreography and hard-surface humanoid redesign (2026-10-08)
+
+The entry surface now has one visual subject: the locally rendered original
+Three.js humanoid. The obsolete differential-drive illustration is suppressed
+on that surface. The character was rebuilt with rounded white shell panels,
+graphite inset surfaces, independent external shoulder yokes, segmented limbs,
+and a cyan visor; its nested joints retain a clear arm-to-torso gap through
+the readiness sequence. GSAP 3.12.5 is served locally for one short staged
+arrival of the landing copy, calls to action, status, and robot. It honors
+`prefers-reduced-motion`; the existing continuous robot motion also remains
+still in that mode. Desktop WebGL rendering was reviewed with a software
+WebGL fallback. No API, ROS, Isaac, or hardware behavior changed.

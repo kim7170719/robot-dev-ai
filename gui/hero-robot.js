@@ -9,93 +9,116 @@ if (host && canvas && window.WebGLRenderingContext) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.12;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.domElement.setAttribute("role", "img");
-  renderer.domElement.setAttribute("aria-label", "原創三維人形機器人，以外置肩軸執行掃描、招手與移動展示。");
+  renderer.domElement.setAttribute("aria-label", "原創三維人形機器人，以獨立外置肩軸執行掃描、招手與移動展示。");
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(26, 1, .1, 40);
-  camera.position.set(2.95, .86, 11.7);
-  camera.lookAt(0, .38, 0);
-  const key = new THREE.DirectionalLight(0xf6f9ff, 4.8);
-  key.position.set(3.5, 5.5, 4.5);
+  const camera = new THREE.PerspectiveCamera(27, 1, .1, 40);
+  camera.position.set(3.1, 1.0, 11.6);
+  camera.lookAt(0, .45, 0);
+
+  const key = new THREE.DirectionalLight(0xffffff, 4.6);
+  key.position.set(3.5, 5.4, 4.5);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
   scene.add(key);
-  scene.add(new THREE.HemisphereLight(0x9fc8ff, 0x04070c, 2.15));
-  const rim = new THREE.DirectionalLight(0x58a9ff, 2.4);
-  rim.position.set(-4, 3.5, -2);
+  scene.add(new THREE.HemisphereLight(0xaacbff, 0x05080e, 2.1));
+  const rim = new THREE.DirectionalLight(0x75b7ff, 2.15);
+  rim.position.set(-4, 3.6, -2.4);
   scene.add(rim);
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(16, 16), new THREE.ShadowMaterial({ color: 0x000000, opacity: .35 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(16, 16), new THREE.ShadowMaterial({ color: 0x000000, opacity: .34 }));
   floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -1.93;
+  floor.position.y = -2.04;
   floor.receiveShadow = true;
   scene.add(floor);
 
-  const ceramic = new THREE.MeshPhysicalMaterial({ color: 0xe4ebf5, metalness: .34, roughness: .24, clearcoat: .6, clearcoatRoughness: .12 });
-  const ceramicDark = new THREE.MeshPhysicalMaterial({ color: 0xaebdd0, metalness: .48, roughness: .26, clearcoat: .48 });
-  const graphite = new THREE.MeshPhysicalMaterial({ color: 0x090f18, metalness: .72, roughness: .21, clearcoat: .32 });
-  const visor = new THREE.MeshPhysicalMaterial({ color: 0x02060d, metalness: .82, roughness: .08, clearcoat: .92, clearcoatRoughness: .06 });
-  const cyan = new THREE.MeshStandardMaterial({ color: 0xa8eeff, emissive: 0x138dff, emissiveIntensity: 3.2, roughness: .22 });
+  const pearl = new THREE.MeshPhysicalMaterial({ color: 0xe7eef7, metalness: .31, roughness: .22, clearcoat: .64, clearcoatRoughness: .11 });
+  const silver = new THREE.MeshPhysicalMaterial({ color: 0x9cacbf, metalness: .55, roughness: .25, clearcoat: .36 });
+  const graphite = new THREE.MeshPhysicalMaterial({ color: 0x07101a, metalness: .78, roughness: .19, clearcoat: .5, clearcoatRoughness: .08 });
+  const visor = new THREE.MeshPhysicalMaterial({ color: 0x01050a, metalness: .84, roughness: .06, clearcoat: 1, clearcoatRoughness: .03 });
+  const signal = new THREE.MeshStandardMaterial({ color: 0xb7f4ff, emissive: 0x128cff, emissiveIntensity: 2.6, roughness: .24 });
   const robot = new THREE.Group();
-  robot.rotation.y = -.31;
+  robot.rotation.y = -.3;
   scene.add(robot);
-  const sphere = new THREE.SphereGeometry(1, 28, 20);
-  const joint = new THREE.SphereGeometry(1, 20, 16);
-  const capsule = new THREE.CapsuleGeometry(.5, 1, 8, 18);
-  const mesh = (geometry, material, position, scale = [1, 1, 1]) => {
-    const node = new THREE.Mesh(geometry, material);
+
+  const setShadow = (node) => { node.castShadow = true; node.receiveShadow = true; return node; };
+  const mesh = (geometry, material, position = [0, 0, 0], scale = [1, 1, 1]) => {
+    const node = setShadow(new THREE.Mesh(geometry, material));
     node.position.set(...position);
     node.scale.set(...scale);
-    node.castShadow = true;
-    node.receiveShadow = true;
     return node;
   };
-  const orb = (material, position, scale) => mesh(sphere, material, position, scale);
-  const tube = (material, position, scale) => mesh(capsule, material, position, scale);
-  const box = (size, material, position, scale = [1, 1, 1]) => mesh(new THREE.BoxGeometry(...size), material, position, scale);
-  const plate = (points, depth, material, position) => {
-    const profile = new THREE.Shape();
-    profile.moveTo(...points[0]);
-    points.slice(1).forEach((point) => profile.lineTo(...point));
-    profile.closePath();
-    return mesh(new THREE.ExtrudeGeometry(profile, { depth, bevelEnabled: true, bevelSize: .055, bevelThickness: .05, bevelSegments: 2, curveSegments: 12 }), material, position);
+  const sphere = (material, position, scale) => mesh(new THREE.SphereGeometry(1, 28, 20), material, position, scale);
+  const capsule = (radius, length, material, position) => mesh(new THREE.CapsuleGeometry(radius, length, 8, 20), material, position);
+  const roundedRect = (width, height, radius) => {
+    const x = -width / 2;
+    const y = -height / 2;
+    const r = Math.min(radius, width / 2, height / 2);
+    const shape = new THREE.Shape();
+    shape.moveTo(x + r, y);
+    shape.lineTo(x + width - r, y);
+    shape.quadraticCurveTo(x + width, y, x + width, y + r);
+    shape.lineTo(x + width, y + height - r);
+    shape.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    shape.lineTo(x + r, y + height);
+    shape.quadraticCurveTo(x, y + height, x, y + height - r);
+    shape.lineTo(x, y + r);
+    shape.quadraticCurveTo(x, y, x + r, y);
+    return shape;
+  };
+  const shell = (width, height, depth, radius, material, position) => {
+    const geometry = new THREE.ExtrudeGeometry(roundedRect(width, height, radius), {
+      depth,
+      bevelEnabled: true,
+      bevelSegments: 3,
+      bevelSize: Math.min(radius * .45, .06),
+      bevelThickness: Math.min(depth * .18, .06),
+      curveSegments: 16,
+    });
+    geometry.translate(0, 0, -depth / 2);
+    return mesh(geometry, material, position);
   };
 
-  // A broad faceted thorax and a narrow waist deliberately replace the former toy-like sphere stack.
-  robot.add(plate([[-.78, -.46], [.78, -.46], [.61, .56], [.34, .7], [-.34, .7], [-.61, .56]], .5, ceramic, [0, 1.04, -.25]));
-  robot.add(orb(graphite, [0, 1.18, .285], [.36, .42, .065]));
-  robot.add(box([.5, .04, .025], cyan, [0, 1.46, .365]));
-  robot.add(tube(graphite, [0, .5, .01], [.38, .34, .3]));
-  robot.add(orb(ceramicDark, [-.37, .09, -.02], [.31, .24, .29]));
-  robot.add(orb(ceramicDark, [.37, .09, -.02], [.31, .24, .29]));
-  robot.add(orb(graphite, [0, 1.91, 0], [.22, .16, .18]));
+  // Original hard-surface silhouette: slim torso, external shoulder yokes, and recessed technical seams.
+  const pelvis = new THREE.Group();
+  pelvis.position.set(0, .12, 0);
+  robot.add(pelvis);
+  pelvis.add(shell(.94, .34, .52, .15, graphite, [0, 0, 0]));
+  pelvis.add(shell(.62, .12, .035, .05, silver, [0, .02, .282]));
+  robot.add(capsule(.23, .22, graphite, [0, .52, 0]));
+  robot.add(shell(1.28, 1.08, .58, .25, pearl, [0, 1.23, 0]));
+  robot.add(shell(.76, .58, .045, .19, graphite, [0, 1.25, .32]));
+  robot.add(shell(.42, .035, .02, .01, signal, [0, 1.49, .355]));
+  robot.add(shell(.48, .12, .38, .05, graphite, [0, 1.89, 0]));
 
   const head = new THREE.Group();
-  head.position.set(0, 2.28, .03);
+  head.position.set(0, 2.27, .02);
   robot.add(head);
-  head.add(orb(ceramic, [0, 0, 0], [.66, .4, .48]));
-  head.add(orb(visor, [0, -.02, .45], [.55, .18, .075]));
-  head.add(box([.64, .026, .025], cyan, [0, -.02, .53]));
-  head.add(box([.66, .06, .08], ceramicDark, [0, .36, .03]));
+  head.add(shell(1.02, .56, .65, .22, pearl, [0, 0, 0]));
+  head.add(shell(.76, .2, .04, .09, visor, [0, -.02, .355]));
+  head.add(shell(.59, .024, .014, .01, signal, [0, -.02, .388]));
+  head.add(shell(.66, .075, .08, .03, silver, [0, .31, .02]));
 
   function makeArm(side) {
     const shoulder = new THREE.Group();
-    shoulder.position.set(side * 1.03, 1.54, .01);
+    shoulder.position.set(side * .91, 1.59, 0);
     robot.add(shoulder);
-    shoulder.add(mesh(joint, graphite, [0, 0, 0], [.235, .235, .235]));
-    shoulder.add(orb(ceramic, [side * .065, .01, .02], [.37, .18, .265]));
+    shoulder.add(sphere(graphite, [0, 0, 0], [.205, .205, .205]));
+    shoulder.add(shell(.31, .25, .44, .12, pearl, [side * .1, -.015, .01]));
     const upper = new THREE.Group();
-    upper.position.set(0, -.17, .01);
+    upper.position.set(0, -.19, 0);
     shoulder.add(upper);
-    upper.add(tube(ceramic, [0, -.42, 0], [.19, .43, .18]));
-    upper.add(mesh(joint, graphite, [0, -.87, 0], [.16, .16, .16]));
+    upper.add(capsule(.155, .55, pearl, [0, -.38, 0]));
+    upper.add(sphere(graphite, [0, -.76, 0], [.14, .14, .14]));
     const forearm = new THREE.Group();
-    forearm.position.set(0, -.89, 0);
+    forearm.position.set(0, -.79, 0);
     upper.add(forearm);
-    forearm.add(tube(ceramicDark, [0, -.39, .01], [.17, .4, .16]));
-    forearm.add(orb(ceramic, [0, -.8, .03], [.16, .23, .14]));
+    forearm.add(capsule(.14, .5, silver, [0, -.34, 0]));
+    forearm.add(shell(.23, .29, .2, .08, pearl, [0, -.76, .02]));
     return { shoulder, forearm };
   }
   const leftArm = makeArm(-1);
@@ -103,26 +126,26 @@ if (host && canvas && window.WebGLRenderingContext) {
 
   function makeLeg(side) {
     const hip = new THREE.Group();
-    hip.position.set(side * .39, .06, 0);
-    robot.add(hip);
-    hip.add(mesh(joint, graphite, [0, 0, 0], [.21, .2, .2]));
+    hip.position.set(side * .34, -.02, 0);
+    pelvis.add(hip);
+    hip.add(sphere(graphite, [0, 0, 0], [.18, .18, .18]));
     const thigh = new THREE.Group();
-    thigh.position.set(0, -.16, 0);
+    thigh.position.set(0, -.18, 0);
     hip.add(thigh);
-    thigh.add(tube(ceramic, [0, -.42, 0], [.27, .39, .23]));
-    thigh.add(mesh(joint, graphite, [0, -.83, 0], [.2, .17, .2]));
+    thigh.add(shell(.31, .72, .34, .12, pearl, [0, -.39, 0]));
+    thigh.add(sphere(graphite, [0, -.8, 0], [.17, .145, .17]));
     const shin = new THREE.Group();
-    shin.position.set(0, -.86, 0);
+    shin.position.set(0, -.84, 0);
     thigh.add(shin);
-    shin.add(tube(ceramicDark, [0, -.42, .02], [.25, .43, .22]));
-    shin.add(orb(ceramic, [0, -.91, .21], [.31, .16, .5]));
+    shin.add(shell(.29, .67, .32, .1, silver, [0, -.38, .01]));
+    shin.add(shell(.36, .16, .67, .08, pearl, [0, -.8, .16]));
     return { hip, shin };
   }
   const leftLeg = makeLeg(-1);
   const rightLeg = makeLeg(1);
 
   const labels = ["SYSTEM READY", "ENVIRONMENT SCAN", "FRIENDLY WAVE", "ACKNOWLEDGED", "MOBILITY CHECK", "READY STANCE"];
-  const state = { headYaw: 0, headPitch: 0, leftArm: 0, rightArm: 0, leftElbow: 0, rightElbow: 0, leftLeg: 0, rightLeg: 0, body: 0 };
+  const state = { headYaw: 0, headPitch: 0, leftArm: -.04, rightArm: .04, leftElbow: 0, rightElbow: 0, leftLeg: 0, rightLeg: 0, body: 0 };
   const target = { ...state };
   const clock = new THREE.Clock();
   let pose = 0;
@@ -131,12 +154,12 @@ if (host && canvas && window.WebGLRenderingContext) {
   const setPose = (now) => {
     const seconds = (now - started) / 1000;
     const rhythm = Math.sin(seconds * 3.4);
-    Object.assign(target, { headYaw: 0, headPitch: 0, leftArm: -.06, rightArm: .06, leftElbow: 0, rightElbow: 0, leftLeg: 0, rightLeg: 0, body: 0 });
-    if (pose === 1) target.headYaw = rhythm * .38;
-    if (pose === 2) { target.rightArm = 1.2 + rhythm * .16; target.rightElbow = -.55; }
-    if (pose === 3) target.headPitch = Math.sin(seconds * 4.2) * .15;
-    if (pose === 4) { target.leftLeg = rhythm * .28; target.rightLeg = -rhythm * .28; target.leftArm = -rhythm * .18; target.rightArm = rhythm * .18; target.body = rhythm * .035; }
-    if (pose === 5) { target.leftArm = -.16; target.rightArm = .16; target.body = .02; }
+    Object.assign(target, { headYaw: 0, headPitch: 0, leftArm: -.04, rightArm: .04, leftElbow: 0, rightElbow: 0, leftLeg: 0, rightLeg: 0, body: 0 });
+    if (pose === 1) target.headYaw = rhythm * .35;
+    if (pose === 2) { target.rightArm = .94 + rhythm * .14; target.rightElbow = -.62; }
+    if (pose === 3) target.headPitch = Math.sin(seconds * 4.2) * .13;
+    if (pose === 4) { target.leftLeg = rhythm * .24; target.rightLeg = -rhythm * .24; target.leftArm = -rhythm * .13; target.rightArm = rhythm * .13; target.body = rhythm * .028; }
+    if (pose === 5) { target.leftArm = -.13; target.rightArm = .13; target.body = .018; }
   };
   const resize = () => {
     const { width, height } = host.getBoundingClientRect();
@@ -148,6 +171,7 @@ if (host && canvas && window.WebGLRenderingContext) {
   new ResizeObserver(resize).observe(host);
   resize();
   host.classList.add("is-ready");
+
   function render(now) {
     requestAnimationFrame(render);
     const delta = Math.min(clock.getDelta(), .05);
@@ -168,7 +192,7 @@ if (host && canvas && window.WebGLRenderingContext) {
       leftLeg.hip.rotation.x = state.leftLeg;
       rightLeg.hip.rotation.x = state.rightLeg;
       robot.rotation.z = state.body;
-      robot.rotation.y = -.31 + Math.sin(now / 5400) * .035;
+      robot.rotation.y = -.3 + Math.sin(now / 5400) * .03;
     }
     renderer.render(scene, camera);
   }
