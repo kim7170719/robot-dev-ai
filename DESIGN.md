@@ -93,16 +93,18 @@ points communicate sensor readiness. “進入工作區” moves directly to the
 existing Overview; “直接建立方案” opens Design. The scene has no external image
 dependency and reduces to a still, readable robot under `prefers-reduced-motion`.
 
-The current landing implementation uses one locally served original 3D product
-render rather than a video or external asset. It is illustration, not a
+The current landing implementation is a locally served WebGL scene using a
+rigged humanoid model; it does not depend on a network request at runtime.
+Its white-shell/charcoal-joint treatment is an illustrative concept, not a
 simulator viewport or a physical-hardware claim.
 
 ## Humanoid Motion Sequence
 
-The landing robot performs one continuous 7.2-second idle sequence: a quiet
-weight shift paired with a bounded visor-light scan. It never swaps the robot
-image mid-sequence. The motion stops outside the landing surface or in a hidden
-tab and remains a still readable boot pose when reduced motion is requested.
+The landing robot uses continuous skeletal animation with 580ms cross-fades
+between idle, acknowledgement, wave, thumbs-up, walking, and jump clips. It
+never swaps a robot image mid-sequence. The motion stops outside the landing
+surface or in a hidden tab and remains a still readable pose when reduced
+motion is requested.
 
 ## Control Surface
 

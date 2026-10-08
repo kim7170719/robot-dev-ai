@@ -27,7 +27,8 @@
     <link rel="stylesheet" href="./m14-topnav.css?v=5">
     <link rel="stylesheet" href="./m14-humanoid.css?v=3">
     <link rel="stylesheet" href="./m14-control.css?v=1">
-    <link rel="stylesheet" href="./m14-3d-hero.css?v=2">
+    <link rel="stylesheet" href="./m14-3d-hero.css?v=3">
+    <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
   </head>
   <body>
     <a class="skip-link" href="#workspace-main">跳至主要內容</a>
@@ -83,7 +84,11 @@
             </svg>
           </div>
           <div class="humanoid-stage" aria-label="人形機器人動作展示">
-            <img class="humanoid-render" src="./assets/humanoid-boot.png" alt="白色人形機器人以連續待機動作準備啟動">
+            <div class="hero-robot-3d" id="hero-robot-3d">
+              <canvas id="hero-robot-canvas" aria-label="可連續活動的三維人形機器人"></canvas>
+              <img class="humanoid-render hero-robot-fallback" src="./assets/humanoid-boot.png" alt="白色人形機器人準備啟動">
+              <p class="hero-robot-loading" aria-live="polite">LOADING MOTION CORE</p>
+            </div>
             <svg viewBox="0 0 520 680" role="img" aria-labelledby="humanoid-title humanoid-desc">
               <title id="humanoid-title">人形機器人啟動與姿勢展示</title><desc id="humanoid-desc">一台人形機器人依序執行啟動、掃描、揮手、平衡、跨步、查看、待命與完成八種姿勢。</desc>
               <g class="humanoid-rings" fill="none" stroke="#203149" stroke-width="1"><ellipse cx="270" cy="340" rx="205" ry="274"/><ellipse cx="270" cy="340" rx="245" ry="115"/><path d="M55 516Q270 620 484 516"/></g>
@@ -149,6 +154,7 @@
         </section>
       </main>
     </div>
-    <script type="module" src="./app.js?v=14"></script>
+    <script type="module" src="./app.js?v=15"></script>
+    <script type="module" src="./hero-robot.js?v=1"></script>
   </body>
 </html>

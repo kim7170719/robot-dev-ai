@@ -211,3 +211,13 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
   reduced motion.
 - The imagery is presentation-only. It is not a simulator viewport, a hardware
   claim, or a change to the GUI-to-typed-API safety boundary.
+
+### 0.11 — 2026-10-08
+
+- Replaced the static landing render with a local Three.js WebGL canvas and a
+  rigged humanoid glTF asset. The browser blends bounded skeletal clips rather
+  than rotating PNGs; motion pauses away from landing, in a hidden tab, and for
+  reduced motion. The local image remains only as a WebGL failure fallback.
+- Three.js and the source model are covered by the MIT notice in
+  `docs/THIRD_PARTY_NOTICES.md`. This stays decorative and has no ROS, Isaac,
+  physical hardware, browser-control, or typed-API implication.

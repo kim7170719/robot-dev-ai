@@ -367,3 +367,14 @@ it pauses outside landing or in a hidden browser tab, and reduced-motion leaves
 the boot pose still. This is an illustrative product surface, not an Isaac Sim
 viewport or a real-hardware representation. No API, ROS, simulator, or safety
 behavior changed.
+
+## M14 rigged WebGL humanoid entry (2026-10-08)
+
+The landing surface now renders a local rigged humanoid in a Three.js WebGL
+canvas rather than presenting a static product image. The animation mixer
+cross-fades idle, acknowledgement, wave, thumbs-up, walking, and jump clips,
+which produces continuous joint motion without rotating images. It pauses
+outside landing/in hidden tabs and retains a still render for reduced motion;
+the existing PNG is only a browser-WebGL failure fallback. The MIT notice for
+the local Three.js runtime and source model is in `docs/THIRD_PARTY_NOTICES.md`.
+No API, ROS, Isaac, or hardware behavior changed.

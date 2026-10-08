@@ -13,7 +13,8 @@ function applyLocale() {
   document.querySelectorAll(".language-alternate").forEach((node) => { node.textContent = locale === "zh" ? "EN" : "中"; });
   document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.setAttribute("aria-label", locale === "zh" ? "Switch interface language to English" : "切換介面語言為中文"));
   const active = document.querySelector("[data-view].active")?.id;
-  if (active) document.querySelector("#view-title").textContent = copy.views[active];
+  const viewTitle = document.querySelector("#view-title");
+  if (active && viewTitle) viewTitle.textContent = copy.views[active];
 }
 const demoRegistry = { hardware: [{ id: "generic-diff-base", kind: "mobile-base", vendor: "Robot Dev AI", capability_ids: ["differential-drive"] }], drivers: [{ id: "generic-diff-driver", hardware_id: "generic-diff-base", ros_distro: "jazzy" }], capabilities: [{ id: "differential-drive", interface_ids: [], template_id: "differential-drive" }], packages: [{ id: "diff-drive-controller", required_capability_ids: ["differential-drive"] }], compatibility: [{ hardware_id: "generic-diff-base", package_id: "diff-drive-controller", status: "validated" }] };
 
@@ -55,7 +56,8 @@ function activateView(id) {
   document.body.classList.toggle("is-landing", id === "landing");
   document.body.classList.toggle("is-control", id === "dashboard");
   syncHumanoidMotion(id === "landing");
-  document.querySelector("#view-title").textContent = translations[locale].views[id] || id;
+  const viewTitle = document.querySelector("#view-title");
+  if (viewTitle) viewTitle.textContent = translations[locale].views[id] || id;
   history.replaceState(null, "", `#${id}`);
   window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
 }
