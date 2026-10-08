@@ -53,9 +53,27 @@ function activateView(id) {
   document.querySelectorAll("[data-view]").forEach((view) => view.classList.toggle("active", view.id === id));
   document.querySelectorAll("[data-view-link]").forEach((link) => link.classList.toggle("active", link.dataset.viewLink === id));
   document.body.classList.toggle("is-landing", id === "landing");
+  document.body.classList.toggle("is-control", id === "dashboard");
+  syncHumanoidSequence(id === "landing");
   document.querySelector("#view-title").textContent = translations[locale].views[id] || id;
   history.replaceState(null, "", `#${id}`);
   window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+}
+const humanoidPoses = ["SYSTEM BOOT", "ENVIRONMENT SCAN", "FRIENDLY WAVE", "BALANCE CHECK", "MOBILITY STEP", "VISION INSPECT", "READY STANCE", "TASK COMPLETE"];
+let humanoidPose = 0;
+let humanoidTimer;
+function showHumanoidPose(index) {
+  const robot = document.querySelector("#humanoid");
+  if (!robot) return;
+  humanoidPose = index % humanoidPoses.length;
+  robot.dataset.pose = String(humanoidPose);
+  document.querySelector("#humanoid-pose-index").textContent = String(humanoidPose + 1).padStart(2, "0");
+  document.querySelector("#humanoid-pose-label").textContent = humanoidPoses[humanoidPose];
+}
+function syncHumanoidSequence(shouldRun) {
+  window.clearInterval(humanoidTimer);
+  if (!shouldRun || reducedMotion) return;
+  humanoidTimer = window.setInterval(() => showHumanoidPose(humanoidPose + 1), 2600);
 }
 function setView(id) {
   if (!reducedMotion && document.startViewTransition) {

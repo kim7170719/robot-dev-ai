@@ -93,6 +93,23 @@ points communicate sensor readiness. “進入工作區” moves directly to the
 existing Overview; “直接建立方案” opens Design. The scene has no external image
 dependency and reduces to a still, readable robot under `prefers-reduced-motion`.
 
+The current landing implementation uses a local SVG humanoid rather than a
+video or external asset.
+
+## Humanoid Motion Sequence
+
+The landing robot cycles every 2.6 seconds through eight legible poses: system
+boot, environment scan, friendly wave, balance check, mobility step, vision
+inspect, ready stance, and task complete. The cycle stops outside the landing
+surface and remains at boot when reduced motion is requested.
+
+## Control Surface
+
+Overview is the operational counterpart to the landing surface: deep ink,
+cool-blue signal lines, and high-contrast data surfaces communicate the same
+robotic system without compromising readable controls. The task-form views
+stay bright and calm for focused input and review.
+
 ## Shapes
 
 - Small control radius: 12px.

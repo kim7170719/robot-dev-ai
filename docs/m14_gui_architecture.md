@@ -1,6 +1,6 @@
 # M14 GUI MVP architecture
 
-Version: 0.8 (2026-10-08)
+Version: 0.9 (2026-10-08)
 
 ## Scope and boundary
 
@@ -192,3 +192,12 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
   review, system checks, and help no longer lead with internal AI or ROS
   implementation terms; the literal technical evidence remains available in
   the relevant detail panels.
+
+### 0.9 — 2026-10-08
+
+- Replaced the entry illustration with a self-contained SVG humanoid that
+  cycles through eight named readiness poses only while the landing view is
+  active. Reduced-motion renders the still boot pose.
+- Restyled Overview as a deep-ink control surface consistent with the landing
+  scene. This is presentation-only: the typed API, confirmations, and read-only
+  camera/runtime boundaries remain unchanged.

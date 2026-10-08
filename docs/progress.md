@@ -347,3 +347,13 @@ runtime were removed from primary actions and explanatory copy. Technical ROS
 and API evidence remains literal in the details views. Dynamic simulation
 state now reports plain outcomes such as normal, partially readable, or
 unavailable. Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 humanoid landing and control surface (2026-10-08)
+
+The entry surface now uses a self-contained SVG humanoid robot with eight
+bounded poses—boot, scan, wave, balance, step, inspect, ready, and complete—
+instead of the former differential-drive illustration. The pose sequence stops
+outside the landing view and has a reduced-motion still state. Overview now
+uses the same deep-ink and signal-blue visual system as the landing page while
+the task-form views stay light for readability. Automated suite:
+`.venv/bin/python -m pytest -q` → 64 passed.
