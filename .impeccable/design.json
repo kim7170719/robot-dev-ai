@@ -1,0 +1,37 @@
+{
+  "$schema": "https://impeccable.style/schema/design.json",
+  "version": 2,
+  "name": "Robot Dev AI M14",
+  "description": "Precision product surface for a safe virtual-robot workflow.",
+  "direction": "Precision Product Surface",
+  "tokens": {
+    "colors": {
+      "canvas": "#f5f5f7",
+      "surface": "#ffffff",
+      "ink": "#17181c",
+      "muted": "#60646f",
+      "signal": "#0071e3",
+      "focus": "#005bb8",
+      "evidence": "#10151d"
+    },
+    "radii": {
+      "small": "12px",
+      "medium": "18px",
+      "large": "26px",
+      "pill": "999px"
+    },
+    "breakpoints": {
+      "compact": "640px",
+      "tablet": "960px"
+    },
+    "motion": {
+      "reduced": "All animation and transitions reduce to 0.01ms."
+    }
+  },
+  "principles": [
+    "Use the bright product surface for planning and review; reserve deep ink for runtime evidence.",
+    "Signal blue is an activation and focus color, not decoration.",
+    "One primary action per decision area; confirmations remain explicit.",
+    "Design for keyboard use and a no-horizontal-scroll compact layout."
+  ]
+}

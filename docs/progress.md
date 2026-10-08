@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **M14 GUI MVP architecture and typed API**. G12 remains frozen and runnable without Cosmos; M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
+Current work: **M14 GUI MVP complete (G14 PASS)**. G12 remains frozen and runnable without Cosmos; M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
 
 ## M8 Template Engine / Gate G8
 
@@ -33,7 +33,7 @@ Current work: **M14 GUI MVP architecture and typed API**. G12 remains frozen and
 | Sensor/navigation/GPU fragments | PASS | LiDAR, camera, Nav2, and Isaac ROS image-processing templates expand deterministically |
 | Generated ROS package builds | PASS | generated `demo_diff_drive` passed Jazzy `colcon build --packages-select demo_diff_drive` |
 
-Automated test suite: `.venv/bin/pytest` → 51 passed (2026-10-06).
+Automated test suite: `.venv/bin/pytest` → 61 passed (2026-10-07).
 
 ## M9 Requirement Agent / Gate G9
 
@@ -105,16 +105,19 @@ Automated test suite: `.venv/bin/pytest` → 51 passed (2026-10-06).
 
 **Gate G13: DEFERRED.** See `docs/m13_cosmos.md` and ADR 0006; no model/container pull was attempted on unsupported hardware, and G13 no longer blocks the main roadmap.
 
-## M14 GUI MVP (started)
+## M14 GUI MVP (completed)
 
 | Criterion | Status | Evidence |
 |---|---|---|
 | Roadmap re-baseline | PASS | `docs/roadmap_v0.3.md` moves Cosmos to Optional Extension O1 and makes GUI the main path |
 | API / GUI safety boundary | PASS | ADR 0007 and `docs/m14_gui_architecture.md`: GUI reaches core only through a typed API; no arbitrary shell, direct ROS, or Isaac viewport |
-| Project and requirement API | PASS | `GET /api/v1/project/summary` exposes frozen-MVP metadata; `POST /api/v1/requirements/parse` returns the existing typed specification/provenance without ROS or shell execution |
-| Five GUI views | NOT STARTED | Dashboard, Requirement, Robot Configuration, Runtime, Validation/Experience |
+| Project, requirement, compatibility, template preview, confirmed workspace generation, and restricted build API | PASS | Typed core behavior is exposed without ROS; generated ROS packages are confined to `<workspace>/src/`, and only an already generated package with a third `confirmed=true` can run `colcon build --packages-select`; typed diagnosis preserves build failures |
+| Read-only runtime snapshot API | PASS | `GET /api/v1/runtime/snapshot` returns the existing allowlisted ROS node, topic-type, controller, and TF evidence; it does not start nodes or publish messages |
+| Fixed simulation validation and repair-proposal APIs | PASS | The fixed `m4-navigation` scenario requires explicit confirmation; repair proposals return typed diffs without applying them |
+| Full Run orchestration and live simulation health | PASS | Confirmed `POST /api/v1/mvp/full-run` uses the frozen M12 pipeline in an ephemeral workspace, then returns build and runtime evidence; dashboard distinguishes Online, Partial, and Unavailable runtime states |
+| Five GUI views | PASS | Same-origin build-less GUI exposes Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience through a responsive latest-run dashboard; `docs/m14_demo.md` records the local HTTP smoke and 1440px/390px visual review |
 
-**Gate G14: NOT RUN.**
+**Gate G14: PASS (2026-10-07).** The five-view GUI consumes the typed API only, preserves confirmation gates for workspace/build/virtual validation, and renders runtime, validation, and repair evidence without direct browser ROS, shell, Isaac viewport, Cosmos, Jetson, or physical-hardware access. Full suite: 61 tests; local HTTP demo passed. A verified Full Run parsed four capabilities, passed restricted build, cleaned its temporary workspace, and observed 25 nodes / 80 topics / 3 TF edges with a truthful Partial status for one timed-out TF inspection.
 
 ## Gate 0 checklist
 
@@ -233,3 +236,232 @@ Full commands: `docs/m2_simple_diff_robot.md`.
 | Gate G4 | PASS | `experiments/raw/M4-G4.md` |
 
 Commands: `docs/m4_nav2.md`. Decision: `docs/decisions/0004-synthetic-2d-lidar.md`.
+
+## M14 simulation telemetry extension (2026-10-07)
+
+| Item | Status | Evidence |
+|---|---|---|
+| Fixed camera/odometry API | PASS | `GET /api/v1/simulation/frame`; no request parameters and no ROS publication |
+| Isaac camera, odometry, LiDAR publishers | PASS | one publisher each on `/camera/image_raw`, `/odom`, `/scan` |
+| GUI telemetry view | PASS | dashboard renders returned odometry marker and ROS camera PNG |
+| Motion proof | PASS | bounded virtual command yielded `x=0.350 m`, `y=0.080 m`, `yaw=0.452 rad` |
+| Automated suite | PASS | `pytest -q` → 63 passed |
+
+The M4 camera sample is a 64×48 synthetic RGB8 diagnostic colour field. It is
+shown honestly as sensor evidence, not presented as an Isaac viewport or a
+photorealistic vehicle view. Start the pinned container with
+`bash scripts/start_m4_isaac_sim.sh` and the GUI with
+`bash scripts/run_m14_demo.sh`.
+
+M14 Sensor Workbench extension (2026-10-07): the Dashboard now separates
+runtime health from a full-width camera workbench. It offers a fixed,
+read-only source selector for Isaac `/camera/image_raw` and RealSense D455
+`/webcam/color/image_raw`, a large RGB frame stage, per-source status/topic/
+resolution metadata, live-refresh control, and odometry map. A selected source
+without a publisher returns typed HTTP 503; it is never represented as live.
+
+## M4 navigation runtime recovery (2026-10-07)
+
+| Check | Status | Evidence |
+|---|---|---|
+| Root cause isolated | PASS | stale Nav2 process group plus orphan lifecycle manager competed with a new instance's DDS services |
+| Prerequisite graph | PASS | `/scan`, `/odom`, `/map`, TF and `map → base_link` were present |
+| Fresh Nav2 lifecycle | PASS | `controller_server`, `planner_server`, `bt_navigator` each reported `active [3]` |
+| Fixed virtual goal | PASS | `(1.0, 0.0)` `NavigateToPose` returned `SUCCEEDED` |
+
+Recovery sequence: stop the complete old Nav2 launch process tree, verify no
+Nav2 server/lifecycle process remains, then start exactly one
+`nav2_launch.py` instance after SLAM has map/TF data. Do not use the action
+name advertised through stale DDS discovery as evidence that navigation works.
+
+## AI-assisted Design first slice (2026-10-07)
+
+`POST /api/v1/design/plan` now composes the existing requirement parser,
+frozen validated registry, compatibility resolver, and in-memory template
+expander. It returns capability IDs, selected packages, and template previews
+with no generated workspace. The GUI Design workspace presents that reviewable
+plan rather than raw parser JSON. The existing structured-provider contract can
+later connect a local or external model, but no key, provider, workspace write,
+or build is enabled by this endpoint. Full suite: 64 tests.
+
+## M14 GUI presentation refinement (2026-10-07)
+
+The five existing, typed-API GUI views now use the operator-facing labels
+Overview, Design, Build, Run, and Diagnose. The landing view narrows the
+workflow to three understandable stages: create a plan, review/generate, and
+run in simulation. Its Design CTA is the primary next action; operational
+evidence remains available without dominating the starting screen. The
+existing local CSS tokens were used for a typography-first, low-chrome visual
+pass. Chrome renders were reviewed at 1500px and 390px; the narrow layout now
+uses full-width stacked actions and has no page-level horizontal overflow.
+No robotics behavior, API contract, ROS topic, or safety boundary changed.
+Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 precision product-surface redesign (2026-10-07)
+
+M14 was visually rebuilt without changing a robotics/API behavior or safety
+boundary. The workspace now uses a low-chrome titanium surface, ink-first
+typography, a single signal-blue active state, and a dark stage only for
+simulation evidence. `PRODUCT.md` records the real product constraints and
+`DESIGN.md` records the implemented tokens, responsive layout, components, and
+accessibility rules. The redesigned Overview and Design views were visually
+reviewed at 1500px and 390px. Automated suite:
+`.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 workflow-motion and compact-navigation pass (2026-10-07)
+
+The M14 presentation now communicates state changes rather than behaving as a
+static dashboard: workspace navigation uses a short clipped transition,
+runtime updates confirm their affected surface, and the live camera indicator
+signals sampling. The only persistent motion is that live signal and it has a
+reduced-motion alternative. At tablet and mobile widths the workflow is a
+3+2 stage grid, replacing the previous horizontally scrollable navigation.
+No API/ROS behavior changed. Automated suite:
+`.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 animated robot entry surface (2026-10-07)
+
+Root navigation now opens a dedicated, full-viewport Robot Dev AI landing
+surface instead of dropping immediately into the dashboard. Its self-contained
+SVG differential-drive robot communicates sensor readiness with a LiDAR sweep,
+camera response, and bounded signal-path motion; it has no external asset or
+network dependency. Operators can enter Overview or go directly to Design.
+Explicit workspace hashes remain supported, and `prefers-reduced-motion` uses a
+still scene. Desktop (1500px) and mobile (390px) renders were inspected.
+Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 top navigation and bilingual UI pass (2026-10-07)
+
+The former left workflow rail was moved to a full-width top navigation with
+five explicit stages. A Chinese/English switch persists the chosen locale for
+the entry surface, workflow labels, and primary Overview actions; technical
+ROS/API evidence remains literal. Desktop and 390px direct-link layouts were
+inspected. Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 plain-language operator copy (2026-10-08)
+
+The primary M14 workflow now explains the operator's task rather than its AI
+implementation: plan, review, check the simulation, and get help when needed.
+Internal terms such as schema, registry, template, workspace, command, and
+runtime were removed from primary actions and explanatory copy. Technical ROS
+and API evidence remains literal in the details views. Dynamic simulation
+state now reports plain outcomes such as normal, partially readable, or
+unavailable. Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 humanoid landing and control surface (2026-10-08)
+
+The entry surface now uses a self-contained SVG humanoid robot with eight
+bounded poses—boot, scan, wave, balance, step, inspect, ready, and complete—
+instead of the former differential-drive illustration. The pose sequence stops
+outside the landing view and has a reduced-motion still state. Overview now
+uses the same deep-ink and signal-blue visual system as the landing page while
+the task-form views stay light for readability. Automated suite:
+`.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 3D humanoid entry refinement (2026-10-08)
+
+The landing robot now uses one locally served original 3D product render rather
+than the provisional SVG line drawing. A continuous 7.2-second idle sequence
+communicates a weight shift and visor scan without cycling static pose images;
+it pauses outside landing or in a hidden browser tab, and reduced-motion leaves
+the boot pose still. This is an illustrative product surface, not an Isaac Sim
+viewport or a real-hardware representation. No API, ROS, simulator, or safety
+behavior changed.
+
+## M14 rigged WebGL humanoid entry (2026-10-08)
+
+The landing surface now renders a local rigged humanoid in a Three.js WebGL
+canvas rather than presenting a static product image. The animation mixer
+cross-fades idle, acknowledgement, wave, thumbs-up, walking, and jump clips,
+which produces continuous joint motion without rotating images. It pauses
+outside landing/in hidden tabs and retains a still render for reduced motion;
+the existing PNG is only a browser-WebGL failure fallback. The MIT notice for
+the local Three.js runtime and source model is in `docs/THIRD_PARTY_NOTICES.md`.
+No API, ROS, Isaac, or hardware behavior changed.
+
+## M14 original procedural humanoid entry (2026-10-08)
+
+The landing WebGL scene now renders an original humanoid constructed from
+native Three.js geometry rather than a downloaded rigged model. Its white
+ceramic shell, graphite joints, and cyan visor run six continuous, damped
+motion states—ready, scan, wave, acknowledgement, mobility, and ready stance.
+The scene remains locally served, pauses away from landing/in hidden tabs, and
+keeps a still frame for reduced motion; the local PNG is only a WebGL-failure
+fallback. The old model and GLTF helper files were removed, leaving only the
+MIT-licensed Three.js runtime. No API, ROS, Isaac, or hardware behavior
+changed.
+
+## M14 procedural humanoid anatomy refinement (2026-10-08)
+
+The landing character was rebuilt around a faceted thorax, narrow waist,
+separated hip shells, and externally mounted shoulders. This removes the
+former spherical toy-like silhouette and ensures the arm hierarchy rotates
+outward from a shoulder anchor outside the torso, including during the wave
+state. The head visor is inset and the feet use a continuous shoe profile.
+This remains original Three.js geometry and presentation-only; no ROS, Isaac,
+API, or hardware behavior changed.
+
+## M14 GSAP choreography and hard-surface humanoid redesign (2026-10-08)
+
+The entry surface now has one visual subject: the locally rendered original
+Three.js humanoid. The obsolete differential-drive illustration is suppressed
+on that surface. The character was rebuilt with rounded white shell panels,
+graphite inset surfaces, independent external shoulder yokes, segmented limbs,
+and a cyan visor; its nested joints retain a clear arm-to-torso gap through
+the readiness sequence. GSAP 3.12.5 is served locally for one short staged
+arrival of the landing copy, calls to action, status, and robot. It honors
+`prefers-reduced-motion`; the existing continuous robot motion also remains
+still in that mode. Desktop WebGL rendering was reviewed with a software
+WebGL fallback. No API, ROS, Isaac, or hardware behavior changed.
+
+## M14 entry and D455 reliability pass (2026-10-08)
+
+The landing page now uses a restrained product-stage treatment: one large
+headline, a single robot stage, an explicit product bar, and a GSAP
+transform/opacity/clip-path arrival. The humanoid readiness sequence no longer
+includes a friendly-wave state. D455 capture no longer requires an unrelated
+`/odom` message before returning a camera frame; absent odometry is explicitly
+marked in the typed response and GUI. `scripts/start_d455_camera.sh` starts
+the colour-only driver at the fixed GUI topic `/webcam/color/image_raw`.
+The D455 was subsequently restarted cleanly and its colour-only stream was
+verified twice through the GUI API: `200`, 640×480 RGB8 at 15 FPS on
+`/webcam/color/image_raw`, without odometry. The device still negotiates USB
+2.1, so USB 3.x remains required before enabling depth or higher-rate work.
+Full suite: 64 tests.
+
+## M14 D455 preview responsiveness pass (2026-10-08)
+
+The D455 was verified with colour and depth enabled at 640×480 / 30 FPS:
+`/webcam/color/image_raw` is `rgb8` and
+`/webcam/depth/image_rect_raw` is `16UC1`. The GUI remains a bounded
+read-only PNG snapshot viewer, not a video transport; its polling interval was
+reduced from four seconds to one second and skips an update while a request is
+still active. Local D455 API measurements were normally about 0.92 seconds per
+~450 KB PNG, with a slower first frame observed at 2.3 seconds. A true 30 FPS
+browser view requires a future streaming transport rather than increasing this
+snapshot polling rate. Full suite: 64 tests.
+
+## M14 D455 continuous-preview pass (2026-10-08)
+
+The fixed D455 browser source now uses a read-only multipart MJPEG endpoint
+instead of requesting PNG snapshots. Its ROS helper is still constrained to
+the authorized `/webcam/color/image_raw` topic and publishes no ROS messages.
+On the physical D455, a three-second curl received 1,770,569 bytes of JPEG
+parts with the expected multipart response and JPEG signature; its helper
+exited after the client disconnected. The workbench starts that stream only
+for the D455 source and stops it when the source or live toggle changes; Isaac
+continues to use the existing bounded snapshot evidence. Full suite: 65 tests.
+
+## M14 D455 low-latency capture pass (2026-10-08)
+
+`scripts/start_d455_camera.sh` now starts the fixed colour topic at
+640×480 / 30 FPS, then sets the D455 node's colour, depth, and align queues to
+one frame after the node is ready. Those are runtime ROS parameters (not
+`rs_launch.py` launch arguments); this was confirmed on the physical driver.
+The browser MJPEG subscriber also uses a depth-one best-effort QoS profile, so
+it favors the newest image over delivery of queued frames. RGBD can be opted
+into with `ROBOT_DEV_AI_D455_RGBD=1`, but low-latency preview defaults to
+colour-only because the current link reports USB 2.1. This removes avoidable
+software backlogs; end-to-end photon-to-screen latency still needs a timestamp
+measurement, and WebRTC is the next transport if MJPEG is insufficient. Full
+suite: 65 tests.
