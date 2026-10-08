@@ -451,3 +451,17 @@ parts with the expected multipart response and JPEG signature; its helper
 exited after the client disconnected. The workbench starts that stream only
 for the D455 source and stops it when the source or live toggle changes; Isaac
 continues to use the existing bounded snapshot evidence. Full suite: 65 tests.
+
+## M14 D455 low-latency capture pass (2026-10-08)
+
+`scripts/start_d455_camera.sh` now starts the fixed colour topic at
+640×480 / 30 FPS, then sets the D455 node's colour, depth, and align queues to
+one frame after the node is ready. Those are runtime ROS parameters (not
+`rs_launch.py` launch arguments); this was confirmed on the physical driver.
+The browser MJPEG subscriber also uses a depth-one best-effort QoS profile, so
+it favors the newest image over delivery of queued frames. RGBD can be opted
+into with `ROBOT_DEV_AI_D455_RGBD=1`, but low-latency preview defaults to
+colour-only because the current link reports USB 2.1. This removes avoidable
+software backlogs; end-to-end photon-to-screen latency still needs a timestamp
+measurement, and WebRTC is the next transport if MJPEG is insufficient. Full
+suite: 65 tests.

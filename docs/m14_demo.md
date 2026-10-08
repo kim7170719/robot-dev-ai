@@ -20,8 +20,10 @@ Open <http://127.0.0.1:8000> on the Ubuntu host.
    When the G4 Isaac container is running, **Robot telemetry view** samples
    `/odom` and the selected camera source. The available sources are **Isaac
    Sim** (`/camera/image_raw`) and **RealSense D455**
-   (`/webcam/color/image_raw`); start the D455 colour-only driver with
-   `bash scripts/start_d455_camera.sh`. Selecting D455 now opens its fixed,
+   (`/webcam/color/image_raw`); start the D455 low-latency colour driver with
+   `bash scripts/start_d455_camera.sh`. It uses 640×480 / 30 FPS and keeps one
+   pending frame per driver queue. Select RGBD only when needed with
+   `ROBOT_DEV_AI_D455_RGBD=1 bash scripts/start_d455_camera.sh`. Selecting D455 now opens its fixed,
    read-only MJPEG preview; it is not a ROS controller, recorder, or arbitrary
    topic browser. The camera preview remains usable when `/odom` is
    unavailable. Use a stable USB 3.x connection for sustained depth or

@@ -10,13 +10,20 @@ import cv2
 import numpy
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
 from sensor_msgs.msg import Image
 
 
 class MjpegNode(Node):
     def __init__(self, image_topic: str) -> None:
         super().__init__("robot_dev_ai_mjpeg_stream")
-        self.create_subscription(Image, image_topic, self._on_image, 10)
+        # A preview should show the newest camera frame, not build a backlog.
+        latest_frame_qos = QoSProfile(
+            history=QoSHistoryPolicy.KEEP_LAST,
+            depth=1,
+            reliability=QoSReliabilityPolicy.BEST_EFFORT,
+        )
+        self.create_subscription(Image, image_topic, self._on_image, latest_frame_qos)
 
     def _on_image(self, message: Image) -> None:
         encoding = message.encoding.lower()
