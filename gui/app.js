@@ -59,22 +59,24 @@ function activateView(id) {
   history.replaceState(null, "", `#${id}`);
   window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
 }
-const humanoidPoses = ["SYSTEM BOOT", "ENVIRONMENT SCAN", "FRIENDLY WAVE", "BALANCE CHECK", "MOBILITY STEP", "VISION INSPECT", "READY STANCE", "TASK COMPLETE"];
+const humanoidPoses = ["SYSTEM BOOT", "ENVIRONMENT SCAN", "FRIENDLY WAVE", "MOBILITY STEP"];
 let humanoidPose = 0;
 let humanoidTimer;
 function showHumanoidPose(index) {
-  const robot = document.querySelector("#humanoid");
-  if (!robot) return;
+  const frames = document.querySelectorAll("[data-humanoid-frame]");
+  if (!frames.length) return;
   humanoidPose = index % humanoidPoses.length;
-  robot.dataset.pose = String(humanoidPose);
+  frames.forEach((frame, frameIndex) => frame.classList.toggle("is-active", frameIndex === humanoidPose));
   document.querySelector("#humanoid-pose-index").textContent = String(humanoidPose + 1).padStart(2, "0");
   document.querySelector("#humanoid-pose-label").textContent = humanoidPoses[humanoidPose];
 }
 function syncHumanoidSequence(shouldRun) {
   window.clearInterval(humanoidTimer);
-  if (!shouldRun || reducedMotion) return;
-  humanoidTimer = window.setInterval(() => showHumanoidPose(humanoidPose + 1), 2600);
+  showHumanoidPose(humanoidPose);
+  if (!shouldRun || reducedMotion || document.hidden) return;
+  humanoidTimer = window.setInterval(() => showHumanoidPose(humanoidPose + 1), 3200);
 }
+document.addEventListener("visibilitychange", () => syncHumanoidSequence(document.visibilityState === "visible" && document.body.classList.contains("is-landing")));
 function setView(id) {
   if (!reducedMotion && document.startViewTransition) {
     document.startViewTransition(() => activateView(id));

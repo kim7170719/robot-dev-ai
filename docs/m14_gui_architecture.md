@@ -201,3 +201,12 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 - Restyled Overview as a deep-ink control surface consistent with the landing
   scene. This is presentation-only: the typed API, confirmations, and read-only
   camera/runtime boundaries remain unchanged.
+
+### 0.10 — 2026-10-08
+
+- Replaced the provisional SVG humanoid with four locally served, original 3D
+  product-render frames: boot, environment scan, greeting, and mobility step.
+  The frames crossfade only while the entry view is active; they pause when the
+  document is hidden, and reduced-motion retains the boot frame.
+- The imagery is presentation-only. It is not a simulator viewport, a hardware
+  claim, or a change to the GUI-to-typed-API safety boundary.

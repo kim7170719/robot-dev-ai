@@ -357,3 +357,13 @@ outside the landing view and has a reduced-motion still state. Overview now
 uses the same deep-ink and signal-blue visual system as the landing page while
 the task-form views stay light for readability. Automated suite:
 `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 3D humanoid entry refinement (2026-10-08)
+
+The landing robot now uses four locally served original 3D product-render
+frames rather than the provisional SVG line drawing: boot, environment scan,
+greeting, and mobility step. The real frames crossfade only while landing is
+visible and pause when the browser tab is hidden; reduced-motion leaves the
+boot frame still. This is an illustrative product surface, not an Isaac Sim
+viewport or a real-hardware representation. No API, ROS, simulator, or safety
+behavior changed.

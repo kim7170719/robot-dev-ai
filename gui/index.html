@@ -25,8 +25,9 @@
     <link rel="stylesheet" href="./m14-motion.css?v=1">
     <link rel="stylesheet" href="./m14-landing.css?v=1">
     <link rel="stylesheet" href="./m14-topnav.css?v=5">
-    <link rel="stylesheet" href="./m14-humanoid.css?v=2">
+    <link rel="stylesheet" href="./m14-humanoid.css?v=3">
     <link rel="stylesheet" href="./m14-control.css?v=1">
+    <link rel="stylesheet" href="./m14-3d-hero.css?v=1">
   </head>
   <body>
     <a class="skip-link" href="#workspace-main">跳至主要內容</a>
@@ -82,6 +83,10 @@
             </svg>
           </div>
           <div class="humanoid-stage" aria-label="人形機器人動作展示">
+            <img class="humanoid-render is-active" data-humanoid-frame="0" src="./assets/humanoid-boot.png" alt="白色人形機器人站立啟動">
+            <img class="humanoid-render" data-humanoid-frame="1" src="./assets/humanoid-scan.png" alt="">
+            <img class="humanoid-render" data-humanoid-frame="2" src="./assets/humanoid-wave.png" alt="">
+            <img class="humanoid-render" data-humanoid-frame="3" src="./assets/humanoid-step.png" alt="">
             <svg viewBox="0 0 520 680" role="img" aria-labelledby="humanoid-title humanoid-desc">
               <title id="humanoid-title">人形機器人啟動與姿勢展示</title><desc id="humanoid-desc">一台人形機器人依序執行啟動、掃描、揮手、平衡、跨步、查看、待命與完成八種姿勢。</desc>
               <g class="humanoid-rings" fill="none" stroke="#203149" stroke-width="1"><ellipse cx="270" cy="340" rx="205" ry="274"/><ellipse cx="270" cy="340" rx="245" ry="115"/><path d="M55 516Q270 620 484 516"/></g>
