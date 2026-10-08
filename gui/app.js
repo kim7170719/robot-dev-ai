@@ -256,4 +256,4 @@ if (initialView?.matches("[data-view]")) {
 } else activateView("landing");
 applyLocale();
 refreshSimulation();
-window.setInterval(() => { if (document.querySelector("#live-preview").checked) refreshSimulationFrame(); }, 4000);
+window.setInterval(() => { if (document.querySelector("#live-preview").checked) refreshSimulationFrame(); }, 1000);

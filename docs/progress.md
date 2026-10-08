@@ -428,3 +428,15 @@ verified twice through the GUI API: `200`, 640×480 RGB8 at 15 FPS on
 `/webcam/color/image_raw`, without odometry. The device still negotiates USB
 2.1, so USB 3.x remains required before enabling depth or higher-rate work.
 Full suite: 64 tests.
+
+## M14 D455 preview responsiveness pass (2026-10-08)
+
+The D455 was verified with colour and depth enabled at 640×480 / 30 FPS:
+`/webcam/color/image_raw` is `rgb8` and
+`/webcam/depth/image_rect_raw` is `16UC1`. The GUI remains a bounded
+read-only PNG snapshot viewer, not a video transport; its polling interval was
+reduced from four seconds to one second and skips an update while a request is
+still active. Local D455 API measurements were normally about 0.92 seconds per
+~450 KB PNG, with a slower first frame observed at 2.3 seconds. A true 30 FPS
+browser view requires a future streaming transport rather than increasing this
+snapshot polling rate. Full suite: 64 tests.
