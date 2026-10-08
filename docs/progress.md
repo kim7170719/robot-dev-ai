@@ -390,3 +390,13 @@ keeps a still frame for reduced motion; the local PNG is only a WebGL-failure
 fallback. The old model and GLTF helper files were removed, leaving only the
 MIT-licensed Three.js runtime. No API, ROS, Isaac, or hardware behavior
 changed.
+
+## M14 procedural humanoid anatomy refinement (2026-10-08)
+
+The landing character was rebuilt around a faceted thorax, narrow waist,
+separated hip shells, and externally mounted shoulders. This removes the
+former spherical toy-like silhouette and ensures the arm hierarchy rotates
+outward from a shoulder anchor outside the torso, including during the wave
+state. The head visor is inset and the feet use a continuous shoe profile.
+This remains original Three.js geometry and presentation-only; no ROS, Isaac,
+API, or hardware behavior changed.
