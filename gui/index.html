@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="./m14-polish.css?v=2">
     <link rel="stylesheet" href="./m14-motion.css?v=1">
     <link rel="stylesheet" href="./m14-landing.css?v=1">
+    <link rel="stylesheet" href="./m14-topnav.css?v=4">
   </head>
   <body>
     <a class="skip-link" href="#workspace-main">跳至主要內容</a>
@@ -45,11 +46,15 @@
         <div class="sidebar-footer"><span class="dot"></span><span><strong>Virtual-only evidence</strong><small>G12 frozen · G14 GUI</small></span></div>
       </aside>
       <main class="main-content" id="workspace-main" tabindex="-1">
-        <header class="topbar"><div class="breadcrumb"><span>Robot Dev AI</span><i>/</i><strong id="view-title">Dashboard</strong></div><div><span class="shield">Safety boundary active</span><span class="avatar">YU</span></div></header>
+        <header class="topbar">
+          <a class="top-brand" href="#landing" data-view-link="landing" aria-label="Robot Dev AI animated home"><span class="top-brand-mark" aria-hidden="true"><i></i><i></i></span><strong>Robot Dev AI</strong></a>
+          <nav class="top-workflow" aria-label="Workspace navigation"><a href="#dashboard" data-view-link="dashboard" data-i18n="nav.overview">Overview</a><a href="#requirement" data-view-link="requirement" data-i18n="nav.design">Design</a><a href="#configuration" data-view-link="configuration" data-i18n="nav.build">Build</a><a href="#runtime" data-view-link="runtime" data-i18n="nav.run">Run</a><a href="#validation" data-view-link="validation" data-i18n="nav.diagnose">Diagnose</a></nav>
+          <div class="topbar-actions"><button class="language-toggle" data-action="toggle-language" type="button" aria-label="Switch interface language"><span class="language-current">EN</span><span class="language-divider">/</span><span class="language-alternate">中</span></button><span class="shield" data-i18n="chrome.safety">Safety boundary active</span><span class="avatar">YU</span></div>
+        </header>
 
         <section class="view landing" id="landing" data-view aria-labelledby="landing-title">
           <div class="landing-topline"><span>ROBOT DEV AI</span><span>VIRTUAL ROBOT STUDIO</span></div>
-          <div class="landing-copy"><p>設計、驗證、模擬</p><h1 id="landing-title">讓第一台機器人<br>先在虛擬世界醒來。</h1><p class="landing-summary">從自然語言需求出發，建立具備 LiDAR、Camera 與導航能力的差速機器人；每個動作都先在可審閱的安全邊界內完成。</p><div class="landing-actions"><button class="landing-enter" data-go="dashboard">進入工作區 <span aria-hidden="true">→</span></button><button class="landing-text-action" data-go="requirement">直接建立方案</button></div></div>
+          <div class="landing-copy"><p data-i18n="landing.kicker">設計、驗證、模擬</p><h1 id="landing-title" data-i18n-html="landing.title">讓第一台機器人<br>先在虛擬世界醒來。</h1><p class="landing-summary" data-i18n="landing.summary">從自然語言需求出發，建立具備 LiDAR、Camera 與導航能力的差速機器人；每個動作都先在可審閱的安全邊界內完成。</p><div class="landing-actions"><button class="landing-enter" data-go="dashboard"><span data-i18n="landing.enter">進入工作區</span> <span aria-hidden="true">→</span></button><button class="landing-text-action" data-go="requirement" data-i18n="landing.direct">直接建立方案</button></div></div>
           <div class="landing-robot" aria-label="一台差速機器人的啟動動畫">
             <svg viewBox="0 0 720 720" role="img" aria-labelledby="robot-scene-title robot-scene-desc">
               <title id="robot-scene-title">虛擬差速機器人啟動</title><desc id="robot-scene-desc">機器人以 LiDAR 與相機感測器掃描環境，準備進入虛擬開發工作區。</desc>
@@ -74,11 +79,11 @@
               <g class="scene-labels" fill="#9fb0c5" font-family="system-ui, sans-serif" font-size="13" letter-spacing="1.6"><text x="85" y="510">ODOMETRY LOCKED</text><text x="502" y="230">SENSOR READY</text></g>
             </svg>
           </div>
-          <div class="landing-status"><span class="landing-status-dot" aria-hidden="true"></span><span>Virtual-first robot development</span><span>Jazzy · Isaac Sim 4.5</span></div>
+          <div class="landing-status"><span class="landing-status-dot" aria-hidden="true"></span><span data-i18n="landing.status">Virtual-first robot development</span><span>Jazzy · Isaac Sim 4.5</span></div>
         </section>
 
         <section class="view active" id="dashboard" data-view>
-          <div class="run-header"><div><p class="eyebrow">WORKSPACE / NEXT ACTION</p><h1>從需求到可運行機器人</h1><p>先完成 Design Plan；確認後才進入 Build。Run 與 Diagnose 僅在需要時開啟。</p></div><div class="run-actions"><button class="primary" data-go="requirement">開始 Design <b>→</b></button><button class="secondary" data-go="runtime">查看運行狀態</button></div></div>
+          <div class="run-header"><div><p class="eyebrow">WORKSPACE / NEXT ACTION</p><h1 data-i18n="overview.title">從想法到機器人</h1><p data-i18n="overview.summary">先告訴我們你想做的機器人；我們會整理可行建議，確認後才會建立專案。</p></div><div class="run-actions"><button class="primary" data-go="requirement"><span data-i18n="overview.design">開始規劃</span> <b>→</b></button><button class="secondary" data-go="runtime" data-i18n="overview.runtime">查看目前狀態</button></div></div>
           <div class="metric-grid run-metrics">
             <article class="metric accent"><small>PIPELINE</small><strong id="pipeline-status">Ready</strong><span id="pipeline-detail">Awaiting explicit run</span><b aria-hidden="true"></b></article>
             <article class="metric"><small>BUILD</small><strong id="build-status">Not run</strong><span id="build-detail">Restricted colcon only</span><b aria-hidden="true"></b></article>
@@ -86,42 +91,42 @@
           </div>
           <div class="dashboard-grid">
             <article class="card journey"><header><div><p class="eyebrow">YOUR WORKFLOW</p><h2>下一步，從方案開始</h2></div><span class="pill" id="run-phase">READY</span></header><ol class="run-timeline">
-              <li data-stage="requirements"><em>01</em><div><strong>建立方案</strong><small>描述需求，取得已驗證的模板建議</small></div><span>開始</span></li>
-              <li data-stage="build"><em>02</em><div><strong>確認並生成</strong><small>審閱方案後再建立 workspace</small></div><span>待確認</span></li>
-              <li data-stage="runtime"><em>03</em><div><strong>在模擬中運行</strong><small>查看 Isaac、導航與感測器</small></div><span>Checking</span></li>
+              <li data-stage="requirements"><em>01</em><div><strong>說說你想做什麼</strong><small>用簡單描述告訴我們你需要的機器人</small></div><span>開始</span></li>
+              <li data-stage="build"><em>02</em><div><strong>確認建議內容</strong><small>查看推薦內容後，再決定是否建立專案</small></div><span>待確認</span></li>
+              <li data-stage="runtime"><em>03</em><div><strong>在模擬中查看</strong><small>確認機器人、導航與感測器是否正常</small></div><span>檢查中</span></li>
             </ol></article>
-            <article class="card boundary simulation-card"><header><div><p class="eyebrow">RUNTIME HEALTH</p><h2>Simulation evidence</h2></div><button data-action="refresh-simulation" class="icon-button" aria-label="重新整理 simulation 狀態">↻</button></header><div class="health-indicator"><i id="health-dot"></i><strong id="health-label">Loading runtime evidence…</strong></div><dl><div><dt>ROS nodes</dt><dd id="runtime-nodes">—</dd></div><div><dt>Topics</dt><dd id="runtime-topics">—</dd></div><div><dt>TF edges</dt><dd id="runtime-tf">—</dd></div></dl><p class="simulation-note">圖形與相機控制已移至下方 Sensor Workbench；此處只保留 ROS graph 健康證據。</p><output id="summary-result" class="compact-result" aria-live="polite"></output></article>
+            <article class="card boundary simulation-card"><header><div><p class="eyebrow">SYSTEM STATUS</p><h2>模擬系統狀態</h2></div><button data-action="refresh-simulation" class="icon-button" aria-label="重新檢查模擬系統">↻</button></header><div class="health-indicator"><i id="health-dot"></i><strong id="health-label">正在讀取模擬系統資料…</strong></div><dl><div><dt>連線服務</dt><dd id="runtime-nodes">—</dd></div><div><dt>資料通道</dt><dd id="runtime-topics">—</dd></div><div><dt>位置關係</dt><dd id="runtime-tf">—</dd></div></dl><p class="simulation-note">相機畫面與機器人位置在下方查看；這裡只顯示模擬系統是否能正常讀取。</p><output id="summary-result" class="compact-result" aria-live="polite"></output></article>
           </div>
           <section class="sensor-workbench card" aria-labelledby="sensor-workbench-title"><header class="sensor-workbench-header"><div><p class="eyebrow">SIMULATION &amp; SENSORS</p><h2 id="sensor-workbench-title">Sensor Workbench</h2><p>選擇經驗證的 ROS 影像來源；畫面僅讀取資料，不發布控制訊息。</p></div><div class="sensor-actions"><label for="camera-source">CAMERA SOURCE</label><select id="camera-source"><option value="isaac">Isaac Sim · M4 RGB camera</option><option value="webcam">RealSense D455 · USB colour</option></select><button data-action="refresh-camera" class="secondary">更新畫面</button></div></header><div class="sensor-layout"><article class="camera-stage"><div class="camera-stage-bar"><div><span class="record-dot"></span><strong id="camera-source-name">Isaac Sim · M4 RGB camera</strong></div><span id="camera-label">Waiting for image…</span></div><div class="camera-image-wrap"><img id="camera-frame" alt="目前選取 ROS 相機來源的最新影像" hidden><div id="camera-empty" class="camera-empty"><b>CAMERA FEED</b><span>選取來源後讀取最新 ROS frame</span></div></div><footer><span id="camera-topic">/camera/image_raw</span><span id="camera-resolution">—</span><label class="live-toggle"><input type="checkbox" id="live-preview" checked><span>Live · 4s</span></label></footer></article><aside class="sensor-side"><article class="device-card active" data-camera-device="isaac"><div><span class="device-icon">◉</span><strong>Isaac M4 camera</strong></div><p>Virtual RGB8 · simulation evidence</p><code>/camera/image_raw</code><small>Uses live odometry map</small></article><article class="device-card" data-camera-device="webcam"><div><span class="device-icon">◉</span><strong>RealSense D455</strong></div><p>USB colour stream · ROS Jazzy driver required</p><code>/webcam/color/image_raw</code><small id="webcam-state">Driver not started</small></article><article class="topdown-panel"><div class="visual-label"><span>ODOMETRY MAP</span><strong id="pose-label">Waiting for pose…</strong></div><canvas id="simulation-map" width="520" height="270" aria-label="依真實 odometry 繪製的機器車俯視位置圖"></canvas></article></aside></div><p class="sensor-boundary">Safety boundary: source choices are fixed to known ROS topics. WebCam controls such as exposure, depth, or recording are intentionally not exposed until the D455 driver is installed and validated.</p></section>
           <output id="full-run-result" class="result-panel" aria-live="polite"></output>
         </section>
 
         <section class="view" id="requirement" data-view>
-          <div class="page-header"><div><p class="eyebrow">STEP 01 · AI-ASSISTED DESIGN</p><h1>把需求變成可審閱方案</h1><p>需求先經 schema、registry 與相容性規則驗證；AI provider 只能協助結構化，不能直接生成檔案。</p></div><span>01</span></div>
-          <div class="split"><form id="requirement-form" class="card input-card"><label for="requirement-input">描述你想建立的機器人</label><textarea id="requirement-input" required>我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。</textarea><footer><small>中文、英文皆可 · 不會寫入 workspace</small><button type="submit" class="primary">建立 Design Plan <b>→</b></button></footer></form><article class="card guide"><b>01</b><h2>安全的 AI 工作流</h2><p>AI 結構化需求 → registry 選擇已驗證模板 → 顯示相容性與缺口 → 你確認後才進入 Build。</p><div><span>SCHEMA VALIDATED</span><span>REGISTRY BOUNDED</span><span>REVIEW FIRST</span></div></article></div>
+          <div class="page-header"><div><p class="eyebrow">STEP 01 · START HERE</p><h1>告訴我們你想做的機器人</h1><p>用日常語言描述你的想法；我們會先整理建議，讓你看過再決定下一步。</p></div><span>01</span></div>
+          <div class="split"><form id="requirement-form" class="card input-card"><label for="requirement-input">你希望機器人做什麼？</label><textarea id="requirement-input" required>我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。</textarea><footer><small>可以使用中文或英文 · 送出後不會直接建立任何專案</small><button type="submit" class="primary">產生建議 <b>→</b></button></footer></form><article class="card guide"><b>01</b><h2>你可以放心的原因</h2><p>系統只會根據已驗證的選項整理建議。你先看內容，確認後才會進到建立專案的步驟。</p><div><span>先看建議</span><span>可選項目</span><span>由你確認</span></div></article></div>
           <output id="requirement-result" class="result-panel" aria-live="polite"></output>
         </section>
 
         <section class="view" id="configuration" data-view>
-          <div class="page-header"><div><p class="eyebrow">STEP 02 · BUILD REVIEW</p><h1>確認後才生成</h1><p>先檢查相容性與模板內容；只有你確認後，才會建立 workspace 或執行受限 build。</p></div><span>02</span></div>
-          <div class="two-up"><article class="card robot-card"><div class="schematic"><i class="wheel w1"></i><i class="wheel w2"></i><i class="chassis"></i><i class="sensor"></i></div><p class="eyebrow">DEMO CONFIGURATION</p><h2>Generic Diff Base</h2><p>Validated · Ubuntu x86_64 · Jazzy</p><div><span>DIFF DRIVE</span><span>ROS 2</span><span>VALIDATED</span></div></article><article class="card tool-card"><p class="eyebrow">EVIDENCE TOOLS</p><h2>檢查可用的整合項目</h2><p>所有結果都來自 registry 與 template engine，尚未寫入工作區。</p><button data-action="resolve-configuration" class="primary">解析套件相容性 <b>→</b></button><button data-action="preview-template" class="secondary full">預覽 controller template</button></article></div>
+          <div class="page-header"><div><p class="eyebrow">STEP 02 · REVIEW</p><h1>確認推薦內容</h1><p>先查看系統找到的可用選項；你確認後，才會建立專案或開始建置。</p></div><span>02</span></div>
+          <div class="two-up"><article class="card robot-card"><div class="schematic"><i class="wheel w1"></i><i class="wheel w2"></i><i class="chassis"></i><i class="sensor"></i></div><p class="eyebrow">目前建議</p><h2>Generic Diff Base</h2><p>已確認可用 · Ubuntu x86_64 · Jazzy</p><div><span>差速驅動</span><span>ROS 2</span><span>可使用</span></div></article><article class="card tool-card"><p class="eyebrow">先看再決定</p><h2>查看可用內容</h2><p>這裡的結果只用來協助你判斷；尚未建立或修改任何專案檔案。</p><button data-action="resolve-configuration" class="primary">檢查是否可用 <b>→</b></button><button data-action="preview-template" class="secondary full">查看將建立的內容</button></article></div>
           <output id="configuration-result" class="result-panel" aria-live="polite"></output>
         </section>
 
         <section class="view" id="runtime" data-view>
-          <div class="page-header"><div><p class="eyebrow">STEP 03 · RUN</p><h1>模擬與感測器</h1><p>查看 Isaac、導航與 ROS 運行狀態。深入診斷資料會保留在 Diagnose，不干擾日常操作。</p></div><span>03</span></div>
-          <article class="card runtime-hero"><div><p class="eyebrow"><i class="dot"></i>READ-ONLY ROS SNAPSHOT</p><h2>目前執行環境的可觀測性</h2><p>若 ROS 尚未啟動，結果會保留原始 command evidence，而不會假設 runtime 正常。</p></div><button data-action="runtime-snapshot" class="primary">收集快照 <b>→</b></button></article>
-          <div class="runtime-grid"><article><strong>Nodes</strong><small>ROS node graph</small></article><article><strong>Topics</strong><small>Message types</small></article><article><strong>Controllers</strong><small>Activation state</small></article><article><strong>TF edges</strong><small>Frame relationships</small></article></div>
+          <div class="page-header"><div><p class="eyebrow">STEP 03 · CHECK</p><h1>查看模擬狀態</h1><p>在這裡確認機器人和感測器是否能正常讀取。遇到問題時，再到診斷頁查看細節。</p></div><span>03</span></div>
+          <article class="card runtime-hero"><div><p class="eyebrow"><i class="dot"></i>系統資料 · 唯讀</p><h2>確認系統是否正常運作</h2><p>如果模擬還沒有啟動，我們會如實顯示目前讀得到的資料，不會把未知狀態當成正常。</p></div><button data-action="runtime-snapshot" class="primary">重新檢查 <b>→</b></button></article>
+          <div class="runtime-grid"><article><strong>連線服務</strong><small>目前可讀取的系統元件</small></article><article><strong>資料通道</strong><small>可用的訊息資料</small></article><article><strong>控制狀態</strong><small>是否已準備完成</small></article><article><strong>位置關係</strong><small>機器人各部件的位置</small></article></div>
           <output id="runtime-result" class="result-panel" aria-live="polite"></output>
         </section>
 
         <section class="view" id="validation" data-view>
-          <div class="page-header"><div><p class="eyebrow">STEP 04 · DIAGNOSE</p><h1>驗證與修復建議</h1><p>需要時才進入這裡：執行固定 virtual navigation 驗證，或檢視可審閱的 dependency 修復提案。</p></div><span>04</span></div>
-          <div class="two-up"><article class="card validation primary-validation"><p class="eyebrow">FROZEN SCENARIO</p><h2>m4-navigation</h2><p>對既有 Isaac / Nav2 虛擬環境送出唯一預核准的 map goal。</p><label><input type="checkbox" id="validation-confirm"><span>我確認只執行這個固定 virtual validation。</span></label><button data-action="validate-navigation" class="primary">執行驗證 <b>→</b></button></article><article class="card validation"><p class="eyebrow">REVIEW ONLY</p><h2>Repair proposal</h2><p>展示 manifest dependency 的可審閱 diff。此動作不會寫入任何檔案或觸發 rebuild。</p><button data-action="propose-repair" class="secondary">檢視範例提案</button><small>⌾ Proposal-only by design</small></article></div>
+          <div class="page-header"><div><p class="eyebrow">STEP 04 · HELP</p><h1>遇到問題時再來這裡</h1><p>你可以執行一個安全、固定的模擬檢查，或先查看系統建議；不會自動修改任何內容。</p></div><span>04</span></div>
+          <div class="two-up"><article class="card validation primary-validation"><p class="eyebrow">安全檢查</p><h2>導航功能測試</h2><p>在既有的虛擬環境中，測試機器人能否前往一個已設定的位置。</p><label><input type="checkbox" id="validation-confirm"><span>我確認只進行這一項模擬檢查。</span></label><button data-action="validate-navigation" class="primary">開始檢查 <b>→</b></button></article><article class="card validation"><p class="eyebrow">先看建議</p><h2>可能的修正方式</h2><p>查看系統整理的修正建議。這個動作只會顯示內容，不會修改檔案或重新建置。</p><button data-action="propose-repair" class="secondary">查看修正建議</button><small>僅供查看，不會自動套用</small></article></div>
           <output id="validation-result" class="result-panel" aria-live="polite"></output>
         </section>
       </main>
     </div>
-    <script type="module" src="./app.js?v=10"></script>
+    <script type="module" src="./app.js?v=13"></script>
   </body>
 </html>

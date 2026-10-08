@@ -1,4 +1,20 @@
 const api = "/api/v1";
+const translations = {
+  zh: { "nav.overview": "概覽", "nav.design": "設計", "nav.build": "建置", "nav.run": "運行", "nav.diagnose": "診斷", "chrome.safety": "安全邊界啟用中", "landing.kicker": "設計、驗證、模擬", "landing.title": "讓第一台機器人<br>先在虛擬世界醒來。", "landing.summary": "從自然語言需求出發，建立具備 LiDAR、Camera 與導航能力的差速機器人；每個動作都先在可審閱的安全邊界內完成。", "landing.enter": "進入工作區", "landing.direct": "直接建立方案", "landing.status": "Virtual-first robot development", "overview.title": "從想法到機器人", "overview.summary": "先告訴我們你想做的機器人；我們會整理可行建議，確認後才會建立專案。", "overview.design": "開始規劃", "overview.runtime": "查看目前狀態", views: { landing: "首頁", dashboard: "概覽", requirement: "設計", configuration: "建置", runtime: "運行", validation: "診斷" } },
+  en: { "nav.overview": "Overview", "nav.design": "Design", "nav.build": "Build", "nav.run": "Run", "nav.diagnose": "Diagnose", "chrome.safety": "Safety boundary active", "landing.kicker": "DESIGN · VALIDATE · SIMULATE", "landing.title": "Let your first robot<br>wake up virtually.", "landing.summary": "Start with a natural-language request and build a differential-drive robot with LiDAR, camera, and navigation—each action remains within a reviewable safety boundary.", "landing.enter": "Enter workspace", "landing.direct": "Create a design plan", "landing.status": "Virtual-first robot development", "overview.title": "From idea to robot", "overview.summary": "Tell us what you want to build. We will organise practical suggestions before anything is created.", "overview.design": "Start planning", "overview.runtime": "View current status", views: { landing: "Home", dashboard: "Overview", requirement: "Design", configuration: "Build", runtime: "Run", validation: "Diagnose" } },
+};
+let locale = localStorage.getItem("robot-dev-ai-locale") === "en" ? "en" : "zh";
+function applyLocale() {
+  const copy = translations[locale];
+  document.documentElement.lang = locale === "zh" ? "zh-Hant" : "en";
+  document.querySelectorAll("[data-i18n]").forEach((node) => { node.textContent = copy[node.dataset.i18n] || node.textContent; });
+  document.querySelectorAll("[data-i18n-html]").forEach((node) => { node.innerHTML = copy[node.dataset.i18nHtml] || node.innerHTML; });
+  document.querySelectorAll(".language-current").forEach((node) => { node.textContent = locale === "zh" ? "中" : "EN"; });
+  document.querySelectorAll(".language-alternate").forEach((node) => { node.textContent = locale === "zh" ? "EN" : "中"; });
+  document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.setAttribute("aria-label", locale === "zh" ? "Switch interface language to English" : "切換介面語言為中文"));
+  const active = document.querySelector("[data-view].active")?.id;
+  if (active) document.querySelector("#view-title").textContent = copy.views[active];
+}
 const demoRegistry = { hardware: [{ id: "generic-diff-base", kind: "mobile-base", vendor: "Robot Dev AI", capability_ids: ["differential-drive"] }], drivers: [{ id: "generic-diff-driver", hardware_id: "generic-diff-base", ros_distro: "jazzy" }], capabilities: [{ id: "differential-drive", interface_ids: [], template_id: "differential-drive" }], packages: [{ id: "diff-drive-controller", required_capability_ids: ["differential-drive"] }], compatibility: [{ hardware_id: "generic-diff-base", package_id: "diff-drive-controller", status: "validated" }] };
 
 function showResult(id, value, label = "API EVIDENCE") {
@@ -37,7 +53,7 @@ function activateView(id) {
   document.querySelectorAll("[data-view]").forEach((view) => view.classList.toggle("active", view.id === id));
   document.querySelectorAll("[data-view-link]").forEach((link) => link.classList.toggle("active", link.dataset.viewLink === id));
   document.body.classList.toggle("is-landing", id === "landing");
-  document.querySelector("#view-title").textContent = document.querySelector(`#${id} h1, #${id} h2`)?.textContent || id;
+  document.querySelector("#view-title").textContent = translations[locale].views[id] || id;
   history.replaceState(null, "", `#${id}`);
   window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
 }
@@ -76,18 +92,19 @@ function setTimeline(stage, state, text) {
   row.querySelector("span").textContent = text;
 }
 function updateSimulation(snapshot) {
+  const labels = locale === "zh" ? { online: "正常", partial: "部分資料可讀", unavailable: "目前無法讀取", onlineDetail: "個服務可正常讀取", partialDetail: "個服務可讀取，部分資料逾時", unavailableDetail: "請查看下方系統訊息", healthy: "模擬系統資料完整", partialHealth: "模擬系統只有部分資料", unavailableHealth: "目前無法讀取模擬系統", observed: "已讀取", partialTimeline: "部分可讀", unavailableTimeline: "無法讀取" } : { online: "Ready", partial: "Partially available", unavailable: "Unavailable", onlineDetail: "services are available", partialDetail: "services are available; some data timed out", unavailableDetail: "See the system message below", healthy: "Simulation data is available", partialHealth: "Only part of the simulation data is available", unavailableHealth: "Simulation data is unavailable", observed: "Available", partialTimeline: "Partial", unavailableTimeline: "Unavailable" };
   const commands = Object.values(snapshot.commands);
   const complete = commands.length > 0 && commands.every((command) => command.exit_code === 0) && snapshot.nodes.length > 0;
   const partial = !complete && snapshot.nodes.length > 0;
   const state = complete ? "healthy" : partial ? "partial" : "unavailable";
-  setText("simulation-status", complete ? "Online" : partial ? "Partial" : "Unavailable");
-  setText("simulation-detail", complete ? `${snapshot.nodes.length} nodes detected` : partial ? `${snapshot.nodes.length} nodes; some evidence timed out` : "Read command evidence for details");
-  setText("health-label", complete ? "Simulation runtime is fully observable" : partial ? "Simulation graph is partially observable" : "Runtime evidence is unavailable");
+  setText("simulation-status", complete ? labels.online : partial ? labels.partial : labels.unavailable);
+  setText("simulation-detail", complete ? `${snapshot.nodes.length} ${labels.onlineDetail}` : partial ? `${snapshot.nodes.length} ${labels.partialDetail}` : labels.unavailableDetail);
+  setText("health-label", complete ? labels.healthy : partial ? labels.partialHealth : labels.unavailableHealth);
   document.querySelector("#health-dot").dataset.state = state;
   setText("runtime-nodes", snapshot.nodes.length);
   setText("runtime-topics", Object.keys(snapshot.topic_types).length);
   setText("runtime-tf", snapshot.tf_edges.length);
-  setTimeline("runtime", complete ? "passed" : partial ? "partial" : "blocked", complete ? "Observed" : partial ? "Partial" : "Unavailable");
+  setTimeline("runtime", complete ? "passed" : partial ? "partial" : "blocked", complete ? labels.observed : partial ? labels.partialTimeline : labels.unavailableTimeline);
   return complete;
 }
 function drawSimulationMap(frame) {
@@ -186,6 +203,7 @@ function updateFullRun(run) {
 }
 document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); setView(link.dataset.viewLink); }));
 document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go)));
+document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); }));
 bindAction('[data-action="load-summary"]', "summary-result", () => request("/project/summary"), "PROJECT SNAPSHOT");
 document.querySelector('[data-action="refresh-simulation"]').addEventListener("click", refreshSimulation);
 document.querySelector('[data-action="refresh-camera"]').addEventListener("click", refreshSimulationFrame);
@@ -225,7 +243,9 @@ bindAction('[data-action="validate-navigation"]', "validation-result", async () 
 bindAction('[data-action="propose-repair"]', "validation-result", () => request("/repairs/propose", { method: "POST", body: JSON.stringify({ path: "src/demo_robot/package.xml", contents: '<package format="3">\n  <name>demo_robot</name>\n</package>\n', missing_dependency: "geometry_msgs" }) }), "REPAIR PROPOSAL · REVIEW ONLY");
 const initial = location.hash.slice(1);
 const initialView = initial ? document.getElementById(initial) : null;
-if (initialView?.matches("[data-view]")) activateView(initial);
-else activateView("landing");
+if (initialView?.matches("[data-view]")) {
+  activateView(initial);
+} else activateView("landing");
+applyLocale();
 refreshSimulation();
 window.setInterval(() => { if (document.querySelector("#live-preview").checked) refreshSimulationFrame(); }, 4000);

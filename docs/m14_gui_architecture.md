@@ -1,6 +1,6 @@
 # M14 GUI MVP architecture
 
-Version: 0.6 (2026-10-07)
+Version: 0.8 (2026-10-08)
 
 ## Scope and boundary
 
@@ -176,3 +176,19 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 - Root navigation now resolves safely to the entry surface when no URL hash is
   supplied; explicit `#dashboard`, `#requirement`, and other workspace hashes
   remain supported. The landing animation has a static reduced-motion state.
+
+### 0.7 — 2026-10-07
+
+- Replaced the persistent left workflow rail with a top-aligned five-stage
+  navigation bar. The compact mobile top bar remains visible for direct
+  workspace hash links.
+- Added local Chinese/English UI switching for entry, primary workflow, and
+  primary Overview copy. It deliberately does not translate ROS topic names,
+  message types, or API evidence.
+
+### 0.8 — 2026-10-08
+
+- Rewrote primary operator-facing copy in plain task language. Planning,
+  review, system checks, and help no longer lead with internal AI or ROS
+  implementation terms; the literal technical evidence remains available in
+  the relevant detail panels.

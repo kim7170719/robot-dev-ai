@@ -48,6 +48,24 @@ operator action. Dark surfaces are evidence contexts, not a second app theme.
 - At 960px the sidebar becomes a horizontal workflow rail; at 640px actions,
   cards, sensor controls, and evidence panels become one column.
 - The page must never require horizontal scrolling at narrow widths.
+- Workspace navigation lives in a three-part top bar: brand/home, five-stage
+  workflow navigation, then language and safety utilities. It replaces the
+  former permanent left rail.
+
+## Language
+
+The UI offers a Chinese/English switch for the entry surface, primary
+workspace navigation, and primary Overview actions. ROS topic names, message
+types, and API evidence remain literal technical evidence and are not
+translated.
+
+## Operator Copy
+
+Primary UI text uses everyday task language: explain the immediate goal first
+(for example, “開始規劃” or “確認建議內容”), then put implementation details
+in supporting copy or the Diagnose view. Do not lead a non-specialist with
+terms such as schema, registry, template, workspace, command, or runtime.
+Technical evidence remains available and literal when an operator needs it.
 
 ## Elevation & Depth
 

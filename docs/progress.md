@@ -329,3 +329,21 @@ network dependency. Operators can enter Overview or go directly to Design.
 Explicit workspace hashes remain supported, and `prefers-reduced-motion` uses a
 still scene. Desktop (1500px) and mobile (390px) renders were inspected.
 Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 top navigation and bilingual UI pass (2026-10-07)
+
+The former left workflow rail was moved to a full-width top navigation with
+five explicit stages. A Chinese/English switch persists the chosen locale for
+the entry surface, workflow labels, and primary Overview actions; technical
+ROS/API evidence remains literal. Desktop and 390px direct-link layouts were
+inspected. Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.
+
+## M14 plain-language operator copy (2026-10-08)
+
+The primary M14 workflow now explains the operator's task rather than its AI
+implementation: plan, review, check the simulation, and get help when needed.
+Internal terms such as schema, registry, template, workspace, command, and
+runtime were removed from primary actions and explanatory copy. Technical ROS
+and API evidence remains literal in the details views. Dynamic simulation
+state now reports plain outcomes such as normal, partially readable, or
+unavailable. Automated suite: `.venv/bin/python -m pytest -q` → 64 passed.
