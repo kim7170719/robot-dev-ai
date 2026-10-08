@@ -149,12 +149,56 @@ function drawSimulationMap(frame) {
   context.fillText("M4 virtual room · 1 grid = 1 m", 32, height - 12);
 }
 let frameRequestActive = false;
+let mjpegActive = false;
+function stopMjpegPreview() {
+  if (!mjpegActive) return;
+  const image = document.querySelector("#camera-frame");
+  image.onload = null;
+  image.onerror = null;
+  image.removeAttribute("src");
+  delete image.dataset.streamReady;
+  mjpegActive = false;
+}
+function startMjpegPreview() {
+  if (mjpegActive || !document.querySelector("#live-preview").checked) return;
+  const image = document.querySelector("#camera-frame");
+  const empty = document.querySelector("#camera-empty");
+  mjpegActive = true;
+  document.querySelector(".camera-stage")?.classList.add("is-refreshing");
+  setText("camera-label", "Connecting live stream…");
+  setText("camera-resolution", "MJPEG stream");
+  setText("live-preview-label", "Live · MJPEG");
+  image.onload = () => {
+    if (image.dataset.streamReady) return;
+    image.dataset.streamReady = "true";
+    image.hidden = false;
+    empty.hidden = true;
+    setText("camera-label", `${image.naturalWidth} × ${image.naturalHeight} · live stream`);
+    setText("camera-resolution", `${image.naturalWidth} × ${image.naturalHeight} MJPEG`);
+    document.querySelector(".camera-stage")?.classList.remove("is-refreshing");
+  };
+  image.onerror = () => {
+    stopMjpegPreview();
+    image.hidden = true;
+    empty.hidden = false;
+    setText("camera-label", "Live stream unavailable");
+    setText("camera-resolution", "No stream");
+    setText("live-preview-label", "Live · off");
+    document.querySelector(".camera-stage")?.classList.remove("is-refreshing");
+  };
+  image.src = "/api/v1/simulation/stream?source=webcam";
+}
 async function refreshSimulationFrame() {
   if (frameRequestActive) return;
+  const source = document.querySelector("#camera-source")?.value || "isaac";
+  if (source === "webcam") {
+    startMjpegPreview();
+    return;
+  }
+  stopMjpegPreview();
   frameRequestActive = true;
   document.querySelector(".camera-stage")?.classList.add("is-refreshing");
   try {
-    const source = document.querySelector("#camera-source")?.value || "isaac";
     const frame = await request(`/simulation/frame?source=${source}`);
     const image = document.querySelector("#camera-frame");
     image.src = `data:image/png;base64,${frame.image_png_base64}`;
@@ -163,6 +207,7 @@ async function refreshSimulationFrame() {
     setText("camera-label", `${frame.width} × ${frame.height} · live`);
     setText("camera-resolution", `${frame.width} × ${frame.height} RGB8`);
     setText("camera-topic", frame.source_topic);
+    setText("live-preview-label", "Live · 1s");
     setText("pose-label", frame.pose_available === false ? "Camera live · simulation pose unavailable" : `x ${frame.x_m.toFixed(2)} m · y ${frame.y_m.toFixed(2)} m · ${frame.yaw_rad.toFixed(2)} rad`);
     drawSimulationMap(frame);
   } catch (error) {
@@ -214,16 +259,23 @@ document.querySelectorAll("[data-go]").forEach((button) => button.addEventListen
 document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); }));
 bindAction('[data-action="load-summary"]', "summary-result", () => request("/project/summary"), "PROJECT SNAPSHOT");
 document.querySelector('[data-action="refresh-simulation"]').addEventListener("click", refreshSimulation);
-document.querySelector('[data-action="refresh-camera"]').addEventListener("click", refreshSimulationFrame);
+document.querySelector('[data-action="refresh-camera"]').addEventListener("click", () => {
+  if (document.querySelector("#camera-source").value === "webcam") stopMjpegPreview();
+  refreshSimulationFrame();
+});
 document.querySelector("#camera-source").addEventListener("change", (event) => {
   const source = event.currentTarget.value;
   const webcam = source === "webcam";
   setText("camera-source-name", webcam ? "RealSense D455 · USB colour" : "Isaac Sim · M4 RGB camera");
   setText("camera-topic", webcam ? "/webcam/color/image_raw" : "/camera/image_raw");
   document.querySelectorAll("[data-camera-device]").forEach((card) => card.classList.toggle("active", card.dataset.cameraDevice === source));
+  stopMjpegPreview();
   refreshSimulationFrame();
 });
-document.querySelector("#live-preview").addEventListener("change", (event) => { if (event.currentTarget.checked) refreshSimulationFrame(); });
+document.querySelector("#live-preview").addEventListener("change", (event) => {
+  if (event.currentTarget.checked) refreshSimulationFrame();
+  else stopMjpegPreview();
+});
 bindAction('[data-action="full-run"]', "full-run-result", async () => {
   const result = await request("/mvp/full-run", {
     method: "POST",
@@ -256,4 +308,6 @@ if (initialView?.matches("[data-view]")) {
 } else activateView("landing");
 applyLocale();
 refreshSimulation();
-window.setInterval(() => { if (document.querySelector("#live-preview").checked) refreshSimulationFrame(); }, 1000);
+window.setInterval(() => {
+  if (document.querySelector("#live-preview").checked && document.querySelector("#camera-source").value !== "webcam") refreshSimulationFrame();
+}, 1000);

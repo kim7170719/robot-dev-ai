@@ -440,3 +440,14 @@ still active. Local D455 API measurements were normally about 0.92 seconds per
 ~450 KB PNG, with a slower first frame observed at 2.3 seconds. A true 30 FPS
 browser view requires a future streaming transport rather than increasing this
 snapshot polling rate. Full suite: 64 tests.
+
+## M14 D455 continuous-preview pass (2026-10-08)
+
+The fixed D455 browser source now uses a read-only multipart MJPEG endpoint
+instead of requesting PNG snapshots. Its ROS helper is still constrained to
+the authorized `/webcam/color/image_raw` topic and publishes no ROS messages.
+On the physical D455, a three-second curl received 1,770,569 bytes of JPEG
+parts with the expected multipart response and JPEG signature; its helper
+exited after the client disconnected. The workbench starts that stream only
+for the D455 source and stops it when the source or live toggle changes; Isaac
+continues to use the existing bounded snapshot evidence. Full suite: 65 tests.

@@ -1,3 +1,4 @@
+import io
 from pathlib import Path
 
 from starlette.testclient import TestClient
@@ -305,6 +306,34 @@ def test_simulation_view_returns_typed_unavailable_evidence() -> None:
     assert response.json() == {
         "detail": "timed out waiting for /camera/image_raw and /odom"
     }
+
+
+def test_simulation_stream_returns_a_bounded_mjpeg_response() -> None:
+    class Process:
+        stdout = io.BytesIO(b"--frame\r\nContent-Type: image/jpeg\r\n\r\ntest-frame\r\n")
+
+        @staticmethod
+        def poll() -> int:
+            return 0
+
+        @staticmethod
+        def terminate() -> None:
+            raise AssertionError("completed process should not terminate")
+
+    class StreamCollector:
+        def start(self, source: str) -> Process:
+            assert source == "webcam"
+            return Process()
+
+    response = TestClient(
+        create_app(simulation_mjpeg_stream_factory=StreamCollector)
+    ).get("/api/v1/simulation/stream?source=webcam")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith(
+        "multipart/x-mixed-replace; boundary=frame"
+    )
+    assert response.content.startswith(b"--frame\r\nContent-Type: image/jpeg")
 
 
 def test_fixed_navigation_validation_requires_confirmation() -> None:

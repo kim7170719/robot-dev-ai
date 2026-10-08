@@ -36,6 +36,7 @@ class SimulationFrame(BaseModel):
 
 
 FrameRunner = Callable[[CameraSource], SimulationFrame]
+MjpegProcessRunner = Callable[[CameraSource], subprocess.Popen[bytes]]
 
 
 class SimulationFrameCollector:
@@ -45,6 +46,16 @@ class SimulationFrameCollector:
         self._runner = runner or _collect_frame
 
     def collect_frame(self, source: CameraSource = "isaac") -> SimulationFrame:
+        return self._runner(source)
+
+
+class MjpegStreamCollector:
+    """Read-only, bounded-topic MJPEG bridge for the browser preview."""
+
+    def __init__(self, runner: MjpegProcessRunner | None = None) -> None:
+        self._runner = runner or _start_mjpeg
+
+    def start(self, source: CameraSource = "isaac") -> subprocess.Popen[bytes]:
         return self._runner(source)
 
 
@@ -71,3 +82,13 @@ def _collect_frame(source: CameraSource) -> SimulationFrame:
         return SimulationFrame.model_validate(payload)
     except (KeyError, ValueError, json.JSONDecodeError) as error:
         raise RuntimeError("ROS camera frame was malformed") from error
+
+
+def _start_mjpeg(source: CameraSource) -> subprocess.Popen[bytes]:
+    helper = Path(__file__).with_name("camera_mjpeg_stream.py")
+    return subprocess.Popen(
+        ("/usr/bin/python3", str(helper), CAMERA_TOPICS[source]),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        bufsize=0,
+    )

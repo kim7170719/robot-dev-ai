@@ -1,11 +1,13 @@
 """Typed FastAPI boundary for the frozen Robot Dev AI core."""
 
+import asyncio
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable, Literal
 from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -18,6 +20,7 @@ from agent.auto_debug.build_collector import BuildCommandCollector
 from agent.auto_debug.collector import RosRuntimeCollector, RosRuntimeSnapshot
 from agent.auto_debug.simulation_view import (
     CameraSource,
+    MjpegStreamCollector,
     SimulationFrame,
     SimulationFrameCollector,
 )
@@ -176,6 +179,7 @@ def create_app(
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
     simulation_frame_collector_factory: Callable[[], SimulationFrameCollector] | None = None,
+    simulation_mjpeg_stream_factory: Callable[[], MjpegStreamCollector] | None = None,
     simulation_validator_factory: Callable[[], IsaacSimulationValidator] | None = None,
     mvp_pipeline_factory: Callable[[Path], MvpPipeline] | None = None,
 ) -> FastAPI:
@@ -189,6 +193,7 @@ def create_app(
     frame_collector_factory = (
         simulation_frame_collector_factory or SimulationFrameCollector
     )
+    mjpeg_stream_factory = simulation_mjpeg_stream_factory or MjpegStreamCollector
     validator_factory = simulation_validator_factory or IsaacSimulationValidator
     pipeline_factory = mvp_pipeline_factory or _default_mvp_pipeline
     app = FastAPI(
@@ -238,6 +243,35 @@ def create_app(
             return frame_collector_factory().collect_frame(source)
         except RuntimeError as error:
             raise HTTPException(status_code=503, detail=str(error)) from error
+
+    @app.get("/api/v1/simulation/stream")
+    async def stream_simulation_camera(
+        request: Request, source: CameraSource = "webcam"
+    ) -> StreamingResponse:
+        process = mjpeg_stream_factory().start(source)
+        if process.stdout is None:
+            raise HTTPException(status_code=503, detail="ROS MJPEG stream was not available")
+
+        async def chunks():
+            try:
+                while not await request.is_disconnected():
+                    chunk = await asyncio.to_thread(process.stdout.read, 65_536)
+                    if not chunk:
+                        break
+                    yield chunk
+            finally:
+                if process.poll() is None:
+                    process.terminate()
+                    try:
+                        await asyncio.to_thread(process.wait, 1)
+                    except TimeoutError:
+                        process.kill()
+
+        return StreamingResponse(
+            chunks(),
+            media_type="multipart/x-mixed-replace; boundary=frame",
+            headers={"Cache-Control": "no-store, no-cache"},
+        )
 
     @app.post(
         "/api/v1/validation/m4-navigation",
