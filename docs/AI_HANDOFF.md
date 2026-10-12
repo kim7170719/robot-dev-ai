@@ -1,12 +1,12 @@
 # AI handoff (live)
 
-Updated: 2026-10-07. Next editor should refresh this file after the next real task.
+Updated: 2026-10-12. M14 is closed; M15 hardware-integration preflight is active.
 
 ## Where we are
 
-**G0–G12 and G14 PASS** on Ubuntu. M13/G13 is deferred as Optional Extension O1. Isaac Sim remains the physics authority.
+**G0–G12 and G14 PASS** on Ubuntu. M13/G13 is deferred as Optional Extension O1. M15 has begun with a safety-first hardware-integration design; **G15 is not passed**. Isaac Sim remains the physics authority.
 
-G4 was merged into `develop` through PR [#10](https://github.com/kim7170719/robot-dev-ai/pull/10). Create a new feature branch for M5; do not develop directly on `develop`.
+The active branch is `feature/m15-hardware-integration`; do not develop directly on `develop`. The real target profile is Jetson Orin Nano + differential-drive base + Intel RealSense D455. Physical 2D LiDAR, wheel encoders, independent emergency stop, base controller, power system, and their evidence remain prerequisites, not assumptions.
 
 ## Done
 
@@ -31,7 +31,8 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Next
 
-- M14 exposes the frozen core through a typed API. Workspace mutation and restricted build require separate explicit confirmations; M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU; resume only on supported hardware with a measurable scenario-generation hypothesis.
+- Execute only the M15 staged preflight in `docs/m15_hardware_integration.md`: record the supplied hardware identifiers, prove the physical stop/power path, then perform read-only Jetson and sensor discovery before any drive command. Do not claim G15 or enable motors without the listed evidence.
+- M14 continues to expose the frozen core through a typed API. Workspace mutation and restricted build require separate explicit confirmations; M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
 
 ## M5 evidence
 
@@ -188,13 +189,13 @@ FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host�
 
 | Field | Value |
 |---|---|
-| Branch | `feature/gui-mvp` (from merged `develop`) |
+| Branch | `feature/m15-hardware-integration` (branched from completed M14 UI work) |
 | `develop` | `2d39098` — M12 freeze merged |
 | `main` | `c771bf1` — do not develop here |
-| Working tree | M14 changes belong on `feature/gui-mvp`; generated status DOCX is intentionally ignored |
+| Working tree | Keep `.agents/` local and untracked; M15 documentation and later hardware adapters belong on `feature/m15-hardware-integration` |
 
 ## Suggested next step
 
-1. Review PR #13 into `develop`; then begin M15 planning only after selecting the target Jetson and real differential-drive hardware.
-2. For Ubuntu interactive simulation, start the pinned G4 container with `bash scripts/start_m4_isaac_sim.sh`, then start the GUI with `bash scripts/run_m14_demo.sh`. The Dashboard telemetry panel is read-only and requires `/odom` plus `/camera/image_raw` publishers.
+1. Obtain the exact base/controller, encoder, 2D-LiDAR, emergency-stop, battery, and Jetson details; follow the ordered G15 preflight rather than issuing a motor command.
+2. For Ubuntu interactive simulation, start the pinned G4 container with `bash scripts/start_m4_isaac_sim.sh`, then start the GUI with `bash scripts/run_m14_demo.sh`. The Dashboard telemetry panel remains read-only and requires `/odom` plus `/camera/image_raw` publishers.
 M12 simulation-validator evidence (2026-10-06): isolated G4 Isaac Sim, SLAM, and Nav2 were started; `/controller_server`, `/planner_server`, and `/bt_navigator` reached `active [3]`. The fixed `m4-navigation` validator sent the `(1.0, 0.0)` map goal and received `SUCCEEDED`. The Isaac container and host launch processes remain running for interactive testing.

@@ -1,6 +1,6 @@
 # M14 GUI MVP architecture
 
-Version: 0.9 (2026-10-08)
+Version: 0.13 (2026-10-12)
 
 ## Scope and boundary
 
@@ -231,3 +231,19 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 - Only the local Three.js runtime remains a third-party dependency. The robot
   stays decorative, WebGL-failure fallback remains local, and no ROS, Isaac,
   physical-hardware, browser-control, or typed-API behavior changed.
+
+### 0.13 — 2026-10-12
+
+- Replaced the procedural primary landing subject with the later user-supplied,
+  locally stored rigged GLB (`gui/assets/humanoid-rigged.glb`). It is loaded by
+  the local Three.js runtime and uses its embedded clips through
+  `AnimationMixer`: WALK loops by default, DANCE loops, and KICK returns to
+  WALK after one bounded play.
+- The stage adds bounded drag rotation, wheel/pinch zoom, click showcase, and
+  keyboard controls. Motion pauses away from landing, in hidden tabs, and for
+  reduced motion. The procedural scene remains only as a local load-error
+  fallback. The asset provenance and user responsibility are recorded in
+  `docs/THIRD_PARTY_NOTICES.md`.
+- This is a M14 presentation refinement only: it neither embeds a simulator
+  viewport nor changes typed API, ROS, Isaac, Jetson, or physical-control
+  behavior.

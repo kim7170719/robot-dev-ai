@@ -1,5 +1,12 @@
 # TODO
 
+## Active — M15 Jetson + real-robot bring-up (Gate G15)
+
+- **Purpose:** Safely bring the selected Jetson Orin Nano differential-drive platform online with Intel RealSense D455, a physical 2D LiDAR, wheel encoders, and an independent emergency stop; then collect reproducible real-hardware evidence without changing the M12 simulation baseline.
+- **Files:** `docs/m15_hardware_integration.md`; future hardware adapters remain behind ROS interfaces and are added only after the actual controller and sensor identities are known.
+- **Status (2026-10-12):** STARTED — hardware-integration design and preflight only. Earlier Ubuntu D455 evidence exists, but no Jetson, drivetrain, encoder, LiDAR, emergency-stop, power, or real-robot navigation evidence is claimed.
+- **Done when:** G15 records the actual hardware manifest; verifies safe power/stop behavior; proves D455, LiDAR, encoder/odometry, and drive interfaces in staged tests; and preserves clear rollback evidence. See `docs/m15_hardware_integration.md` for the ordered gates.
+
 ## Deferred — M13 Cosmos scenario generation (Optional Extension O1)
 
 - **Purpose:** Add a separate scenario-generation capability without replacing Isaac Sim physics or the G12 validator.
@@ -11,7 +18,7 @@
 
 - **Purpose:** Make the frozen G7–G12 core usable through a typed API and web GUI without changing robotics behavior.
 - **Files:** `api/`, `gui/`, `docs/m14_gui_architecture.md`, API tests
-- **Status (2026-10-07):** **G14 PASS.** The same-origin GUI provides Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience views over the typed API. Workspace/build and the frozen virtual validation remain confirmation-gated; repair stays proposal-only. See `docs/m14_demo.md`.
+- **Status (2026-10-12):** **G14 PASS.** The same-origin GUI provides Dashboard, Requirement, Robot Configuration, Runtime, and Validation/Experience views over the typed API. Workspace/build and the frozen virtual validation remain confirmation-gated; repair stays proposal-only. The landing page now presents the locally stored user-supplied rigged GLB with local animation and interaction; it remains presentation-only. See `docs/m14_demo.md` and `docs/THIRD_PARTY_NOTICES.md`.
 - **Done when:** the five core views consume typed API evidence for project, requirement, compatibility, generation/build, runtime, validation, and repair without direct ROS/shell access or a Cosmos dependency.
 
 
