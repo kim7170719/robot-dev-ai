@@ -35,9 +35,11 @@ Isaac Sim G4 CLI results (2026-09-21):
 - M14 remains a completed presentation layer. Do not reshape its core API/GUI schema until G12.5 freezes the new contract. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
 - M14B Evidence Explorer is now a read-only extension of the existing GUI. It reads `/api/v1/evidence/generic-diff-base` and labels the default G12 virtual MVP record as E3 simulation evidence, not E4 real-hardware proof. The v0.5 Registry view reads `/api/v1/registry/management` and `/api/v1/registry/sources/{id}/review`; it filters stored lifecycle/provenance data but cannot discover, clone, install, execute, validate, promote, or edit an external package. See `docs/roadmap_v0.5.md` and ADR 0010.
 - G12.6 now has an environment-bound evidence schema, conflict-preserving query,
-  read-only API, and `RegistrySnapshot.create()` for deterministic benchmark
-  inputs. It does not yet meet the broader population/community gate and does
-  not imply E4/E5 evidence.
+  read-only API, deterministic `RegistrySnapshot.create()`, and a separate
+  pending community-review queue. Evidence Explorer shows the snapshot ID and
+  review state; pending community reports never become accepted evidence. It
+  does not meet the broader evidence-population gate and does not imply E2,
+  E4, or E5 evidence.
 
 ## M5 evidence
 

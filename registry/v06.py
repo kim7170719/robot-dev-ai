@@ -12,6 +12,7 @@ from .v04 import EvidenceStatus, RegistryDocumentV04
 
 EvidenceLevel = Literal["E0", "E1", "E2", "E3", "E4", "E5"]
 SourceTrust = Literal["A", "B", "C", "blocked"]
+CommunityReviewState = Literal["pending-review", "accepted", "rejected"]
 
 
 class EvidenceEnvironment(RegistryModel):
@@ -34,6 +35,23 @@ class EvidenceRecord(RegistryModel):
     provenance: str = Field(min_length=1, max_length=128)
 
 
+class CommunityEvidenceSubmission(RegistryModel):
+    """Unreviewed community evidence kept outside the accepted record set."""
+
+    id: Identifier
+    record: EvidenceRecord
+    review_state: CommunityReviewState = "pending-review"
+    submitted_by: str = Field(min_length=1, max_length=128)
+
+    @model_validator(mode="after")
+    def validate_community_submission(self) -> CommunityEvidenceSubmission:
+        if self.record.source_trust != "C":
+            raise ValueError("community submissions require source trust C")
+        if self.record.evidence_level == "E5" and self.review_state != "accepted":
+            raise ValueError("E5 community evidence requires accepted review")
+        return self
+
+
 class RegistryDocumentV06(RegistryModel):
     """v0.6 envelope retaining v0.4 facts and appending contextual evidence."""
 
@@ -41,6 +59,7 @@ class RegistryDocumentV06(RegistryModel):
     source_schema_version: Literal["v0.4"]
     registry_v04: RegistryDocumentV04
     evidence_records: list[EvidenceRecord] = Field(default_factory=list)
+    community_submissions: list[CommunityEvidenceSubmission] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_evidence_references(self) -> RegistryDocumentV06:
@@ -55,6 +74,18 @@ class RegistryDocumentV06(RegistryModel):
         missing = sorted({record.component_id for record in self.evidence_records} - available)
         if missing:
             raise ValueError("evidence references unknown component: " + ", ".join(missing))
+        submission_ids = [submission.id for submission in self.community_submissions]
+        if len(submission_ids) != len(set(submission_ids)):
+            raise ValueError("v0.6 registry contains duplicate community submission identifiers")
+        submission_components = {
+            submission.record.component_id for submission in self.community_submissions
+        }
+        missing_submissions = sorted(submission_components - available)
+        if missing_submissions:
+            raise ValueError(
+                "community submission references unknown component: "
+                + ", ".join(missing_submissions)
+            )
         return self
 
 

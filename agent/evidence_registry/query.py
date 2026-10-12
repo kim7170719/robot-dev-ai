@@ -13,6 +13,7 @@ class EvidenceSummary(BaseModel):
     records: list[EvidenceRecord] = Field(default_factory=list)
     coverage_levels: list[str] = Field(default_factory=list)
     conflict_record_ids: list[Identifier] = Field(default_factory=list)
+    pending_community_submission_ids: list[Identifier] = Field(default_factory=list)
 
 
 class EvidenceRegistry:
@@ -44,4 +45,10 @@ class EvidenceRegistry:
             records=records,
             coverage_levels=sorted({record.evidence_level for record in records}),
             conflict_record_ids=conflicts,
+            pending_community_submission_ids=sorted(
+                submission.id
+                for submission in document.community_submissions
+                if submission.record.component_id == component_id
+                and submission.review_state == "pending-review"
+            ),
         )

@@ -41,6 +41,14 @@ stored facts; Registry GUI filtering and review controls cannot fetch, install,
 execute, validate, or promote a package. Full suite: **94 tests**. See
 `docs/roadmap_v0.5.md` and ADR 0010.
 
+v0.6 Scalable Evidence Registry product surface (2026-10-12): **PASS for the
+software foundation.** Community C-trust reports are stored as explicit
+`pending-review` submissions and cannot overwrite accepted evidence. The
+Evidence API now exposes a deterministic snapshot identifier, and the GUI
+shows that snapshot plus pending-review state. Full suite: **94 tests**. The
+evidence-population research gate remains open: no E2 sandbox-build, E4
+real-hardware, or E5 community claim has been fabricated.
+
 ## M8 Template Engine / Gate G8
 
 | Criterion | Status | Evidence |

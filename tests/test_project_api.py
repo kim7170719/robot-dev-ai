@@ -94,6 +94,14 @@ def test_evidence_endpoint_returns_contextual_summary_only() -> None:
     assert response.json()["records"][0]["evidence_level"] == "E3"
 
 
+def test_evidence_snapshot_endpoint_is_read_only_and_content_addressed() -> None:
+    response = TestClient(create_app(read_only=True)).get("/api/v1/evidence/snapshot")
+
+    assert response.status_code == 200
+    assert len(response.json()["snapshot_id"]) == 64
+    assert response.json()["evidence_record_count"] == 1
+
+
 def test_registry_management_endpoints_are_read_only_and_traceable() -> None:
     client = TestClient(create_app(read_only=True))
 

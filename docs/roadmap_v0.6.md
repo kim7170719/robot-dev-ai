@@ -1,6 +1,6 @@
 # Roadmap v0.6 — Scalable Evidence Registry
 
-**Status:** accepted future sequencing (2026-10-12)
+**Status:** foundation implemented; population gate remains evidence-dependent (2026-10-12)
 
 **Source:** user-supplied *ROBOT DEV AI Roadmap v0.6 — Composable Architecture
 and Scalable Evidence Registry*.
@@ -28,6 +28,28 @@ G0–G12 virtual MVP (PASS) → G12.5 composable core (active)
 ```
 
 Cosmos remains optional and never validates physics, ROS, or real hardware.
+
+## Implemented foundation
+
+- `registry.v06` preserves E0–E5 level, source trust, status, environment, and
+  provenance separately. It now also retains C-trust community submissions in
+  a distinct review queue; pending reports cannot silently become accepted
+  evidence or E5 claims.
+- `EvidenceRegistry` reports coverage, same-context PASS/FAIL conflicts, and
+  pending community-review identifiers without collapsing observations.
+- `RegistrySnapshot.create()` provides a deterministic content hash. The
+  read-only `/api/v1/evidence/snapshot` endpoint exposes its identifier and
+  counts to the Evidence GUI.
+- M14B Evidence Explorer shows the current snapshot and explicitly labels
+  pending community reports as not yet evidence.
+
+## Honest completion boundary
+
+The schema, query, snapshot, API, review queue, and GUI surface are complete.
+The numerical research gate below remains pending external evidence: this
+repository does not fabricate ten E0/E1 records, three sandbox-build E2
+records, physical E4 results, or multi-review E5 reports. Those require the
+future audited discovery/sandbox path and actual recorded observations.
 
 ## Evidence model
 

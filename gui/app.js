@@ -261,6 +261,12 @@ function renderEvidence(summary) {
   target.replaceChildren();
   if (!record) { target.textContent = "No recorded evidence."; return; }
   target.innerHTML = `<article><small>EVIDENCE LEVEL</small><strong>${record.evidence_level}</strong><p>${record.status.toUpperCase()} · trust ${record.source_trust}</p></article><article><small>RECORDED ENVIRONMENT</small><strong>${record.environment.os}</strong><p>${record.environment.ros_distro} · ${record.environment.cpu_arch}</p></article><article><small>PROVENANCE</small><strong>${record.provenance}</strong><p>${summary.coverage_levels.join(" · ")} coverage${summary.conflict_record_ids.length ? " · conflict recorded" : ""}</p></article>`;
+  const pending = document.querySelector("#community-review-count");
+  if (pending) pending.textContent = summary.pending_community_submission_ids.length ? `社群提交：${summary.pending_community_submission_ids.length} 筆待人工審查，尚未納入證據。` : "社群提交：尚無待審查資料";
+}
+function renderEvidenceSnapshot(snapshot) {
+  const target = document.querySelector("#evidence-snapshot");
+  if (target) target.textContent = `${snapshot.snapshot_id.slice(0, 12)}… · ${snapshot.evidence_record_count} records`;
 }
 let registryCatalog = null;
 function registryText(value) { return String(value || "—").replaceAll("-", " "); }
@@ -362,6 +368,7 @@ if (initialView?.matches("[data-view]")) {
 } else activateView("landing");
 applyLocale();
 request("/evidence/generic-diff-base").then(renderEvidence).catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; });
+request("/evidence/snapshot").then(renderEvidenceSnapshot).catch((error) => { document.querySelector("#evidence-snapshot").textContent = error.message; });
 loadRegistry();
 refreshSimulation();
 window.setInterval(() => {

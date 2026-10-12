@@ -38,7 +38,7 @@ from agent.mvp_pipeline import (
     SimulationValidationResult,
 )
 from agent.requirement_agent import RequirementAgent
-from agent.evidence_registry import EvidenceRegistry, EvidenceSummary
+from agent.evidence_registry import EvidenceRegistry, EvidenceSummary, RegistrySnapshot
 from agent.trusted_source import TrustedSourcePolicy
 from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
@@ -79,6 +79,16 @@ class CoreSchemaSummary(BaseModel):
     status: Literal["frozen"]
     capabilities: list[str]
     next_gate: Literal["G12.6"]
+
+
+class EvidenceSnapshotSummary(BaseModel):
+    """A non-mutating identifier for the exact evidence inputs being viewed."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    snapshot_id: str
+    evidence_record_count: int
+    pending_community_submission_count: int
 
 
 class RequirementRequest(BaseModel):
@@ -269,6 +279,18 @@ def create_app(
                 "unknown-component-flow",
             ],
             next_gate="G12.6",
+        )
+
+    @app.get("/api/v1/evidence/snapshot", response_model=EvidenceSnapshotSummary)
+    def read_evidence_snapshot() -> EvidenceSnapshotSummary:
+        snapshot = RegistrySnapshot.create(evidence_document)
+        return EvidenceSnapshotSummary(
+            snapshot_id=snapshot.id,
+            evidence_record_count=len(snapshot.document.evidence_records),
+            pending_community_submission_count=sum(
+                submission.review_state == "pending-review"
+                for submission in snapshot.document.community_submissions
+            ),
         )
 
     @app.get("/api/v1/evidence/{component_id}", response_model=EvidenceSummary)

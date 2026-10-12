@@ -17,6 +17,12 @@ gui/app.js`, TestClient GUI/catalog/review smoke, and `git diff --check` all
 passed. Next, implement an audit-backed onboarding transaction and sandbox
 executor before enabling source discovery or Registry CRUD.
 
+v0.6 scalable evidence foundation now also keeps unreviewed community reports
+outside accepted evidence and exposes a deterministic evidence snapshot through
+the API/GUI. Full suite after this work: **94 tests passed**. The v0.6 numeric
+research gate remains pending real audit-backed discovery/sandbox records; do
+not claim E2/E4/E5 evidence.
+
 | Field | Value |
 |---|---|
 | Last writer | Ubuntu |

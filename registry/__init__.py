@@ -13,6 +13,7 @@ from .v04 import (
     migrate_v03_registry,
 )
 from .v06 import (
+    CommunityEvidenceSubmission,
     EvidenceEnvironment,
     EvidenceRecord,
     RegistryDocumentV06,
@@ -42,6 +43,7 @@ __all__ = [
     "EvidenceRecord",
     "RegistryDocumentV06",
     "migrate_v04_registry",
+    "CommunityEvidenceSubmission",
     "CompatibilityClaim",
     "ManagedComponent",
     "RegistryManagementDocumentV05",
