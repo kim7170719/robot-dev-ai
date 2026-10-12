@@ -214,6 +214,12 @@ supported core seams, and G12.6 as the next gate. It accepts no registry write,
 ROS command, or mutation. The complete suite passed: **86 tests**. G12.5
 acceptance consolidation remains pending before the gate itself can be claimed.
 
+G12.6 evidence schema (2026-10-12): **in progress.** `registry.v06` wraps the
+v0.4 registry without inventing evidence and records E0–E5, source trust,
+status, provenance, and OS/ROS/CPU context per immutable observation. A
+simulation E3 record is therefore not a real-hardware E4 claim. Query, conflict,
+coverage, snapshot, and GUI work remain open.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |

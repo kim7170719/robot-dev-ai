@@ -12,6 +12,12 @@ from .v04 import (
     SoftwareProfileV04,
     migrate_v03_registry,
 )
+from .v06 import (
+    EvidenceEnvironment,
+    EvidenceRecord,
+    RegistryDocumentV06,
+    migrate_v04_registry,
+)
 
 __all__ = [
     "AdapterContract",
@@ -24,4 +30,8 @@ __all__ = [
     "RobotSpecV04",
     "SoftwareProfileV04",
     "migrate_v03_registry",
+    "EvidenceEnvironment",
+    "EvidenceRecord",
+    "RegistryDocumentV06",
+    "migrate_v04_registry",
 ]

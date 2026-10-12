@@ -7,6 +7,11 @@
 - **Status (2026-10-12):** Tasks 1–8 and 10 PASS; Task 9 regression/acceptance is active. The v0.4 core schema is exposed as a read-only API contract. No real-hardware action or G12.5 gate claim has been made.
 - **Done when:** all eight G12.5 acceptance criteria in `docs/roadmap_v0.4.md` pass with tests and evidence; only then freeze the core API and align the M14B GUI.
 
+## Active next — G12.6 Scalable Evidence Registry
+
+- **Purpose:** Preserve contextual E0–E5 evidence without overstating simulation or documentation as real-hardware validation.
+- **Status (2026-10-12):** v0.6 envelope and evidence-record schema are implemented; query, coverage, conflicts, snapshots, and M14B GUI remain next.
+
 ## Paused — M15 Jetson + real-robot bring-up (Gate G15)
 
 - **Purpose:** Safely bring the selected Jetson Orin Nano differential-drive platform online with Intel RealSense D455, a physical 2D LiDAR, wheel encoders, and an independent emergency stop; then collect reproducible real-hardware evidence without changing the M12 simulation baseline.
