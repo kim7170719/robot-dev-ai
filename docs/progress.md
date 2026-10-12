@@ -137,6 +137,15 @@ than inventing verification. Schema/migration tests plus the full suite passed:
 **69 tests**. This establishes models only; Architecture Resolver behavior is
 the next task and G12.5 remains open.
 
+G12.5 Task 2 (2026-10-12): **PASS.** `agent.architecture_resolver` now
+deterministically selects a topology from declared v0.4 hardware profiles and
+robot requirements without generating files. It assigns ROS 2/Nav2 to a Linux
+host and motor/encoder work to an MCU for Host+MCU requests; it honours explicit
+topology choices, and returns `architecture-conflict` for an MCU-only navigation
+request. It emits plans with `not-tested` evidence status rather than claiming
+that an actual device is connected. Architecture tests plus the full suite
+passed: **73 tests**. Task 3, capability/constraint registry upgrade, is next.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |

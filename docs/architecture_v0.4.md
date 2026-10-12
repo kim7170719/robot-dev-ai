@@ -65,6 +65,10 @@ evidence. The GUI never receives ROS credentials or shell authority.
 | Validators/Evidence | Collect and classify build, graph, runtime, simulation, and later real evidence | Commands/observations → versioned evidence records |
 | Presentation API | Expose typed state without ROS shell/control logic | HTTP contract → GUI/CLI |
 
+The initial resolver lives at `agent/architecture_resolver/`. It has no file,
+package-install, ROS, or hardware side effect; it produces a `not-tested`
+architecture plan or an `architecture-conflict` only.
+
 ## 4. Boundary and failure stance
 
 | Boundary | Contract owner | Slow/down/unknown behavior |
