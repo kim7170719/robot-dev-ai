@@ -1,6 +1,6 @@
 # Roadmap v0.4 — Composable, architecture-aware integration
 
-**Status:** active execution baseline (2026-10-12)
+**Status:** active G12.5 baseline; future sequencing superseded by v0.6 (2026-10-12)
 
 **Source:** user-supplied *Robot Dev AI / RoboWeave Roadmap v0.4 — Composable &
 Architecture-Aware Refactor*
@@ -95,4 +95,5 @@ a physics or real-robot validation authority.
 9. Freeze Core API schema, then update M14B UI.
 
 See `docs/architecture_v0.4.md` for boundaries and `docs/decisions/0008-*` for
-the recorded architectural decision.
+the recorded architectural decision. `docs/roadmap_v0.6.md` adds G12.6 after
+G12.5 and supersedes this document's future M14B/M15/M16 sequencing.

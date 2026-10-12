@@ -24,6 +24,13 @@ M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `mai
 
 Current work: **G12.5 v0.4 composable-architecture refactor is active; G12.5 is not yet passed.** M14 GUI MVP remains complete (G14 PASS), M15 real-hardware preflight is paused pending the new core schema, G12 historical evidence remains frozen and runnable without Cosmos, and M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
 
+Roadmap update (2026-10-12): the user-supplied v0.6 roadmap is accepted for
+future sequencing. It retains the active G12.5 core refactor and introduces
+G12.6 Scalable Evidence Registry only after G12.5: E0–E5 evidence levels,
+independent source trust, environment-specific conflicts, coverage, community
+review, and immutable benchmark snapshots. No G12.6 implementation or E4/E5
+claim exists yet; see `docs/roadmap_v0.6.md` and ADR 0009.
+
 ## M8 Template Engine / Gate G8
 
 | Criterion | Status | Evidence |

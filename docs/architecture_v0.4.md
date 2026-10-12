@@ -1,6 +1,6 @@
 # v0.4 composable integration architecture
 
-**Version:** 0.1 (2026-10-12)
+**Version:** 0.2 (2026-10-12)
 
 **Status:** active design baseline for G12.5
 
@@ -127,6 +127,7 @@ plausible but unverified hardware integration is not safe evidence.
 | ADR | Decision | Status |
 |---|---|---|
 | [0008](decisions/0008-composable-architecture-before-real-hardware.md) | Complete G12.5 composable core refactor before M15 real-hardware execution | Accepted |
+| [0009](decisions/0009-scalable-evidence-registry-after-composable-core.md) | Add G12.6 layered evidence registry after G12.5 | Accepted |
 
 Existing stack decisions remain in `docs/DECISIONS.md`; this architecture does
 not change ROS 2 Jazzy, system Python, Isaac Sim 4.5 Docker, or the GUI typed
@@ -148,3 +149,4 @@ API boundary.
 | Version | Date | Change |
 |---|---|---|
 | 0.1 | 2026-10-12 | Initial v0.4/G12.5 architecture baseline derived from the user-supplied roadmap. |
+| 0.2 | 2026-10-12 | Record v0.6 sequencing: G12.6 follows, rather than interrupts, the active G12.5 core refactor. |
