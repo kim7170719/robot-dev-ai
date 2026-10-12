@@ -491,3 +491,17 @@ Meshopt, 2048px WebP textures, and an 8% geometry target; validation found no
 errors (the source material's tangent-space warning remains). GLB assets are
 Git LFS tracked. This remains presentation-only: no ROS, Isaac, API, or
 hardware behaviour changed.
+
+## M14 rigged humanoid interaction (2026-10-12)
+
+The later user-supplied Tripo GLB contains 78 skeletal joints, 56 mesh parts,
+and five authored clips (`dance`, `front kick`, `run`, `flip`, `walk`). It
+replaces the static GLB as the landing primary asset. The browser uses an
+`AnimationMixer` to play a looping walk by default and exposes WALK, DANCE, and
+KICK controls; kick plays once and returns to walk. The user can drag to rotate,
+use wheel/pinch input to zoom, click to toggle the auto-showcase, and use arrow
+keys, Space, and R on the focused canvas. Optimisation preserved all clips and
+reduced the supplied 5.8 MB asset to 2.2 MB with Meshopt and 2048px WebP
+textures. Browser WebGL verification loaded 2,263,892 bytes, exercised WALK and
+DANCE, and captured the animated rig. Full suite: 65 tests. This is visual UI
+motion only; it does not control ROS, Isaac, or physical hardware.

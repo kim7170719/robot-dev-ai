@@ -37,9 +37,10 @@ orchestrates DOM entry motion; it has no ROS, API, or simulator access.
 
 ## User-supplied humanoid GLB
 
-`gui/assets/humanoid-reference.glb` is a Web-optimised derivative of the GLB
-the project user supplied on 2026-10-12. The source metadata names `Tripo` as
-generator. It is used only as the landing-page visual asset; it has no skeleton
-or animation clips and does not represent a robot capability, Isaac Sim scene,
-or physical hardware. The user must retain the source model's applicable
-licence and usage rights before any public deployment.
+`gui/assets/humanoid-reference.glb` and `gui/assets/humanoid-rigged.glb` are
+Web-optimised derivatives of GLBs the project user supplied on 2026-10-12. The
+source metadata names `Tripo` as generator. The rigged asset includes a 78-joint
+skeleton and five animation clips; both assets are used only for landing-page
+visuals and do not represent robot capabilities, an Isaac Sim scene, or
+physical hardware. The user must retain the source models' applicable licence
+and usage rights before any public deployment.

@@ -6,6 +6,7 @@ const host = document.querySelector("#hero-robot-3d");
 const canvas = document.querySelector("#hero-robot-canvas");
 const status = document.querySelector(".humanoid-pose");
 const loading = document.querySelector(".hero-robot-loading");
+const motionControls = [...document.querySelectorAll("[data-hero-motion]")];
 
 if (host && canvas && window.WebGLRenderingContext) {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -16,8 +17,8 @@ if (host && canvas && window.WebGLRenderingContext) {
   renderer.toneMappingExposure = 1.12;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.domElement.setAttribute("role", "img");
-  renderer.domElement.setAttribute("aria-label", "三維人形機器人展示，可用滑鼠或觸控移動視角。載入失敗時使用本機原創備援模型。");
+  renderer.domElement.setAttribute("role", "application");
+  renderer.domElement.setAttribute("aria-label", "可互動的人形機器人模型。拖曳旋轉，滾輪縮放，點擊切換自動展示；方向鍵旋轉，空白鍵切換，R 重設視角。載入失敗時使用本機原創備援模型。");
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(27, 1, .1, 40);
@@ -48,7 +49,25 @@ if (host && canvas && window.WebGLRenderingContext) {
   robot.rotation.y = -.3;
   scene.add(robot);
   let referenceRig = null;
+  let mixer = null;
+  let currentAction = null;
+  const motionActions = new Map();
   const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
+  const interaction = {
+    autoOrbit: true,
+    cameraYaw: .26,
+    cameraYawTarget: .26,
+    cameraPitch: .035,
+    cameraPitchTarget: .035,
+    distance: 12,
+    distanceTarget: 12,
+    modelYaw: 0,
+    modelYawTarget: 0,
+    dragging: false,
+    moved: false,
+    lastX: 0,
+    lastY: 0,
+  };
 
   const setShadow = (node) => { node.castShadow = true; node.receiveShadow = true; return node; };
   const mesh = (geometry, material, position = [0, 0, 0], scale = [1, 1, 1]) => {
@@ -204,13 +223,100 @@ if (host && canvas && window.WebGLRenderingContext) {
   };
   new ResizeObserver(resize).observe(host);
   host.addEventListener("pointermove", (event) => {
+    if (interaction.dragging) return;
     const bounds = host.getBoundingClientRect();
     pointer.targetX = THREE.MathUtils.clamp(((event.clientX - bounds.left) / bounds.width - .5) * 2, -1, 1);
     pointer.targetY = THREE.MathUtils.clamp(((event.clientY - bounds.top) / bounds.height - .5) * 2, -1, 1);
   });
   host.addEventListener("pointerleave", () => {
+    if (interaction.dragging) return;
     pointer.targetX = 0;
     pointer.targetY = 0;
+  });
+  const setStatus = (message) => {
+    if (status) status.textContent = message;
+  };
+  const resetInteractiveView = () => {
+    interaction.cameraYawTarget = .26;
+    interaction.cameraPitchTarget = .035;
+    interaction.distanceTarget = 12;
+    interaction.modelYawTarget = 0;
+    interaction.autoOrbit = true;
+    setStatus("AUTO SHOWCASE");
+  };
+  const playMotion = (name) => {
+    const action = motionActions.get(name);
+    if (!action || action === currentAction) return;
+    if (currentAction) currentAction.fadeOut(.24);
+    action.reset();
+    action.setLoop(name === "kick" ? THREE.LoopOnce : THREE.LoopRepeat, name === "kick" ? 1 : Infinity);
+    action.clampWhenFinished = name === "kick";
+    action.fadeIn(.24).play();
+    currentAction = action;
+    motionControls.forEach((button) => button.classList.toggle("is-active", button.dataset.heroMotion === name));
+    setStatus(`${name.toUpperCase()} MOTION`);
+  };
+  motionControls.forEach((button) => {
+    button.addEventListener("click", () => playMotion(button.dataset.heroMotion));
+  });
+  canvas.addEventListener("pointerdown", (event) => {
+    if (!referenceRig) return;
+    interaction.dragging = true;
+    interaction.moved = false;
+    interaction.lastX = event.clientX;
+    interaction.lastY = event.clientY;
+    interaction.autoOrbit = false;
+    canvas.setPointerCapture(event.pointerId);
+    setStatus("MANUAL EXPLORE");
+  });
+  canvas.addEventListener("pointermove", (event) => {
+    if (!interaction.dragging) return;
+    const deltaX = event.clientX - interaction.lastX;
+    const deltaY = event.clientY - interaction.lastY;
+    interaction.lastX = event.clientX;
+    interaction.lastY = event.clientY;
+    interaction.moved ||= Math.abs(deltaX) + Math.abs(deltaY) > 2;
+    interaction.modelYawTarget += deltaX * .012;
+    interaction.cameraYawTarget = THREE.MathUtils.clamp(interaction.cameraYawTarget + deltaX * .0025, -.8, .8);
+    interaction.cameraPitchTarget = THREE.MathUtils.clamp(interaction.cameraPitchTarget + deltaY * .002, -.16, .18);
+  });
+  const releasePointer = (event) => {
+    if (!interaction.dragging) return;
+    interaction.dragging = false;
+    if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    if (!interaction.moved) {
+      interaction.autoOrbit = !interaction.autoOrbit;
+      setStatus(interaction.autoOrbit ? "AUTO SHOWCASE" : "MANUAL EXPLORE");
+    }
+  };
+  canvas.addEventListener("pointerup", releasePointer);
+  canvas.addEventListener("pointercancel", releasePointer);
+  canvas.addEventListener("wheel", (event) => {
+    if (!referenceRig) return;
+    event.preventDefault();
+    interaction.distanceTarget = THREE.MathUtils.clamp(interaction.distanceTarget + event.deltaY * .012, 8.8, 14.5);
+    interaction.autoOrbit = false;
+    setStatus("MANUAL EXPLORE");
+  }, { passive: false });
+  canvas.addEventListener("keydown", (event) => {
+    if (!referenceRig) return;
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      interaction.modelYawTarget += event.key === "ArrowLeft" ? -.18 : .18;
+      interaction.autoOrbit = false;
+      setStatus("MANUAL EXPLORE");
+    } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+      interaction.distanceTarget = THREE.MathUtils.clamp(interaction.distanceTarget + (event.key === "ArrowUp" ? -.5 : .5), 8.8, 14.5);
+      interaction.autoOrbit = false;
+      setStatus("MANUAL EXPLORE");
+    } else if (event.key.toLowerCase() === "r") {
+      resetInteractiveView();
+    } else if (event.key === " ") {
+      interaction.autoOrbit = !interaction.autoOrbit;
+      setStatus(interaction.autoOrbit ? "AUTO SHOWCASE" : "MANUAL EXPLORE");
+    } else {
+      return;
+    }
+    event.preventDefault();
   });
   resize();
   host.classList.add("is-ready");
@@ -236,15 +342,28 @@ if (host && canvas && window.WebGLRenderingContext) {
       }
     });
     scene.add(referenceRig);
+    mixer = new THREE.AnimationMixer(model);
+    const clips = {
+      walk: gltf.animations.find((clip) => clip.name.includes("walk")),
+      dance: gltf.animations.find((clip) => clip.name.includes("dance")),
+      kick: gltf.animations.find((clip) => clip.name.includes("kick")),
+    };
+    Object.entries(clips).forEach(([name, clip]) => {
+      if (clip) motionActions.set(name, mixer.clipAction(clip));
+    });
+    mixer.addEventListener("finished", ({ action }) => {
+      if (action === currentAction && action === motionActions.get("kick")) playMotion("walk");
+    });
     robot.visible = false;
-    if (status) status.textContent = "REFERENCE MODEL READY";
+    resetInteractiveView();
+    playMotion("walk");
     if (loading) loading.textContent = "REFERENCE MODEL READY";
   };
 
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
   loader.load(
-    "./assets/humanoid-reference.glb",
+    "./assets/humanoid-rigged.glb",
     activateReferenceModel,
     (event) => {
       if (loading && event.total) loading.textContent = `LOADING REFERENCE ${Math.round((event.loaded / event.total) * 100)}%`;
@@ -259,14 +378,26 @@ if (host && canvas && window.WebGLRenderingContext) {
   function render(now) {
     requestAnimationFrame(render);
     const delta = Math.min(clock.getDelta(), .05);
-    if (active()) {
+    if (referenceRig) {
       pointer.x = THREE.MathUtils.damp(pointer.x, pointer.targetX, 4.5, delta);
       pointer.y = THREE.MathUtils.damp(pointer.y, pointer.targetY, 4.5, delta);
-      if (referenceRig) {
-        referenceRig.rotation.y = -.35 + Math.sin(now / 7200) * .055 + pointer.x * .16;
-        referenceRig.rotation.x = pointer.y * -.035;
-        referenceRig.position.y = floor.position.y + .02 + Math.sin(now / 2100) * .018;
-      } else {
+      interaction.cameraYaw = THREE.MathUtils.damp(interaction.cameraYaw, interaction.cameraYawTarget, 6, delta);
+      interaction.cameraPitch = THREE.MathUtils.damp(interaction.cameraPitch, interaction.cameraPitchTarget, 6, delta);
+      interaction.distance = THREE.MathUtils.damp(interaction.distance, interaction.distanceTarget, 6, delta);
+      interaction.modelYaw = THREE.MathUtils.damp(interaction.modelYaw, interaction.modelYawTarget, 6, delta);
+      const autoYaw = active() && interaction.autoOrbit ? Math.sin(now / 7000) * .16 : 0;
+      const idleFloat = active() ? Math.sin(now / 2100) * .018 : 0;
+      referenceRig.rotation.y = -.35 + interaction.modelYaw + autoYaw + pointer.x * .09;
+      referenceRig.rotation.x = pointer.y * -.025;
+      referenceRig.position.y = floor.position.y + .02 + idleFloat;
+      camera.position.set(
+        Math.sin(interaction.cameraYaw) * interaction.distance,
+        .45 + interaction.cameraPitch * interaction.distance,
+        Math.cos(interaction.cameraYaw) * interaction.distance,
+      );
+      camera.lookAt(0, .35, 0);
+      if (active() && mixer) mixer.update(delta);
+    } else if (active()) {
         if (!started) started = now;
         if (now - started > 3600) {
           pose = (pose + 1) % labels.length;
@@ -285,7 +416,6 @@ if (host && canvas && window.WebGLRenderingContext) {
         robot.rotation.z = state.body;
         robot.rotation.y = -.3 + Math.sin(now / 5400) * .03;
       }
-    }
     renderer.render(scene, camera);
   }
   requestAnimationFrame(render);

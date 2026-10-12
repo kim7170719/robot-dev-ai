@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="./m14-topnav.css?v=5">
     <link rel="stylesheet" href="./m14-humanoid.css?v=3">
     <link rel="stylesheet" href="./m14-control.css?v=1">
-    <link rel="stylesheet" href="./m14-3d-hero.css?v=4">
+    <link rel="stylesheet" href="./m14-3d-hero.css?v=5">
     <link rel="stylesheet" href="./m14-landing-apple.css?v=1">
     <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
   </head>
@@ -86,9 +86,15 @@
           </div>
           <div class="humanoid-stage" aria-label="人形機器人動作展示">
             <div class="hero-robot-3d" id="hero-robot-3d">
-              <canvas id="hero-robot-canvas" aria-label="可連續活動的三維人形機器人"></canvas>
+              <canvas id="hero-robot-canvas" tabindex="0" aria-label="可互動的人形機器人模型：拖曳旋轉、滾輪縮放、點擊切換自動展示；鍵盤可用方向鍵、空白鍵和 R 操作。"></canvas>
               <img class="humanoid-render hero-robot-fallback" src="./assets/humanoid-boot.png" alt="白色人形機器人準備啟動">
               <p class="hero-robot-loading" aria-live="polite">LOADING MOTION CORE</p>
+              <p class="hero-interaction-hint" aria-hidden="true">DRAG · ZOOM · EXPLORE</p>
+              <div class="hero-motion-controls" role="group" aria-label="機器人動作控制">
+                <button type="button" data-hero-motion="walk">WALK</button>
+                <button type="button" data-hero-motion="dance">DANCE</button>
+                <button type="button" data-hero-motion="kick">KICK</button>
+              </div>
             </div>
             <p class="humanoid-pose">SYSTEM READY</p>
           </div>
@@ -142,7 +148,7 @@
     </div>
     <script src="./vendor/gsap.min.js?v=3.12.5"></script>
     <script type="module" src="./app.js?v=15"></script>
-    <script type="module" src="./hero-robot.js?v=5"></script>
+    <script type="module" src="./hero-robot.js?v=6"></script>
     <script type="module" src="./hero-motion.js?v=1"></script>
   </body>
 </html>

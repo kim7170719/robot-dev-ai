@@ -2,9 +2,15 @@
 .landing > .landing-robot { display: none; }
 .humanoid-stage { isolation: isolate; overflow: visible; }
 .hero-robot-3d { height: 100%; position: relative; width: 100%; }
-#hero-robot-canvas { height: 100%; opacity: 0; position: absolute; transition: opacity 480ms ease; width: 100%; }
+#hero-robot-canvas { cursor: grab; height: 100%; opacity: 0; position: absolute; touch-action: none; transition: opacity 480ms ease; width: 100%; }
+#hero-robot-canvas:active { cursor: grabbing; }
+#hero-robot-canvas:focus-visible { outline: 2px solid #b7e6ff; outline-offset: 4px; }
 .hero-robot-fallback { filter: drop-shadow(0 28px 34px rgba(0, 0, 0, .46)); height: 100%; left: 0; object-fit: contain; position: absolute; top: 0; width: 100%; }
 .hero-robot-loading { bottom: 14%; color: #bdd5f3; font-size: 12px; font-weight: 700; letter-spacing: .1em; margin: 0; position: absolute; right: 14%; text-shadow: 0 2px 12px rgba(0, 0, 0, .78); }
+.hero-interaction-hint { bottom: 7%; color: rgba(189, 213, 243, .72); font-size: 9px; font-weight: 700; letter-spacing: .14em; margin: 0; pointer-events: none; position: absolute; right: 14%; text-shadow: 0 2px 12px rgba(0, 0, 0, .78); }
+.hero-motion-controls { bottom: 11%; display: flex; gap: 6px; left: 10%; position: absolute; z-index: 1; }
+.hero-motion-controls button { background: rgba(5, 10, 17, .68); border: 1px solid rgba(160, 202, 247, .28); border-radius: 999px; color: #dcecff; cursor: pointer; font: 700 9px/1 inherit; letter-spacing: .1em; padding: 8px 10px; transition: background 180ms ease, border-color 180ms ease, color 180ms ease; }
+.hero-motion-controls button:hover, .hero-motion-controls button:focus-visible, .hero-motion-controls button.is-active { background: rgba(76, 150, 231, .24); border-color: rgba(183, 230, 255, .86); color: #fff; outline: none; }
 .hero-robot-3d.is-ready #hero-robot-canvas { opacity: 1; }
 .hero-robot-3d.is-ready .hero-robot-fallback, .hero-robot-3d.is-ready .hero-robot-loading { display: none; }
 .humanoid-pose { background: rgba(5, 10, 17, .78); border: 1px solid rgba(160, 202, 247, .26); border-radius: 999px; box-shadow: 0 12px 30px rgba(0, 0, 0, .24); font-size: 11px; padding: 8px 12px; }
@@ -14,6 +20,7 @@
 @media (max-width: 640px) {
   .humanoid-stage { height: min(72vw, 290px); left: 0; right: 0; top: clamp(46px, 8svh, 66px); width: 100%; }
   .humanoid-pose { bottom: 7%; right: 14%; }
+  .hero-motion-controls { bottom: 11%; left: 14%; }
   .landing-copy { bottom: auto; top: max(350px, calc(8svh + min(72vw, 290px) + 20px)); }
 }
 @media (prefers-reduced-motion: reduce) { #hero-robot-canvas { transition: none; } }
