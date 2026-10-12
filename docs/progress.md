@@ -129,6 +129,14 @@ criteria and `docs/architecture_v0.4.md` records the whole-system boundary.
 Status is architecture/document baseline only; no G12.5 code or gate claim has
 been made.
 
+G12.5 Task 1 (2026-10-12): **PASS.** `registry.v04` now defines versioned
+resource, hardware-profile, robot-spec, architecture-plan, and composition-plan
+models. `migrate_v03_registry()` validates and retains the existing v0.3
+registry inside a v0.4 envelope, then marks migrated hardware `unknown` rather
+than inventing verification. Schema/migration tests plus the full suite passed:
+**69 tests**. This establishes models only; Architecture Resolver behavior is
+the next task and G12.5 remains open.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |

@@ -31,7 +31,7 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Next
 
-- Implement G12.5 in the documented order: schema/migration → Architecture Resolver → capability registry → Composition Planner → templates/adapters → readiness/safety → tests → API freeze. Do not resume M15 actuator or hardware work before G12.5 evidence.
+- G12.5 Task 1 is complete: `registry/v04.py` supplies versioned schema models and `migrate_v03_registry()` preserves validated v0.3 registry facts while marking unsupported verification as `unknown`; tests total 69. Next implement Task 2, Architecture Resolver, before registry/planner/generation work. Do not resume M15 actuator or hardware work before G12.5 evidence.
 - M14 remains a completed presentation layer. Do not reshape its core API/GUI schema until G12.5 freezes the new contract. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
 
 ## M5 evidence
