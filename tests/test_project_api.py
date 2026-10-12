@@ -117,6 +117,21 @@ def test_registry_management_endpoints_are_read_only_and_traceable() -> None:
     assert blocked_write.status_code == 403
 
 
+def test_onboarding_preview_returns_no_execution_authority() -> None:
+    response = TestClient(create_app()).post(
+        "/api/v1/registry/onboarding/preview",
+        json={
+            "requested_by": "operator",
+            "component": {"id": "candidate-driver", "kind": "driver", "display_name": "Candidate Driver", "source_id": "candidate-source", "lifecycle": "discovered", "provenance": "test"},
+            "source": {"id": "candidate-source", "source_type": "official-repo", "url": "https://example.test/repo", "trust_level": "A", "license": {"spdx": "MIT", "redistribution": "allowed"}, "retrieved_at": "2026-10-12"},
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["execution_authorized"] is False
+    assert response.json()["status"] == "awaiting-human-confirmation"
+
+
 def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:
     response = TestClient(create_app()).post(
         "/api/v1/requirements/parse",

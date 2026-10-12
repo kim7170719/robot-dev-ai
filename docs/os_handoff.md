@@ -23,6 +23,12 @@ the API/GUI. Full suite after this work: **94 tests passed**. The v0.6 numeric
 research gate remains pending real audit-backed discovery/sandbox records; do
 not claim E2/E4/E5 evidence.
 
+The next v0.5 onboarding preview is also complete: it creates a deterministic
+audit transaction and sandbox-step plan with `execution_authorized=false`.
+Registry GUI can preview it, never run it. Next is persistent audit storage and
+the separately authorized sandbox executor. Full suite at this checkpoint:
+**97 tests passed**.
+
 | Field | Value |
 |---|---|
 | Last writer | Ubuntu |

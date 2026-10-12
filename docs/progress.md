@@ -49,6 +49,13 @@ shows that snapshot plus pending-review state. Full suite: **94 tests**. The
 evidence-population research gate remains open: no E2 sandbox-build, E4
 real-hardware, or E5 community claim has been fabricated.
 
+v0.5 onboarding transaction preview (2026-10-12): **PASS.** A registered
+source/component pair now produces a deterministic audit transaction with its
+source-policy decision, a reviewable lifecycle diff, and a descriptive sandbox
+sequence. The result always has `execution_authorized=false`; a blocked source
+has no sandbox steps. The Registry GUI can preview this plan but cannot run it.
+Full suite: **97 tests**.
+
 ## M8 Template Engine / Gate G8
 
 | Criterion | Status | Evidence |

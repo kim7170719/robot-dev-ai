@@ -40,6 +40,11 @@ Isaac Sim G4 CLI results (2026-09-21):
   review state; pending community reports never become accepted evidence. It
   does not meet the broader evidence-population gate and does not imply E2,
   E4, or E5 evidence.
+- The next v0.5 step now includes `agent/source_onboarding`: an auditable,
+  deterministic preview transaction for a registered source/component pair.
+  It lists later sandbox steps but is explicitly non-executing. The Registry
+  GUI offers “預覽安全測試計畫”; it cannot authorize or run acquisition. A
+  persistent audit store and sandbox executor remain the next implementation.
 
 ## M5 evidence
 

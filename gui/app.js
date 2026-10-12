@@ -283,6 +283,21 @@ async function reviewSource(sourceId) {
   try { renderSourceReview(await request(`/registry/sources/${sourceId}/review`)); }
   catch (error) { document.querySelector("#source-review-result").textContent = error.message; }
 }
+async function previewOnboarding(component) {
+  const source = registryCatalog?.sources.find((item) => item.id === component.source_id);
+  if (!source) return;
+  const target = document.querySelector("#source-review-result");
+  target.textContent = "正在建立安全測試計畫…";
+  try {
+    const plan = await request("/registry/onboarding/preview", { method: "POST", body: JSON.stringify({ component, source, requested_by: "local-operator" }) });
+    target.replaceChildren();
+    const title = document.createElement("strong");
+    title.textContent = plan.status === "blocked" ? "此來源無法建立安全測試計畫" : "安全測試計畫等待人工確認";
+    const detail = document.createElement("p");
+    detail.textContent = plan.status === "blocked" ? plan.source_review.reasons.join(" ") : `預定步驟：${plan.sandbox_steps.join(" → ")}。目前沒有任何執行權限。`;
+    target.append(title, detail);
+  } catch (error) { target.textContent = error.message; }
+}
 function renderRegistry() {
   const target = document.querySelector("#registry-catalog");
   if (!registryCatalog) return;
@@ -301,8 +316,11 @@ function renderRegistry() {
     const state = document.createElement("span"); state.className = `lifecycle lifecycle-${component.lifecycle}`; state.textContent = registryText(component.lifecycle);
     const provenance = document.createElement("div"); provenance.className = "registry-source";
     provenance.textContent = `${source?.trust_level || "—"} trust · ${source?.license?.spdx || "license pending"}`;
+    const actions = document.createElement("div"); actions.className = "registry-actions";
     const button = document.createElement("button"); button.type = "button"; button.className = "secondary"; button.textContent = "查看來源審查"; button.addEventListener("click", () => reviewSource(component.source_id));
-    article.append(identity, state, provenance, button); target.append(article);
+    const preview = document.createElement("button"); preview.type = "button"; preview.className = "secondary"; preview.textContent = "預覽安全測試計畫"; preview.addEventListener("click", () => previewOnboarding(component));
+    actions.append(button, preview);
+    article.append(identity, state, provenance, actions); target.append(article);
   });
 }
 async function loadRegistry() {

@@ -50,7 +50,11 @@ claim of real-world VERIFIED support.
 
 ## Next implementation order
 
-Add a persistent audit-backed onboarding transaction before enabling source
-discovery or CRUD. Then add a sandbox executor behind the trusted-source and
-mutation-safety policies. Only after that should the Registry GUI expose an
-explicit human-confirmed candidate onboarding action.
+The audit-ready preview transaction is now implemented: it produces a stable
+identifier, requested-by value, review result, lifecycle diff, and ordered
+sandbox plan, while explicitly returning `execution_authorized=false`. The
+GUI can preview that plan for a registered component; it cannot execute it.
+
+Next, add a persistent audit store and sandbox executor behind the trusted-
+source and mutation-safety policies. Only then should the Registry GUI expose
+a human-confirmed candidate onboarding action that can acquire code.

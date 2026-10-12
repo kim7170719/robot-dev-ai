@@ -40,6 +40,7 @@ from agent.mvp_pipeline import (
 from agent.requirement_agent import RequirementAgent
 from agent.evidence_registry import EvidenceRegistry, EvidenceSummary, RegistrySnapshot
 from agent.trusted_source import TrustedSourcePolicy
+from agent.source_onboarding import OnboardingRequest, OnboardingTransaction, SourceOnboardingPlanner
 from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
 from registry.models import RobotKnowledgeRegistry
@@ -311,6 +312,11 @@ def create_app(
         if source is None:
             raise HTTPException(status_code=404, detail="No trusted source with that identifier.")
         return TrustedSourcePolicy().review(source)
+
+    @app.post("/api/v1/registry/onboarding/preview", response_model=OnboardingTransaction)
+    def preview_source_onboarding(request: OnboardingRequest) -> OnboardingTransaction:
+        """Return an audit-ready sandbox plan; it does not acquire or execute a source."""
+        return SourceOnboardingPlanner().preview(request)
 
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)
     def parse_requirement(request: RequirementRequest) -> RequirementResult:
