@@ -198,6 +198,6 @@ FastDDS Humble 2.x â†” Jazzy 3.x is one-way; do not go back to FastDDS for hostâ
 
 ## Suggested next step
 
-1. Start G12.5 Task 8 only: safety/transaction semantics for proposed mutations, with tests. `docs/roadmap_v0.6.md`, the linked v0.4 architecture, ADR 0008, and ADR 0009 are the authority.
+1. Start G12.5 Task 9 only: regression and acceptance tests, then freeze the core API. `docs/roadmap_v0.6.md`, the linked v0.4 architecture, ADR 0008, and ADR 0009 are the authority.
 2. The M14 GUI may still be demonstrated with `bash scripts/run_m14_demo.sh`; its Dashboard remains read-only and is not proof of v0.4/M15 execution.
 M12 simulation-validator evidence (2026-10-06): isolated G4 Isaac Sim, SLAM, and Nav2 were started; `/controller_server`, `/planner_server`, and `/bt_navigator` reached `active [3]`. The fixed `m4-navigation` validator sent the `(1.0, 0.0)` map goal and received `SUCCEEDED`. The Isaac container and host launch processes remain running for interactive testing.

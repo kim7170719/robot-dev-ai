@@ -197,6 +197,11 @@ not enumerate USB/CAN/serial devices, start ROS, or command hardware. The
 complete suite passed: **82 tests**. Task 8, safety transaction semantics, is
 next; G12.5 remains open.
 
+G12.5 Task 8 (2026-10-12): **PASS.** `MutationSafetyGate.evaluate()` permits
+only a proposed mutation with passed readiness, a reviewable diff, a rollback
+description, and explicit human confirmation. It never applies the mutation.
+The complete suite passed: **83 tests**. Task 9 is next.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |
