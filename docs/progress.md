@@ -189,6 +189,14 @@ it does not open serial ports, start ROS, flash firmware, or command hardware.
 The complete suite passed: **80 tests**. Task 7, hardware readiness and safety
 transactions, is next; G12.5 remains open.
 
+G12.5 Task 7 (2026-10-12): **PASS.** `HardwareReadinessGate.evaluate()` now
+evaluates only structured, attributable readiness observations. A device is
+ready only when every explicitly required check has `pass` evidence; missing,
+failed, or `not-tested` checks produce a stable `blocked` result. The gate does
+not enumerate USB/CAN/serial devices, start ROS, or command hardware. The
+complete suite passed: **82 tests**. Task 8, safety transaction semantics, is
+next; G12.5 remains open.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |
