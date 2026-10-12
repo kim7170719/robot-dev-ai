@@ -202,6 +202,12 @@ only a proposed mutation with passed readiness, a reviewable diff, a rollback
 description, and explicit human confirmation. It never applies the mutation.
 The complete suite passed: **83 tests**. Task 9 is next.
 
+G12.5 Task 9 (in progress, 2026-10-12): the acceptance suite now covers the
+documented/undocumented unknown-device fallback: sources yield only a
+human-approved provisional path, while absent sources are blocked. This is not
+an external discovery or adapter execution path. Remaining acceptance matrix
+and core API freeze work are still required before a G12.5 gate claim.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |
