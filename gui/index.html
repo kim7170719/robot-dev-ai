@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="./m14-landing.css?v=1">
     <link rel="stylesheet" href="./m14-topnav.css?v=5">
     <link rel="stylesheet" href="./m14-humanoid.css?v=3">
-    <link rel="stylesheet" href="./m14-control.css?v=1">
+    <link rel="stylesheet" href="./m14-control.css?v=2">
     <link rel="stylesheet" href="./m14-3d-hero.css?v=5">
     <link rel="stylesheet" href="./m14-landing-apple.css?v=1">
     <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
@@ -47,13 +47,14 @@
           <a href="#configuration" data-view-link="configuration"><i aria-hidden="true"></i>Build</a>
           <a href="#runtime" data-view-link="runtime"><i aria-hidden="true"></i>Run</a>
           <a href="#validation" data-view-link="validation"><i aria-hidden="true"></i>Diagnose</a>
+          <a href="#evidence" data-view-link="evidence"><i aria-hidden="true"></i>Evidence</a>
         </nav>
         <div class="sidebar-footer"><span class="dot"></span><span><strong>Virtual-only evidence</strong><small>G12 frozen · G14 GUI</small></span></div>
       </aside>
       <main class="main-content" id="workspace-main" tabindex="-1">
         <header class="topbar">
           <a class="top-brand" href="#landing" data-view-link="landing" aria-label="Robot Dev AI animated home"><span class="top-brand-mark" aria-hidden="true"><i></i><i></i></span><strong>Robot Dev AI</strong></a>
-          <nav class="top-workflow" aria-label="Workspace navigation"><a href="#dashboard" data-view-link="dashboard" data-i18n="nav.overview">Overview</a><a href="#requirement" data-view-link="requirement" data-i18n="nav.design">Design</a><a href="#configuration" data-view-link="configuration" data-i18n="nav.build">Build</a><a href="#runtime" data-view-link="runtime" data-i18n="nav.run">Run</a><a href="#validation" data-view-link="validation" data-i18n="nav.diagnose">Diagnose</a></nav>
+          <nav class="top-workflow" aria-label="Workspace navigation"><a href="#dashboard" data-view-link="dashboard" data-i18n="nav.overview">Overview</a><a href="#requirement" data-view-link="requirement" data-i18n="nav.design">Design</a><a href="#configuration" data-view-link="configuration" data-i18n="nav.build">Build</a><a href="#runtime" data-view-link="runtime" data-i18n="nav.run">Run</a><a href="#validation" data-view-link="validation" data-i18n="nav.diagnose">Diagnose</a><a href="#evidence" data-view-link="evidence">Evidence</a></nav>
           <div class="topbar-actions"><button class="language-toggle" data-action="toggle-language" type="button" aria-label="Switch interface language"><span class="language-current">EN</span><span class="language-divider">/</span><span class="language-alternate">中</span></button><span class="shield" data-i18n="chrome.safety">Safety boundary active</span><span class="avatar">YU</span></div>
         </header>
 
@@ -144,10 +145,21 @@
           <div class="two-up"><article class="card validation primary-validation"><p class="eyebrow">安全檢查</p><h2>導航功能測試</h2><p>在既有的虛擬環境中，測試機器人能否前往一個已設定的位置。</p><label><input type="checkbox" id="validation-confirm"><span>我確認只進行這一項模擬檢查。</span></label><button data-action="validate-navigation" class="primary">開始檢查 <b>→</b></button></article><article class="card validation"><p class="eyebrow">先看建議</p><h2>可能的修正方式</h2><p>查看系統整理的修正建議。這個動作只會顯示內容，不會修改檔案或重新建置。</p><button data-action="propose-repair" class="secondary">查看修正建議</button><small>僅供查看，不會自動套用</small></article></div>
           <output id="validation-result" class="result-panel" aria-live="polite"></output>
         </section>
+
+        <section class="view" id="evidence" data-view aria-labelledby="evidence-title">
+          <div class="page-header"><div><h1 id="evidence-title">驗證資料的真實範圍</h1><p>查看此元件在哪些環境中被驗證，以及每筆證據代表的界線。模擬成功不代表真機已驗證。</p></div><span>E</span></div>
+          <article class="evidence-hero" aria-live="polite">
+            <div class="evidence-hero-copy"><p class="evidence-label">REFERENCE COMPONENT</p><h2>Generic Differential Drive Base</h2><p>目前只公開既有 virtual MVP 的可追溯驗證資料。</p></div>
+            <div class="evidence-level" id="evidence-level" aria-label="Evidence level">—</div>
+            <button class="secondary" data-action="load-evidence">重新讀取證據</button>
+          </article>
+          <p class="evidence-boundary">E3 表示在記錄的模擬環境通過；它不是 E4 真機驗證，也不代表其他硬體、作業系統或 ROS 版本均可使用。</p>
+          <div id="evidence-summary" class="evidence-summary" aria-live="polite"><div class="evidence-skeleton"></div><div class="evidence-skeleton"></div><div class="evidence-skeleton"></div></div>
+        </section>
       </main>
     </div>
     <script src="./vendor/gsap.min.js?v=3.12.5"></script>
-    <script type="module" src="./app.js?v=15"></script>
+    <script type="module" src="./app.js?v=16"></script>
     <script type="module" src="./hero-robot.js?v=6"></script>
     <script type="module" src="./hero-motion.js?v=1"></script>
   </body>

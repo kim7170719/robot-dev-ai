@@ -505,6 +505,8 @@ def test_gui_entrypoint_exposes_all_m14_views() -> None:
         "Build",
         "Run",
         "Diagnose",
+        "Evidence",
+        "驗證資料的真實範圍",
     ):
         assert view_name in response.text
 

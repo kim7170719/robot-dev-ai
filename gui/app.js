@@ -1,7 +1,7 @@
 const api = "/api/v1";
 const translations = {
-  zh: { "nav.overview": "概覽", "nav.design": "設計", "nav.build": "建置", "nav.run": "運行", "nav.diagnose": "診斷", "chrome.safety": "安全邊界啟用中", "landing.kicker": "設計、驗證、模擬", "landing.title": "讓第一台機器人<br>先在虛擬世界醒來。", "landing.summary": "從自然語言需求出發，建立具備 LiDAR、Camera 與導航能力的差速機器人；每個動作都先在可審閱的安全邊界內完成。", "landing.enter": "進入工作區", "landing.direct": "直接建立方案", "landing.status": "Virtual-first robot development", "overview.title": "從想法到機器人", "overview.summary": "先告訴我們你想做的機器人；我們會整理可行建議，確認後才會建立專案。", "overview.design": "開始規劃", "overview.runtime": "查看目前狀態", views: { landing: "首頁", dashboard: "概覽", requirement: "設計", configuration: "建置", runtime: "運行", validation: "診斷" } },
-  en: { "nav.overview": "Overview", "nav.design": "Design", "nav.build": "Build", "nav.run": "Run", "nav.diagnose": "Diagnose", "chrome.safety": "Safety boundary active", "landing.kicker": "DESIGN · VALIDATE · SIMULATE", "landing.title": "Let your first robot<br>wake up virtually.", "landing.summary": "Start with a natural-language request and build a differential-drive robot with LiDAR, camera, and navigation—each action remains within a reviewable safety boundary.", "landing.enter": "Enter workspace", "landing.direct": "Create a design plan", "landing.status": "Virtual-first robot development", "overview.title": "From idea to robot", "overview.summary": "Tell us what you want to build. We will organise practical suggestions before anything is created.", "overview.design": "Start planning", "overview.runtime": "View current status", views: { landing: "Home", dashboard: "Overview", requirement: "Design", configuration: "Build", runtime: "Run", validation: "Diagnose" } },
+  zh: { "nav.overview": "概覽", "nav.design": "設計", "nav.build": "建置", "nav.run": "運行", "nav.diagnose": "診斷", "chrome.safety": "安全邊界啟用中", "landing.kicker": "設計、驗證、模擬", "landing.title": "讓第一台機器人<br>先在虛擬世界醒來。", "landing.summary": "從自然語言需求出發，建立具備 LiDAR、Camera 與導航能力的差速機器人；每個動作都先在可審閱的安全邊界內完成。", "landing.enter": "進入工作區", "landing.direct": "直接建立方案", "landing.status": "Virtual-first robot development", "overview.title": "從想法到機器人", "overview.summary": "先告訴我們你想做的機器人；我們會整理可行建議，確認後才會建立專案。", "overview.design": "開始規劃", "overview.runtime": "查看目前狀態", views: { landing: "首頁", dashboard: "概覽", requirement: "設計", configuration: "建置", runtime: "運行", validation: "診斷", evidence: "證據" } },
+  en: { "nav.overview": "Overview", "nav.design": "Design", "nav.build": "Build", "nav.run": "Run", "nav.diagnose": "Diagnose", "chrome.safety": "Safety boundary active", "landing.kicker": "DESIGN · VALIDATE · SIMULATE", "landing.title": "Let your first robot<br>wake up virtually.", "landing.summary": "Start with a natural-language request and build a differential-drive robot with LiDAR, camera, and navigation—each action remains within a reviewable safety boundary.", "landing.enter": "Enter workspace", "landing.direct": "Create a design plan", "landing.status": "Virtual-first robot development", "overview.title": "From idea to robot", "overview.summary": "Tell us what you want to build. We will organise practical suggestions before anything is created.", "overview.design": "Start planning", "overview.runtime": "View current status", views: { landing: "Home", dashboard: "Overview", requirement: "Design", configuration: "Build", runtime: "Run", validation: "Diagnose", evidence: "Evidence" } },
 };
 let locale = localStorage.getItem("robot-dev-ai-locale") === "en" ? "en" : "zh";
 function applyLocale() {
@@ -254,10 +254,22 @@ function updateFullRun(run) {
   }
   setText("run-phase", pipeline.status.toUpperCase());
 }
+function renderEvidence(summary) {
+  const target = document.querySelector("#evidence-summary");
+  const record = summary.records[0];
+  document.querySelector("#evidence-level").textContent = record?.evidence_level || "—";
+  target.replaceChildren();
+  if (!record) { target.textContent = "No recorded evidence."; return; }
+  target.innerHTML = `<article><small>EVIDENCE LEVEL</small><strong>${record.evidence_level}</strong><p>${record.status.toUpperCase()} · trust ${record.source_trust}</p></article><article><small>RECORDED ENVIRONMENT</small><strong>${record.environment.os}</strong><p>${record.environment.ros_distro} · ${record.environment.cpu_arch}</p></article><article><small>PROVENANCE</small><strong>${record.provenance}</strong><p>${summary.coverage_levels.join(" · ")} coverage${summary.conflict_record_ids.length ? " · conflict recorded" : ""}</p></article>`;
+}
 document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); setView(link.dataset.viewLink); }));
 document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go)));
 document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); }));
 bindAction('[data-action="load-summary"]', "summary-result", () => request("/project/summary"), "PROJECT SNAPSHOT");
+document.querySelector('[data-action="load-evidence"]').addEventListener("click", async () => {
+  try { renderEvidence(await request("/evidence/generic-diff-base")); }
+  catch (error) { document.querySelector("#evidence-summary").textContent = error.message; }
+});
 document.querySelector('[data-action="refresh-simulation"]').addEventListener("click", refreshSimulation);
 document.querySelector('[data-action="refresh-camera"]').addEventListener("click", () => {
   if (document.querySelector("#camera-source").value === "webcam") stopMjpegPreview();
@@ -307,6 +319,7 @@ if (initialView?.matches("[data-view]")) {
   activateView(initial);
 } else activateView("landing");
 applyLocale();
+request("/evidence/generic-diff-base").then(renderEvidence).catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; });
 refreshSimulation();
 window.setInterval(() => {
   if (document.querySelector("#live-preview").checked && document.querySelector("#camera-source").value !== "webcam") refreshSimulationFrame();

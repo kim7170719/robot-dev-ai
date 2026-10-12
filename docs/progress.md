@@ -230,6 +230,13 @@ returns the read-only contextual summary used by M14B. The default document
 contains only the existing G12 virtual-MVP E3 record for `generic-diff-base`;
 it is not a real-hardware claim. The complete suite passed: **89 tests**.
 
+M14B Evidence Explorer (2026-10-12): **PASS.** The existing GUI now has a
+read-only Evidence view backed only by the contextual v0.6 evidence endpoint.
+It exposes E-level, source trust, recorded OS/ROS/CPU environment, provenance,
+coverage, and a plain-language E3-versus-E4 boundary. It provides no registry
+write, promotion, ROS, shell, or hardware-control capability. JavaScript syntax
+and the complete Python suite passed.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |
