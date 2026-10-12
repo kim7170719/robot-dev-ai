@@ -154,6 +154,15 @@ drivers into unknown-v0.4 software profiles rather than asserting support.
 Unknown transport/driver/constraint references are rejected. The complete suite
 passed: **75 tests**. Task 4, deterministic Composition Planner, is next.
 
+G12.5 Task 4 (2026-10-12): **PASS.** `agent.composition_planner` turns an
+architecture plan, a v0.4 registry, and a robot spec into a deterministic,
+ordered component graph without rendering templates or writing files. It maps
+known capabilities to their registry-authorized component templates and binds
+the declared hardware profile. Unknown capabilities, absent hardware profiles,
+and known capabilities without a component template return explicit blocked
+issues rather than LLM-generated guesses. The complete suite passed: **77
+tests**. Task 5, backward-compatible template componentization, is next.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |
