@@ -172,6 +172,16 @@ would claim the same destination path, so one component cannot silently
 overwrite another. The complete suite passed: **79 tests**. Task 6, adapter
 selection and validation, is next; G12.5 remains open.
 
+G12.5 Task 6 (2026-10-12): **PASS.** The versioned registry now carries
+traceable serial, micro-ROS, or ros2_control adapter contracts, each with
+supported device classes plus declared transport and software-profile
+requirements. `AdapterResolver.resolve()` is a pure, explicit adapter-selection
+seam: it returns a selected contract only when those recorded facts match, or
+returns missing-fact reasons. The initial verified serial-contract test passes;
+it does not open serial ports, start ROS, flash firmware, or command hardware.
+The complete suite passed: **80 tests**. Task 7, hardware readiness and safety
+transactions, is next; G12.5 remains open.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |

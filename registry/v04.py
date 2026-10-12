@@ -40,6 +40,7 @@ ConstraintKind = Literal[
     "power",
     "sensor-rate",
 ]
+AdapterKind = Literal["serial", "micro-ros", "ros2-control"]
 
 
 class Constraint(RegistryModel):
@@ -57,6 +58,20 @@ class SoftwareProfileV04(RegistryModel):
     id: Identifier
     kind: Literal["driver", "sdk", "runtime", "firmware-tool"]
     version: Annotated[str, Field(min_length=1, max_length=128)] | None = None
+    verification_state: VerificationState
+    provenance: Annotated[str, Field(min_length=1, max_length=128)]
+
+
+class AdapterContract(RegistryModel):
+    """A declared integration seam; this record never opens a hardware connection."""
+
+    id: Identifier
+    kind: AdapterKind
+    supported_device_classes: list[Annotated[str, Field(min_length=1, max_length=64)]] = (
+        Field(default_factory=list)
+    )
+    required_transport_ids: list[Identifier] = Field(default_factory=list)
+    required_software_profile_ids: list[Identifier] = Field(default_factory=list)
     verification_state: VerificationState
     provenance: Annotated[str, Field(min_length=1, max_length=128)]
 
@@ -136,6 +151,7 @@ class RegistryDocumentV04(RegistryModel):
     registry: RobotKnowledgeRegistry
     hardware_profiles: list[HardwareProfileV04] = Field(default_factory=list)
     software_profiles: list[SoftwareProfileV04] = Field(default_factory=list)
+    adapter_contracts: list[AdapterContract] = Field(default_factory=list)
     constraints: list[Constraint] = Field(default_factory=list)
     resource_profiles: list[ResourceProfile] = Field(default_factory=list)
 
@@ -153,6 +169,7 @@ class RegistryDocumentV04(RegistryModel):
             )
 
         software_ids = _unique_v04_ids(self.software_profiles, "software profile")
+        _unique_v04_ids(self.adapter_contracts, "adapter contract")
         constraints_by_id = {constraint.id: constraint for constraint in self.constraints}
         if len(constraints_by_id) != len(self.constraints):
             raise ValueError("v0.4 registry contains duplicate constraint identifiers")
@@ -175,6 +192,21 @@ class RegistryDocumentV04(RegistryModel):
                     if constraint.kind == "transport"
                 },
                 f"hardware profile {profile.device_id} references unknown transport",
+            )
+        for adapter in self.adapter_contracts:
+            _require_v04_references(
+                adapter.required_software_profile_ids,
+                software_ids,
+                f"adapter contract {adapter.id} references unknown software profile",
+            )
+            _require_v04_references(
+                adapter.required_transport_ids,
+                {
+                    constraint.id
+                    for constraint in self.constraints
+                    if constraint.kind == "transport"
+                },
+                f"adapter contract {adapter.id} references unknown transport",
             )
         return self
 

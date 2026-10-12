@@ -1,6 +1,7 @@
 """Validated robot development knowledge records."""
 
 from .v04 import (
+    AdapterContract,
     ArchitecturePlan,
     CompositionPlan,
     Constraint,
@@ -13,6 +14,7 @@ from .v04 import (
 )
 
 __all__ = [
+    "AdapterContract",
     "ArchitecturePlan",
     "CompositionPlan",
     "Constraint",
