@@ -36,9 +36,9 @@ if (host && canvas && window.WebGLRenderingContext) {
   floor.receiveShadow = true;
   scene.add(floor);
 
-  const pearl = new THREE.MeshPhysicalMaterial({ color: 0xe7eef7, metalness: .31, roughness: .22, clearcoat: .64, clearcoatRoughness: .11 });
-  const silver = new THREE.MeshPhysicalMaterial({ color: 0x9cacbf, metalness: .55, roughness: .25, clearcoat: .36 });
-  const graphite = new THREE.MeshPhysicalMaterial({ color: 0x07101a, metalness: .78, roughness: .19, clearcoat: .5, clearcoatRoughness: .08 });
+  const pearl = new THREE.MeshPhysicalMaterial({ color: 0xf2f1ee, metalness: .16, roughness: .18, clearcoat: .85, clearcoatRoughness: .08 });
+  const silver = new THREE.MeshPhysicalMaterial({ color: 0xbfc2c4, metalness: .62, roughness: .21, clearcoat: .42 });
+  const graphite = new THREE.MeshPhysicalMaterial({ color: 0x0a0b0e, metalness: .62, roughness: .3, clearcoat: .35, clearcoatRoughness: .13 });
   const visor = new THREE.MeshPhysicalMaterial({ color: 0x01050a, metalness: .84, roughness: .06, clearcoat: 1, clearcoatRoughness: .03 });
   const signal = new THREE.MeshStandardMaterial({ color: 0xb7f4ff, emissive: 0x128cff, emissiveIntensity: 2.6, roughness: .24 });
   const robot = new THREE.Group();
@@ -54,6 +54,16 @@ if (host && canvas && window.WebGLRenderingContext) {
   };
   const sphere = (material, position, scale) => mesh(new THREE.SphereGeometry(1, 28, 20), material, position, scale);
   const capsule = (radius, length, material, position) => mesh(new THREE.CapsuleGeometry(radius, length, 8, 20), material, position);
+  const cylinder = (top, bottom, height, material, position, rotation = [0, 0, 0]) => {
+    const node = mesh(new THREE.CylinderGeometry(top, bottom, height, 28, 2), material, position);
+    node.rotation.set(...rotation);
+    return node;
+  };
+  const torus = (radius, tube, material, position, rotation = [0, 0, 0]) => {
+    const node = mesh(new THREE.TorusGeometry(radius, tube, 10, 36), material, position);
+    node.rotation.set(...rotation);
+    return node;
+  };
   const roundedRect = (width, height, radius) => {
     const x = -width / 2;
     const y = -height / 2;
@@ -83,25 +93,33 @@ if (host && canvas && window.WebGLRenderingContext) {
     return mesh(geometry, material, position);
   };
 
-  // Original hard-surface silhouette: slim torso, external shoulder yokes, and recessed technical seams.
+  // Reference-derived original silhouette: ceramic shell, exposed flexible joints, cyan visor seam.
   const pelvis = new THREE.Group();
   pelvis.position.set(0, .12, 0);
   robot.add(pelvis);
-  pelvis.add(shell(.94, .34, .52, .15, graphite, [0, 0, 0]));
-  pelvis.add(shell(.62, .12, .035, .05, silver, [0, .02, .282]));
-  robot.add(capsule(.23, .22, graphite, [0, .52, 0]));
-  robot.add(shell(1.28, 1.08, .58, .25, pearl, [0, 1.23, 0]));
-  robot.add(shell(.76, .58, .045, .19, graphite, [0, 1.25, .32]));
-  robot.add(shell(.42, .035, .02, .01, signal, [0, 1.49, .355]));
-  robot.add(shell(.48, .12, .38, .05, graphite, [0, 1.89, 0]));
+  pelvis.add(shell(1.04, .38, .62, .16, graphite, [0, 0, 0]));
+  pelvis.add(shell(.77, .18, .09, .07, pearl, [0, .01, .32]));
+  pelvis.add(shell(.42, .27, .67, .09, pearl, [0, -.02, .02]));
+  robot.add(cylinder(.24, .27, .42, graphite, [0, .55, 0]));
+  [-.13, 0, .13].forEach((y) => robot.add(torus(.245, .034, silver, [0, .55 + y, 0], [Math.PI / 2, 0, 0])));
+  robot.add(sphere(pearl, [0, 1.28, -.015], [.77, .68, .34]));
+  robot.add(shell(1.3, .5, .22, .18, pearl, [0, 1.42, .18]));
+  robot.add(shell(.73, .52, .07, .12, pearl, [0, 1.04, .35]));
+  robot.add(shell(.42, .035, .02, .01, signal, [0, 1.34, .405]));
+  robot.add(shell(.54, .11, .4, .05, graphite, [0, 1.9, 0]));
 
   const head = new THREE.Group();
-  head.position.set(0, 2.27, .02);
+  head.position.set(0, 2.34, .02);
   robot.add(head);
-  head.add(shell(1.02, .56, .65, .22, pearl, [0, 0, 0]));
-  head.add(shell(.76, .2, .04, .09, visor, [0, -.02, .355]));
-  head.add(shell(.59, .024, .014, .01, signal, [0, -.02, .388]));
-  head.add(shell(.66, .075, .08, .03, silver, [0, .31, .02]));
+  head.add(sphere(pearl, [0, .04, -.01], [.56, .47, .42]));
+  head.add(shell(.9, .35, .12, .11, pearl, [0, -.11, .31]));
+  head.add(shell(.74, .22, .04, .055, visor, [0, -.07, .43]));
+  head.add(shell(.67, .023, .016, .01, signal, [0, -.065, .462]));
+  head.add(shell(.55, .18, .12, .055, pearl, [0, -.31, .31]));
+  [-1, 1].forEach((side) => {
+    head.add(cylinder(.16, .16, .105, graphite, [side * .55, .01, .01], [0, 0, Math.PI / 2]));
+    head.add(cylinder(.105, .105, .116, silver, [side * .605, .01, .01], [0, 0, Math.PI / 2]));
+  });
 
   function makeArm(side) {
     const shoulder = new THREE.Group();
@@ -119,6 +137,15 @@ if (host && canvas && window.WebGLRenderingContext) {
     upper.add(forearm);
     forearm.add(capsule(.14, .5, silver, [0, -.34, 0]));
     forearm.add(shell(.23, .29, .2, .08, pearl, [0, -.76, .02]));
+    const hand = new THREE.Group();
+    hand.position.set(0, -.96, .02);
+    forearm.add(hand);
+    hand.add(sphere(graphite, [0, -.08, 0], [.14, .19, .105]));
+    [-.075, -.025, .025, .075].forEach((offset) => {
+      const finger = capsule(.022, .16, silver, [offset, -.22, .015]);
+      finger.rotation.z = side * -.08;
+      hand.add(finger);
+    });
     return { shoulder, forearm };
   }
   const leftArm = makeArm(-1);
@@ -133,12 +160,15 @@ if (host && canvas && window.WebGLRenderingContext) {
     thigh.position.set(0, -.18, 0);
     hip.add(thigh);
     thigh.add(shell(.31, .72, .34, .12, pearl, [0, -.39, 0]));
+    thigh.add(shell(.21, .48, .055, .07, pearl, [0, -.39, .2]));
     thigh.add(sphere(graphite, [0, -.8, 0], [.17, .145, .17]));
     const shin = new THREE.Group();
     shin.position.set(0, -.84, 0);
     thigh.add(shin);
     shin.add(shell(.29, .67, .32, .1, silver, [0, -.38, .01]));
-    shin.add(shell(.36, .16, .67, .08, pearl, [0, -.8, .16]));
+    shin.add(shell(.33, .72, .11, .1, pearl, [0, -.39, .18]));
+    shin.add(sphere(graphite, [0, -.79, .02], [.15, .14, .15]));
+    shin.add(shell(.39, .19, .72, .08, pearl, [0, -.91, .2]));
     return { hip, shin };
   }
   const leftLeg = makeLeg(-1);

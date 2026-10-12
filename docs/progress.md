@@ -465,3 +465,16 @@ colour-only because the current link reports USB 2.1. This removes avoidable
 software backlogs; end-to-end photon-to-screen latency still needs a timestamp
 measurement, and WebRTC is the next transport if MJPEG is insufficient. Full
 suite: 65 tests.
+
+## M14 reference-directed humanoid reconstruction (2026-10-12)
+
+The landing WebGL humanoid was rebuilt as an original procedural Three.js
+interpretation of a supplied reference: its ceramic helmet, side modules, dark
+visor with cyan seam, ribbed neck, segmented chest, articulated hands, exposed
+joint volumes, and long plated legs are generated locally from native geometry.
+It remains one lightweight browser scene with the existing guarded motion,
+reduced-motion still state, and local fallback image; it does not download a
+model, claim photogrammetric accuracy, or represent a physical robot. JavaScript
+syntax validation passed and the local GUI returned HTTP 200. Full visual
+comparison remains a manual browser review because the headless browser cannot
+settle the continuous render loop.

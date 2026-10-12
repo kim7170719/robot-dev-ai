@@ -95,13 +95,15 @@ image dependency and reduces to a still, readable robot under
 
 The current landing implementation is a locally served WebGL scene with an
 original procedural humanoid assembled from native geometry; it does not
-download or depend on a third-party robot model at runtime. Its rounded white
-hard-shell panels, graphite recesses, external shoulder yokes, segmented limbs,
-and cyan visor are an illustrative concept, not a simulator viewport or a
-physical-hardware claim. Shoulders remain outside the thorax through every
-motion state; limb motion must never intersect the body shell. A single local
-GSAP timeline gives the landing copy and robot one short arrival sequence;
-after that the robot's own joint motion is the only persistent movement.
+download or depend on a third-party robot model at runtime. Its visual brief is
+a supplied reference image: a short ceramic helmet with side modules, a dark
+visor cut by a cyan seam, segmented chest and limb shells, and exposed dark
+joint material. The resulting model is an original, symmetric reconstruction,
+not a scan or a claim about a physical robot. Shoulders remain outside the
+thorax through every motion state; limb motion must never intersect the body
+shell. A single local GSAP timeline gives the landing copy and robot one short
+arrival sequence; after that the robot's own joint motion is the only
+persistent movement.
 
 ## Humanoid Motion Sequence
 
