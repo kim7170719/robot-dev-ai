@@ -220,6 +220,11 @@ status, provenance, and OS/ROS/CPU context per immutable observation. A
 simulation E3 record is therefore not a real-hardware E4 claim. Query, conflict,
 coverage, snapshot, and GUI work remain open.
 
+G12.6 evidence query (2026-10-12): **PASS.** `EvidenceRegistry.summarize()`
+returns environment-bound observations, covered E-levels, and record IDs in a
+same-context PASS/FAIL conflict without overwriting either result. The complete
+suite passed: **88 tests**. API, snapshot, and GUI work remain open.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |
