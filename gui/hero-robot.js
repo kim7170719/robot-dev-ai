@@ -59,8 +59,8 @@ if (host && canvas && window.WebGLRenderingContext) {
     cameraYawTarget: .26,
     cameraPitch: .035,
     cameraPitchTarget: .035,
-    distance: 12,
-    distanceTarget: 12,
+    distance: 11.4,
+    distanceTarget: 11.4,
     modelYaw: 0,
     modelYawTarget: 0,
     dragging: false,
@@ -239,7 +239,7 @@ if (host && canvas && window.WebGLRenderingContext) {
   const resetInteractiveView = () => {
     interaction.cameraYawTarget = .26;
     interaction.cameraPitchTarget = .035;
-    interaction.distanceTarget = 12;
+    interaction.distanceTarget = 11.4;
     interaction.modelYawTarget = 0;
     interaction.autoOrbit = true;
     setStatus("AUTO SHOWCASE");
@@ -294,7 +294,7 @@ if (host && canvas && window.WebGLRenderingContext) {
   canvas.addEventListener("wheel", (event) => {
     if (!referenceRig) return;
     event.preventDefault();
-    interaction.distanceTarget = THREE.MathUtils.clamp(interaction.distanceTarget + event.deltaY * .012, 8.8, 14.5);
+    interaction.distanceTarget = THREE.MathUtils.clamp(interaction.distanceTarget + event.deltaY * .012, 8.4, 13.8);
     interaction.autoOrbit = false;
     setStatus("MANUAL EXPLORE");
   }, { passive: false });
@@ -305,7 +305,7 @@ if (host && canvas && window.WebGLRenderingContext) {
       interaction.autoOrbit = false;
       setStatus("MANUAL EXPLORE");
     } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-      interaction.distanceTarget = THREE.MathUtils.clamp(interaction.distanceTarget + (event.key === "ArrowUp" ? -.5 : .5), 8.8, 14.5);
+      interaction.distanceTarget = THREE.MathUtils.clamp(interaction.distanceTarget + (event.key === "ArrowUp" ? -.5 : .5), 8.4, 13.8);
       interaction.autoOrbit = false;
       setStatus("MANUAL EXPLORE");
     } else if (event.key.toLowerCase() === "r") {
@@ -326,7 +326,7 @@ if (host && canvas && window.WebGLRenderingContext) {
     const bounds = new THREE.Box3().setFromObject(model);
     const size = bounds.getSize(new THREE.Vector3());
     const center = bounds.getCenter(new THREE.Vector3());
-    const targetHeight = 4.15;
+    const targetHeight = 4.9;
     const scale = targetHeight / size.y;
 
     referenceRig = new THREE.Group();

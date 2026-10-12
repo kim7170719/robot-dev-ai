@@ -505,3 +505,9 @@ reduced the supplied 5.8 MB asset to 2.2 MB with Meshopt and 2048px WebP
 textures. Browser WebGL verification loaded 2,263,892 bytes, exercised WALK and
 DANCE, and captured the animated rig. Full suite: 65 tests. This is visual UI
 motion only; it does not control ROS, Isaac, or physical hardware.
+
+M14 landing subject scale pass (2026-10-12): increased the rigged hero target
+height from 4.15 to 4.9 scene units and brought the default camera distance
+from 12.0 to 11.4 units, making the animated subject approximately 25% more
+prominent on the landing screen while retaining bounded drag, zoom, keyboard,
+and motion-button controls. This is presentation-only.
