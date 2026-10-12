@@ -68,12 +68,12 @@ class TemplateExpander:
 
         rendered = {}
         for path in source_files:
-            relative_path = Template(str(path.relative_to(source_root))).substitute(
-                request.values
+            relative_path = _substitute(
+                Template(str(path.relative_to(source_root))), request.values
             )
             destination = str(Path(relative_path).with_suffix(""))
-            rendered[destination] = Template(path.read_text(encoding="utf-8")).substitute(
-                request.values
+            rendered[destination] = _substitute(
+                Template(path.read_text(encoding="utf-8")), request.values
             )
         return ExpansionResult(template_id=capability.template_id, files=rendered)
 
@@ -88,3 +88,12 @@ class TemplateExpander:
                 raise ValueError(f"template output escapes destination: {relative_path}")
             resolved_target.parent.mkdir(parents=True, exist_ok=True)
             resolved_target.write_text(contents, encoding="utf-8")
+
+
+def _substitute(template: Template, values: dict[str, str]) -> str:
+    """Render one template while preserving a useful missing-value error."""
+
+    try:
+        return template.substitute(values)
+    except KeyError as error:
+        raise ValueError(f"missing template value: {error.args[0]}") from error
