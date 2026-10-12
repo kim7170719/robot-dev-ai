@@ -31,7 +31,7 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Next
 
-- G12.5 Tasks 1–2 are complete: `registry/v04.py` supplies versioned schema models and `migrate_v03_registry()` preserves validated v0.3 registry facts while marking unsupported verification as `unknown`; `agent/architecture_resolver` selects or blocks declared Linux/MCU topologies without generating artifacts. It explicitly blocks MCU-only navigation and marks every produced plan `not-tested`; tests total 73. Next implement Task 3, capability/constraint registry upgrade, before composition/generation work. Do not resume M15 actuator or hardware work before G12.5 evidence.
+- G12.5 Tasks 1–3 are complete: `registry/v04.py` supplies versioned schema models, migration, and a capability/constraint registry. `RegistryDocumentV04` validates declared driver, transport, firmware constraint, limitation, verification, and provenance facts rather than accepting unlinked profile strings; legacy facts remain `unknown` until supported by evidence. `agent/architecture_resolver` selects or blocks declared Linux/MCU topologies without generating artifacts. Tests total 75. Next implement Task 4, deterministic Composition Planner, before template/generation work. Do not resume M15 actuator or hardware work before G12.5 evidence.
 - M14 remains a completed presentation layer. Do not reshape its core API/GUI schema until G12.5 freezes the new contract. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
 
 ## M5 evidence

@@ -146,6 +146,14 @@ request. It emits plans with `not-tested` evidence status rather than claiming
 that an actual device is connected. Architecture tests plus the full suite
 passed: **73 tests**. Task 3, capability/constraint registry upgrade, is next.
 
+G12.5 Task 3 (2026-10-12): **PASS.** `RegistryDocumentV04` now validates
+hardware profiles against declared software-driver, transport, and constraint
+facts. Profiles record `driver_ids`, `constraint_ids`, `firmware_required`,
+verification state, limitations, and provenance; the migration maps legacy
+drivers into unknown-v0.4 software profiles rather than asserting support.
+Unknown transport/driver/constraint references are rejected. The complete suite
+passed: **75 tests**. Task 4, deterministic Composition Planner, is next.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |
