@@ -243,6 +243,12 @@ coverage, and a plain-language E3-versus-E4 boundary. It provides no registry
 write, promotion, ROS, shell, or hardware-control capability. JavaScript syntax
 and the complete Python suite passed.
 
+G12.6 immutable snapshot (2026-10-12): **PASS.**
+`RegistrySnapshot.create()` makes a copied, content-addressed v0.6 registry
+snapshot with a deterministic SHA-256 ID. It is the reproducible registry input
+for later M16 benchmark splits; it does not mutate a registry or create a
+community-promotion path. The complete suite passed: **90 tests**.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |
