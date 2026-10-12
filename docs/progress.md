@@ -528,3 +528,14 @@ height from 4.15 to 4.9 scene units and brought the default camera distance
 from 12.0 to 11.4 units, making the animated subject approximately 25% more
 prominent on the landing screen while retaining bounded drag, zoom, keyboard,
 and motion-button controls. This is presentation-only.
+
+## M14 controlled LAN presentation mode (2026-10-12)
+
+M14 can now be deliberately launched as a LAN read-only presentation surface
+with `ROBOT_DEV_AI_MODE=lan-readonly` and an explicit bind IP. The normal demo
+remains loopback-only. In the LAN mode, FastAPI permits only GET/HEAD requests;
+all POST APIs are rejected with `403` before a plan, generation, build, Full
+Run, repair, or navigation validation can run. `docs/m14_lan_readonly.md`
+documents the recommended authenticated HTTPS reverse proxy, subnet firewall
+restriction, direct trusted-LAN fallback, verification, and rollback. This is
+not a physical-control interface and does not provide G15 evidence.

@@ -1,13 +1,14 @@
 """Typed FastAPI boundary for the frozen Robot Dev AI core."""
 
 import asyncio
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable, Literal
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -176,6 +177,7 @@ class FullMvpRunResult(BaseModel):
 def create_app(
     project_summary: ProjectSummary | None = None,
     workspace_root: Path | None = None,
+    read_only: bool | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
     simulation_frame_collector_factory: Callable[[], SimulationFrameCollector] | None = None,
@@ -183,7 +185,15 @@ def create_app(
     simulation_validator_factory: Callable[[], IsaacSimulationValidator] | None = None,
     mvp_pipeline_factory: Callable[[Path], MvpPipeline] | None = None,
 ) -> FastAPI:
-    """Create the presentation API without starting ROS or shell commands."""
+    """Create the presentation API without starting ROS or shell commands.
+
+    ``read_only`` is the LAN presentation boundary: only GET/HEAD requests are
+    served, so no browser client can trigger plans, validations, builds, or
+    workspace writes.
+    """
+
+    if read_only is None:
+        read_only = os.environ.get("ROBOT_DEV_AI_READ_ONLY", "false").lower() == "true"
 
     summary = project_summary or _default_project_summary()
     pending_plans: dict[str, WorkspacePlan] = {}
@@ -201,6 +211,16 @@ def create_app(
         version="0.1.0",
         description="Typed presentation boundary for the frozen virtual MVP.",
     )
+    app.state.read_only = read_only
+
+    @app.middleware("http")
+    async def enforce_read_only_mode(request: Request, call_next):
+        if read_only and request.method not in {"GET", "HEAD"}:
+            return JSONResponse(
+                status_code=403,
+                content={"detail": "M14 is running in read-only mode."},
+            )
+        return await call_next(request)
 
     @app.get("/api/v1/project/summary", response_model=ProjectSummary)
     def read_project_summary() -> ProjectSummary:

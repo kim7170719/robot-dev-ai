@@ -1,6 +1,6 @@
 # M14 GUI MVP architecture
 
-Version: 0.13 (2026-10-12)
+Version: 0.14 (2026-10-12)
 
 ## Scope and boundary
 
@@ -247,3 +247,15 @@ label prevents the GUI from overstating the visual fidelity of the simulation.
 - This is a M14 presentation refinement only: it neither embeds a simulator
   viewport nor changes typed API, ROS, Isaac, Jetson, or physical-control
   behavior.
+
+### 0.14 — 2026-10-12
+
+- Added an explicit `lan-readonly` launch mode for controlled internal
+  demonstrations. It is opt-in: the normal launcher remains bound to
+  `127.0.0.1`.
+- In this mode the FastAPI boundary permits only GET/HEAD requests. Every POST
+  endpoint is rejected before request validation or work execution, including
+  plans, generation, builds, Full Run, repairs, and virtual navigation
+  validation. The deployment runbook requires an authenticated HTTPS reverse
+  proxy for normal LAN use; a temporary direct-LAN procedure is deliberately
+  limited to a firewalled, trusted subnet.

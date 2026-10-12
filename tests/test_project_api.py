@@ -458,6 +458,42 @@ def test_gui_entrypoint_exposes_all_m14_views() -> None:
         assert view_name in response.text
 
 
+def test_lan_read_only_mode_allows_dashboard_but_blocks_all_post_apis() -> None:
+    """LAN presentation must not expose execution or workspace-write routes."""
+    client = TestClient(create_app(read_only=True))
+
+    summary = client.get("/api/v1/project/summary")
+    landing = client.get("/")
+    assert summary.status_code == 200
+    assert landing.status_code == 200
+    for path in (
+        "/api/v1/requirements/parse",
+        "/api/v1/design/plan",
+        "/api/v1/compatibility/resolve",
+        "/api/v1/templates/preview",
+        "/api/v1/validation/m4-navigation",
+        "/api/v1/mvp/full-run",
+        "/api/v1/repairs/propose",
+        "/api/v1/workspaces/plan",
+        "/api/v1/workspaces/apply",
+        "/api/v1/workspaces/build",
+    ):
+        blocked = client.post(path, json={})
+        assert blocked.status_code == 403
+        assert blocked.json() == {"detail": "M14 is running in read-only mode."}
+
+
+def test_app_factory_uses_the_read_only_environment_switch(monkeypatch) -> None:
+    monkeypatch.setenv("ROBOT_DEV_AI_READ_ONLY", "true")
+
+    response = TestClient(create_app()).post(
+        "/api/v1/requirements/parse",
+        json={"natural_language": "Build a differential-drive robot."},
+    )
+
+    assert response.status_code == 403
+
+
 def test_workspace_plan_requires_confirmation_before_generating_files(
     tmp_path: Path,
 ) -> None:
