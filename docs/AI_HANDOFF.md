@@ -4,7 +4,7 @@ Updated: 2026-10-12. v0.4/G12.5 composable-architecture refactor is active; v0.6
 
 ## Where we are
 
-**G0–G12 and G14 PASS** on Ubuntu. M13/G13 is deferred as Optional Extension O1. The user-approved v0.4 baseline starts **G12.5 composable architecture refactor**; M15 preflight is paused and G15 is not passed. Isaac Sim remains the physics authority.
+**G0–G12, G12.5, and G14 PASS** on Ubuntu. M13/G13 is deferred as Optional Extension O1. G12.6 Scalable Evidence Registry is now active; M15 preflight is paused and G15 is not passed. Isaac Sim remains the physics authority.
 
 The active branch is `refactor/composable-architecture-v0.4`; do not develop directly on `develop`. The real target profile is Jetson Orin Nano + differential-drive base + Intel RealSense D455, but physical 2D LiDAR, wheel encoders, independent emergency stop, base controller, power system, and their evidence remain prerequisites, not assumptions.
 
@@ -31,7 +31,7 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Next
 
-- G12.5 Tasks 1–7 are complete: `registry/v04.py` supplies versioned schema models, migration, a capability/constraint registry, and traceable serial, micro-ROS, or ros2_control adapter contracts. `RegistryDocumentV04` validates declared driver, transport, firmware constraint, limitation, verification, and provenance facts rather than accepting unlinked profile strings; legacy facts remain `unknown` until supported by evidence. `agent/architecture_resolver` selects or blocks declared Linux/MCU topologies; `agent/composition_planner` then produces a deterministic component graph or explicit missing-template/profile issues without writing artifacts. `TemplateExpander.expand_composition()` renders an ordered component plan in memory while preserving the existing registry-authorized v0.3 expansion seam; colliding output paths are rejected before files can be written. `AdapterResolver.resolve()` selects only a contract whose device class, transport, and driver facts match; it performs no ROS or hardware I/O. `HardwareReadinessGate.evaluate()` blocks escalation unless every required recorded check passed; it is pure evaluation, not device discovery or control. Tests total 82. Next implement Task 8 Safety/Transaction. Do not resume M15 actuator or hardware work before G12.5 evidence.
+- **Gate G12.5 PASS:** `docs/g125_acceptance.md` maps all eight accepted criteria to named tests and historical virtual-MVP evidence. The frozen v0.4 core includes schema migration, architecture resolution, component planning/expansion, adapter contracts, unknown-device fallback, readiness, mutation safety, and `GET /api/v1/core/schema`; the complete suite passed with 89 tests. This does not authorize M15 motion or claim G15.
 - M14 remains a completed presentation layer. Do not reshape its core API/GUI schema until G12.5 freezes the new contract. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
 - M14B Evidence Explorer is now a read-only extension of the existing GUI. It reads `/api/v1/evidence/generic-diff-base` and labels the default G12 virtual MVP record as E3 simulation evidence, not E4 real-hardware proof. Registry CRUD, promotion, and community review are not exposed in the GUI.
 

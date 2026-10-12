@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **G12.5 v0.4 composable-architecture refactor is active; G12.5 is not yet passed.** M14 GUI MVP remains complete (G14 PASS), M15 real-hardware preflight is paused pending the new core schema, G12 historical evidence remains frozen and runnable without Cosmos, and M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
+Current work: **G12.5 v0.4 composable-architecture refactor is PASS; G12.6 Scalable Evidence Registry is active.** M14 GUI MVP remains complete (G14 PASS) with a read-only M14B Evidence Explorer, M15 real-hardware preflight remains paused, G12 historical evidence remains frozen and runnable without Cosmos, and M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
 
 Roadmap update (2026-10-12): the user-supplied v0.6 roadmap is accepted for
 future sequencing. It retains the active G12.5 core refactor and introduces
@@ -211,8 +211,14 @@ and core API freeze work are still required before a G12.5 gate claim.
 G12.5 Task 10 (2026-10-12): **PASS.** `GET /api/v1/core/schema` freezes a
 read-only v0.4 contract summary for presentation clients: G12.5 state,
 supported core seams, and G12.6 as the next gate. It accepts no registry write,
-ROS command, or mutation. The complete suite passed: **86 tests**. G12.5
-acceptance consolidation remains pending before the gate itself can be claimed.
+ROS command, or mutation. The complete suite passed: **86 tests** at this
+checkpoint; later acceptance consolidation passed with 89 tests.
+
+**Gate G12.5: PASS (2026-10-12).** All eight acceptance criteria are mapped to
+named automated tests and retained virtual-MVP evidence in
+`docs/g125_acceptance.md`. The targeted acceptance set and complete **89-test**
+suite passed. This gate freezes only the core contract; it does not pass G15 or
+claim any physical hardware readiness.
 
 G12.6 evidence schema (2026-10-12): **in progress.** `registry.v06` wraps the
 v0.4 registry without inventing evidence and records E0–E5, source trust,

@@ -79,8 +79,9 @@ a physics or real-robot validation authority.
 - M15 physical preflight: **PAUSED, not discarded** — it resumes after G12.5;
   its safety and readiness items become inputs to the new readiness/safety
   model.
-- G12.5: **STARTED (architecture/document baseline only)** — no v0.4 runtime
-  code or real-hardware claim yet.
+- G12.5: **PASS (2026-10-12)** — the versioned core, acceptance matrix, and
+  frozen presentation contract are recorded in `docs/g125_acceptance.md`.
+  This remains virtual/software evidence only; no real-hardware claim is made.
 
 ## Implementation order
 
