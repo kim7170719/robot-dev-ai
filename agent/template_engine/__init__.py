@@ -1,5 +1,17 @@
 """Deterministic expansion of verified project templates."""
 
-from .expander import ExpansionRequest, ExpansionResult, TemplateExpander
+from .expander import (
+    CompositionExpansionRequest,
+    CompositionExpansionResult,
+    ExpansionRequest,
+    ExpansionResult,
+    TemplateExpander,
+)
 
-__all__ = ["ExpansionRequest", "ExpansionResult", "TemplateExpander"]
+__all__ = [
+    "CompositionExpansionRequest",
+    "CompositionExpansionResult",
+    "ExpansionRequest",
+    "ExpansionResult",
+    "TemplateExpander",
+]

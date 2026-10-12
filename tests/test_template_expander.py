@@ -2,8 +2,13 @@ from pathlib import Path
 
 import pytest
 
-from agent.template_engine import ExpansionRequest, TemplateExpander
+from agent.template_engine import (
+    CompositionExpansionRequest,
+    ExpansionRequest,
+    TemplateExpander,
+)
 from registry.models import RobotKnowledgeRegistry
+from registry.v04 import CompositionComponent, CompositionPlan
 
 
 def lidar_registry() -> RobotKnowledgeRegistry:
@@ -202,3 +207,61 @@ def test_expansion_writes_all_files_below_requested_output_root(tmp_path: Path) 
     assert (tmp_path / "config/lidar.yaml").read_text(encoding="utf-8") == (
         "scan_topic: /scan\nframe_id: lidar_link\n"
     )
+
+
+def test_composition_plan_expands_ordered_components_without_registry_lookup() -> None:
+    result = TemplateExpander(template_root=Path("templates")).expand_composition(
+        CompositionExpansionRequest(
+            plan=CompositionPlan(
+                components=[
+                    CompositionComponent(
+                        kind="template", id="lidar", device_id="front-lidar"
+                    ),
+                    CompositionComponent(
+                        kind="template", id="camera", device_id="front-camera"
+                    ),
+                ]
+            ),
+            component_values=[
+                {"scan_topic": "/scan", "frame_id": "lidar_link"},
+                {
+                    "frame_id": "camera_link",
+                    "image_topic": "/camera/image_raw",
+                    "camera_info_topic": "/camera/camera_info",
+                },
+            ],
+        )
+    )
+
+    assert [component.template_id for component in result.components] == [
+        "lidar",
+        "camera",
+    ]
+    assert result.files == {
+        "config/lidar.yaml": "scan_topic: /scan\nframe_id: lidar_link\n",
+        "config/camera.yaml": (
+            "camera:\n"
+            "  ros__parameters:\n"
+            "    frame_id: camera_link\n"
+            "    image_topic: /camera/image_raw\n"
+            "    camera_info_topic: /camera/camera_info\n"
+        ),
+    }
+
+
+def test_composition_plan_rejects_colliding_component_output_paths() -> None:
+    request = CompositionExpansionRequest(
+        plan=CompositionPlan(
+            components=[
+                CompositionComponent(kind="template", id="lidar", device_id="front-lidar"),
+                CompositionComponent(kind="template", id="lidar", device_id="rear-lidar"),
+            ]
+        ),
+        component_values=[
+            {"scan_topic": "/scan/front", "frame_id": "front_lidar_link"},
+            {"scan_topic": "/scan/rear", "frame_id": "rear_lidar_link"},
+        ],
+    )
+
+    with pytest.raises(ValueError, match="component output path collision: config/lidar.yaml"):
+        TemplateExpander(template_root=Path("templates")).expand_composition(request)

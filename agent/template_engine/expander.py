@@ -5,9 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 from string import Template
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from registry.models import Identifier, RobotKnowledgeRegistry
+from registry.v04 import CompositionPlan
 
 
 class ExpansionRequest(BaseModel):
@@ -26,6 +27,32 @@ class ExpansionResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     template_id: Identifier
+    files: dict[str, str]
+
+
+class CompositionExpansionRequest(BaseModel):
+    """Render every ordered template component selected by a composition plan."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    plan: CompositionPlan
+    component_values: list[dict[str, str]] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_component_values(self) -> CompositionExpansionRequest:
+        if len(self.component_values) != len(self.plan.components):
+            raise ValueError(
+                "composition component values must match the number of plan components"
+            )
+        return self
+
+
+class CompositionExpansionResult(BaseModel):
+    """In-memory component renderings and their non-overlapping combined files."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    components: list[ExpansionResult]
     files: dict[str, str]
 
 
@@ -61,21 +88,46 @@ class TemplateExpander:
         if capability.template_id is None:
             raise ValueError(f"capability {request.capability_id} has no template")
 
-        source_root = self._template_root / capability.template_id
+        return self._expand_template(capability.template_id, request.values)
+
+    def expand_composition(
+        self, request: CompositionExpansionRequest
+    ) -> CompositionExpansionResult:
+        """Render a planner-authorized component graph without another registry lookup."""
+
+        components: list[ExpansionResult] = []
+        combined_files: dict[str, str] = {}
+        for component, values in zip(
+            request.plan.components, request.component_values, strict=True
+        ):
+            if component.kind != "template":
+                raise ValueError(f"unsupported composition component kind: {component.kind}")
+            result = self._expand_template(component.id, values)
+            for path in result.files:
+                if path in combined_files:
+                    raise ValueError(f"component output path collision: {path}")
+            components.append(result)
+            combined_files.update(result.files)
+        return CompositionExpansionResult(components=components, files=combined_files)
+
+    def _expand_template(
+        self, template_id: Identifier, values: dict[str, str]
+    ) -> ExpansionResult:
+        source_root = self._template_root / template_id
         source_files = sorted(source_root.rglob("*.template"))
         if not source_files:
-            raise ValueError(f"template {capability.template_id} has no source files")
+            raise ValueError(f"template {template_id} has no source files")
 
         rendered = {}
         for path in source_files:
             relative_path = _substitute(
-                Template(str(path.relative_to(source_root))), request.values
+                Template(str(path.relative_to(source_root))), values
             )
             destination = str(Path(relative_path).with_suffix(""))
             rendered[destination] = _substitute(
-                Template(path.read_text(encoding="utf-8")), request.values
+                Template(path.read_text(encoding="utf-8")), values
             )
-        return ExpansionResult(template_id=capability.template_id, files=rendered)
+        return ExpansionResult(template_id=template_id, files=rendered)
 
     def write(self, result: ExpansionResult, output_root: Path) -> None:
         """Materialize a rendered result without allowing output-root escapes."""

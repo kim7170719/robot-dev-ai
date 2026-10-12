@@ -163,6 +163,15 @@ and known capabilities without a component template return explicit blocked
 issues rather than LLM-generated guesses. The complete suite passed: **77
 tests**. Task 5, backward-compatible template componentization, is next.
 
+G12.5 Task 5 (2026-10-12): **PASS.** `TemplateExpander.expand_composition()`
+now renders an ordered `CompositionPlan` in memory from per-component values,
+without repeating the v0.3 registry selection step. The original
+hardware/capability-authorized `expand()` seam and safe writer remain intact.
+Combined output is rejected before materialization when component templates
+would claim the same destination path, so one component cannot silently
+overwrite another. The complete suite passed: **79 tests**. Task 6, adapter
+selection and validation, is next; G12.5 remains open.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |

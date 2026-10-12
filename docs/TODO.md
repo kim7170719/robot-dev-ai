@@ -4,7 +4,7 @@
 
 - **Purpose:** Upgrade the frozen virtual-MVP core from complete-template/package assembly to architecture-aware, capability-aware, composable integration without rewriting historical evidence.
 - **Files:** `docs/roadmap_v0.4.md`, `docs/architecture_v0.4.md`, `docs/decisions/0008-composable-architecture-before-real-hardware.md`; future core work starts with schemas and migration.
-- **Status (2026-10-12):** Tasks 1–4 PASS — v0.4 models/migration, Architecture Resolver, Capability/Constraint Registry, and deterministic Composition Planner are implemented and covered by the 77-test suite. Task 5, backward-compatible template componentization, is next; no real-hardware action or G12.5 gate claim has been made.
+- **Status (2026-10-12):** Tasks 1–5 PASS — v0.4 models/migration, Architecture Resolver, Capability/Constraint Registry, deterministic Composition Planner, and backward-compatible template componentization are implemented and covered by the 79-test suite. Task 6, adapter selection and validation, is next; no real-hardware action or G12.5 gate claim has been made.
 - **Done when:** all eight G12.5 acceptance criteria in `docs/roadmap_v0.4.md` pass with tests and evidence; only then freeze the core API and align the M14B GUI.
 
 ## Paused — M15 Jetson + real-robot bring-up (Gate G15)

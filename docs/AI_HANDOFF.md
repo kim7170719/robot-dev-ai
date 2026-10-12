@@ -31,7 +31,7 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Next
 
-- G12.5 Tasks 1–4 are complete: `registry/v04.py` supplies versioned schema models, migration, and a capability/constraint registry. `RegistryDocumentV04` validates declared driver, transport, firmware constraint, limitation, verification, and provenance facts rather than accepting unlinked profile strings; legacy facts remain `unknown` until supported by evidence. `agent/architecture_resolver` selects or blocks declared Linux/MCU topologies; `agent/composition_planner` then produces a deterministic component graph or explicit missing-template/profile issues without writing artifacts. Tests total 77. Next implement Task 5, backward-compatible template componentization. Do not resume M15 actuator or hardware work before G12.5 evidence.
+- G12.5 Tasks 1–5 are complete: `registry/v04.py` supplies versioned schema models, migration, and a capability/constraint registry. `RegistryDocumentV04` validates declared driver, transport, firmware constraint, limitation, verification, and provenance facts rather than accepting unlinked profile strings; legacy facts remain `unknown` until supported by evidence. `agent/architecture_resolver` selects or blocks declared Linux/MCU topologies; `agent/composition_planner` then produces a deterministic component graph or explicit missing-template/profile issues without writing artifacts. `TemplateExpander.expand_composition()` renders an ordered component plan in memory while preserving the existing registry-authorized v0.3 expansion seam; colliding output paths are rejected before files can be written. Tests total 79. Next implement Task 6, adapter selection and validation. Do not resume M15 actuator or hardware work before G12.5 evidence.
 - M14 remains a completed presentation layer. Do not reshape its core API/GUI schema until G12.5 freezes the new contract. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
 
 ## M5 evidence
@@ -198,6 +198,6 @@ FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host�
 
 ## Suggested next step
 
-1. Start G12.5 Task 1 only: versioned schema models and a v0.3 migration with tests. The linked v0.4 roadmap/architecture and ADR 0008 are the authority.
+1. Start G12.5 Task 6 only: adapter selection and validation against the versioned registry, with tests. The linked v0.4 roadmap/architecture and ADR 0008 are the authority.
 2. The M14 GUI may still be demonstrated with `bash scripts/run_m14_demo.sh`; its Dashboard remains read-only and is not proof of v0.4/M15 execution.
 M12 simulation-validator evidence (2026-10-06): isolated G4 Isaac Sim, SLAM, and Nav2 were started; `/controller_server`, `/planner_server`, and `/bt_navigator` reached `active [3]`. The fixed `m4-navigation` validator sent the `(1.0, 0.0)` map goal and received `SUCCEEDED`. The Isaac container and host launch processes remain running for interactive testing.
