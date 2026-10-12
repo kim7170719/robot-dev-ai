@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **M15 hardware integration preflight is active; G15 is not yet passed.** M14 GUI MVP is complete (G14 PASS), G12 remains frozen and runnable without Cosmos, and M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
+Current work: **G12.5 v0.4 composable-architecture refactor is active; G12.5 is not yet passed.** M14 GUI MVP remains complete (G14 PASS), M15 real-hardware preflight is paused pending the new core schema, G12 historical evidence remains frozen and runnable without Cosmos, and M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
 
 ## M8 Template Engine / Gate G8
 
@@ -119,18 +119,31 @@ Automated test suite: `.venv/bin/pytest` → 61 passed (2026-10-07).
 
 **Gate G14: PASS (2026-10-07).** The five-view GUI consumes the typed API only, preserves confirmation gates for workspace/build/virtual validation, and renders runtime, validation, and repair evidence without direct browser ROS, shell, Isaac viewport, Cosmos, Jetson, or physical-hardware access. Full suite: 61 tests; local HTTP demo passed. A verified Full Run parsed four capabilities, passed restricted build, cleaned its temporary workspace, and observed 25 nodes / 80 topics / 3 TF edges with a truthful Partial status for one timed-out TF inspection.
 
-## M15 Jetson + real-robot bring-up (started)
+## G12.5 v0.4 composable architecture refactor (started)
+
+The user-supplied v0.4 roadmap supersedes the future v0.3 sequence without
+rewriting historical evidence. G12.5 will make architecture, capability,
+composition, adapter, readiness, safety, resource, and evidence states
+first-class before resuming M15. `docs/roadmap_v0.4.md` records the acceptance
+criteria and `docs/architecture_v0.4.md` records the whole-system boundary.
+Status is architecture/document baseline only; no G12.5 code or gate claim has
+been made.
+
+## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |
 |---|---|---|
-| Target profile recorded | STARTED | User-selected target: Jetson Orin Nano, differential-drive base, and Intel RealSense D455; physical 2D LiDAR, wheel encoders, independent emergency stop, motor controller, battery, and wiring details still require confirmation. |
+| Target profile recorded | PAUSED | User-selected target: Jetson Orin Nano, differential-drive base, and Intel RealSense D455; physical 2D LiDAR, wheel encoders, independent emergency stop, motor controller, battery, and wiring details still require confirmation. |
 | M14 closure | PASS | G14 remains a presentation/API milestone; the homepage now uses the user-supplied rigged local GLB with local interaction and animations. It is not a robot simulator or a physical-control surface. |
 | D455 host diagnostic | PASS (limited) | Prior Ubuntu evidence recorded D455 serial `203522250679`; colour and RGBD streams were tested, but its observed USB 2.1 link limits sustained depth/high-rate operation. A direct USB 3.x link is required before accepting depth performance. |
 | Jetson bring-up | NOT RUN | No Jetson OS, ROS graph, power, thermal, or hardware identity evidence has been captured in this milestone. |
 | Drive, encoder, LiDAR, and emergency-stop validation | NOT RUN | No motor command is permitted until the physical emergency stop, power path, controller interface, and restrained-bench procedure are evidenced. |
-| Gate G15 | NOT PASSED | The staged acceptance and rollback criteria are defined in `docs/m15_hardware_integration.md`; this planning record is not a substitute for hardware evidence. |
+| Gate G15 | NOT PASSED / PAUSED | The staged acceptance and rollback criteria are defined in `docs/m15_hardware_integration.md`; this planning record is not a substitute for hardware evidence and resumes after G12.5. |
 
-M15 deliberately starts with hardware inventory, safe power/stop verification, and read-only discovery. It will not reuse the browser GUI as a motor controller and will not treat simulation or a D455-only stream as real-robot proof.
+M15 will resume with hardware inventory, safe power/stop verification, and
+read-only discovery after G12.5. It will not reuse the browser GUI as a motor
+controller and will not treat simulation or a D455-only stream as real-robot
+proof.
 
 M14 closure / M15 documentation check (2026-10-12): `git diff --check` passed and
 `.venv/bin/python -m pytest -q` passed **65 tests**. This verifies the existing

@@ -1,10 +1,17 @@
 # TODO
 
-## Active — M15 Jetson + real-robot bring-up (Gate G15)
+## Active — G12.5 composable architecture refactor
+
+- **Purpose:** Upgrade the frozen virtual-MVP core from complete-template/package assembly to architecture-aware, capability-aware, composable integration without rewriting historical evidence.
+- **Files:** `docs/roadmap_v0.4.md`, `docs/architecture_v0.4.md`, `docs/decisions/0008-composable-architecture-before-real-hardware.md`; future core work starts with schemas and migration.
+- **Status (2026-10-12):** STARTED — architecture/document baseline only. No v0.4 runtime implementation, real-hardware action, or G12.5 claim has been made.
+- **Done when:** all eight G12.5 acceptance criteria in `docs/roadmap_v0.4.md` pass with tests and evidence; only then freeze the core API and align the M14B GUI.
+
+## Paused — M15 Jetson + real-robot bring-up (Gate G15)
 
 - **Purpose:** Safely bring the selected Jetson Orin Nano differential-drive platform online with Intel RealSense D455, a physical 2D LiDAR, wheel encoders, and an independent emergency stop; then collect reproducible real-hardware evidence without changing the M12 simulation baseline.
 - **Files:** `docs/m15_hardware_integration.md`; future hardware adapters remain behind ROS interfaces and are added only after the actual controller and sensor identities are known.
-- **Status (2026-10-12):** STARTED — hardware-integration design and preflight only. Earlier Ubuntu D455 evidence exists, but no Jetson, drivetrain, encoder, LiDAR, emergency-stop, power, or real-robot navigation evidence is claimed.
+- **Status (2026-10-12):** PAUSED by accepted v0.4 sequencing. Earlier Ubuntu D455 evidence exists, but no Jetson, drivetrain, encoder, LiDAR, emergency-stop, power, or real-robot navigation evidence is claimed. Its documented safety/readiness inputs are retained for G12.5.
 - **Done when:** G15 records the actual hardware manifest; verifies safe power/stop behavior; proves D455, LiDAR, encoder/odometry, and drive interfaces in staged tests; and preserves clear rollback evidence. See `docs/m15_hardware_integration.md` for the ordered gates.
 
 ## Deferred — M13 Cosmos scenario generation (Optional Extension O1)

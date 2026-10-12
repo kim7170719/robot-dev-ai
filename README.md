@@ -15,8 +15,9 @@ Ubuntu and Windows each keep an independent clone. GitHub is the only sync point
 
 ## Current milestone
 
-G0–G12 and G14 **PASS**. The M14 GUI MVP is available over the frozen virtual
-core; see `docs/m14_demo.md` for the local demo.
+G0–G12 and G14 **PASS**. The active work is G12.5, a v0.4 composable,
+architecture-aware core refactor; M15 real-hardware preflight is paused until
+that core work passes. See `docs/roadmap_v0.4.md`.
 Cosmos is Optional Extension O1; M13 preflight is complete but G13 is deferred
 on the local Turing GPU. See `docs/roadmap_v0.3.md`.
 

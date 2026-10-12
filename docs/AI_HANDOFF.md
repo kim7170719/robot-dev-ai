@@ -1,12 +1,12 @@
 # AI handoff (live)
 
-Updated: 2026-10-12. M14 is closed; M15 hardware-integration preflight is active.
+Updated: 2026-10-12. v0.4/G12.5 composable-architecture refactor is active; M15 is paused.
 
 ## Where we are
 
-**G0–G12 and G14 PASS** on Ubuntu. M13/G13 is deferred as Optional Extension O1. M15 has begun with a safety-first hardware-integration design; **G15 is not passed**. Isaac Sim remains the physics authority.
+**G0–G12 and G14 PASS** on Ubuntu. M13/G13 is deferred as Optional Extension O1. The user-approved v0.4 baseline starts **G12.5 composable architecture refactor**; M15 preflight is paused and G15 is not passed. Isaac Sim remains the physics authority.
 
-The active branch is `feature/m15-hardware-integration`; do not develop directly on `develop`. The real target profile is Jetson Orin Nano + differential-drive base + Intel RealSense D455. Physical 2D LiDAR, wheel encoders, independent emergency stop, base controller, power system, and their evidence remain prerequisites, not assumptions.
+The active branch is `refactor/composable-architecture-v0.4`; do not develop directly on `develop`. The real target profile is Jetson Orin Nano + differential-drive base + Intel RealSense D455, but physical 2D LiDAR, wheel encoders, independent emergency stop, base controller, power system, and their evidence remain prerequisites, not assumptions.
 
 ## Done
 
@@ -31,8 +31,8 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Next
 
-- Execute only the M15 staged preflight in `docs/m15_hardware_integration.md`: record the supplied hardware identifiers, prove the physical stop/power path, then perform read-only Jetson and sensor discovery before any drive command. Do not claim G15 or enable motors without the listed evidence.
-- M14 continues to expose the frozen core through a typed API. Workspace mutation and restricted build require separate explicit confirmations; M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
+- Implement G12.5 in the documented order: schema/migration → Architecture Resolver → capability registry → Composition Planner → templates/adapters → readiness/safety → tests → API freeze. Do not resume M15 actuator or hardware work before G12.5 evidence.
+- M14 remains a completed presentation layer. Do not reshape its core API/GUI schema until G12.5 freezes the new contract. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
 
 ## M5 evidence
 
@@ -191,13 +191,13 @@ FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host�
 
 | Field | Value |
 |---|---|
-| Branch | `feature/m15-hardware-integration` (branched from completed M14 UI work) |
+| Branch | `refactor/composable-architecture-v0.4` (branched from completed M14/M15-preflight work) |
 | `develop` | `2d39098` — M12 freeze merged |
 | `main` | `c771bf1` — do not develop here |
-| Working tree | Keep `.agents/` local and untracked; M15 documentation and later hardware adapters belong on `feature/m15-hardware-integration` |
+| Working tree | Keep `.agents/` local and untracked; G12.5 implementation belongs on `refactor/composable-architecture-v0.4` |
 
 ## Suggested next step
 
-1. Obtain the exact base/controller, encoder, 2D-LiDAR, emergency-stop, battery, and Jetson details; follow the ordered G15 preflight rather than issuing a motor command.
-2. For Ubuntu interactive simulation, start the pinned G4 container with `bash scripts/start_m4_isaac_sim.sh`, then start the GUI with `bash scripts/run_m14_demo.sh`. The Dashboard telemetry panel remains read-only and requires `/odom` plus `/camera/image_raw` publishers.
+1. Start G12.5 Task 1 only: versioned schema models and a v0.3 migration with tests. The linked v0.4 roadmap/architecture and ADR 0008 are the authority.
+2. The M14 GUI may still be demonstrated with `bash scripts/run_m14_demo.sh`; its Dashboard remains read-only and is not proof of v0.4/M15 execution.
 M12 simulation-validator evidence (2026-10-06): isolated G4 Isaac Sim, SLAM, and Nav2 were started; `/controller_server`, `/planner_server`, and `/bt_navigator` reached `active [3]`. The fixed `m4-navigation` validator sent the `(1.0, 0.0)` map goal and received `SUCCEEDED`. The Isaac container and host launch processes remain running for interactive testing.

@@ -46,7 +46,8 @@ Do not change ROS distribution, system Python, or core frameworks without a writ
 
 ## Current phase
 
-G0–G12 virtual MVP is frozen. M14 exposes existing core capabilities through a
-typed API and GUI without rewriting them. Cosmos is Optional Extension O1;
-G13 is deferred on the local Turing GPU. See `docs/roadmap_v0.3.md` and
-`docs/m14_gui_architecture.md`.
+G0–G12 virtual MVP and G14 GUI are preserved evidence. The active milestone is
+G12.5: a controlled v0.4 refactor that adds architecture-aware, capability-
+aware, composable integration before resumed real-hardware work. M15 physical
+preflight is paused, not passed or discarded. Cosmos remains Optional Extension
+O1. See `docs/roadmap_v0.4.md` and `docs/architecture_v0.4.md`.

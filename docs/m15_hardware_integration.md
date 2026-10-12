@@ -1,7 +1,7 @@
 ---
 template: technical-design
 title: M15 Jetson Orin Nano differential-drive hardware integration
-status: active-preflight
+status: paused-pending-g12.5
 version: 0.1
 date: 2026-10-12
 ---
@@ -16,7 +16,9 @@ target platform also requires a physical 2D LiDAR, wheel encoders, an
 independent emergency stop, a known motor controller, and a documented power
 path before it can move.
 
-This document is a staged bring-up design, not real-hardware evidence. The
+This document is a staged bring-up design, not real-hardware evidence. It is
+paused by the accepted v0.4/G12.5 sequencing and remains an input to the new
+readiness/safety model. The
 existing M12/G12 Isaac path remains the physics and regression baseline. M14
 remains a presentation/API layer and is not a motor-control interface.
 
