@@ -15,6 +15,7 @@ Numbered ADRs live in `docs/decisions/`. This page is the index for agents. Add 
 | 0006 | Cosmos is an optional scenario-proposal extension | Turing host cannot run the supported path; it must not block productization | Supported hardware plus a measurable O1 hypothesis |
 | 0007 | GUI accesses core only through a typed API | Preserve constrained execution and keep frontend free of ROS/shell logic | If a reviewed deployment boundary replaces FastAPI |
 | 0008 | G12.5 composable core refactor before M15 execution | Model architecture, composition, readiness, safety, and evidence before heterogeneous hardware bring-up | When G12.5 is accepted or superseded |
+| 0010 | Trusted-source metadata/read-only Registry Management before mutation | v0.5 onboarding needs audit and sandbox contracts before any external acquisition | When audited sandbox onboarding is implemented |
 | — | CycloneDDS + unicast `127.0.0.1` for Humble container ↔ Jazzy host | FastDDS 2.x/3.x is one-way | If both sides share one RMW version |
 | — | Isaac G4 stamps = **wall clock**; `use_sim_time:=false` | Humble `/clock` type-hash / TF_OLD_DATA | If DDS type matching is fixed |
 | — | Nav2 `/cmd_vel` = **Twist**; host ros2_control = **TwistStamped** | Jazzy Nav2 vs Jazzy diff_drive | Keep both mappings documented |

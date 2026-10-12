@@ -22,7 +22,7 @@ Out of scope:
 
 M0 Environment Audit. Gate G0 **PASS**. Tag `g0-environment-baseline` is on `main`.
 
-Current work: **G12.5 v0.4 composable-architecture refactor is PASS; G12.6 Scalable Evidence Registry is active.** M14 GUI MVP remains complete (G14 PASS) with a read-only M14B Evidence Explorer, M15 real-hardware preflight remains paused, G12 historical evidence remains frozen and runnable without Cosmos, and M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
+Current work: **G12.5 v0.4 composable-architecture refactor is PASS; v0.5 Trusted Source / Registry Management foundation is active.** M14 GUI MVP remains complete (G14 PASS) with read-only Evidence and Registry views, M15 real-hardware preflight remains paused, G12 historical evidence remains frozen and runnable without Cosmos, and M13/G13 is deferred as Optional Extension O1. Windows remains a Git, Cursor, and documentation helper only.
 
 Roadmap update (2026-10-12): the user-supplied v0.6 roadmap is accepted for
 future sequencing. It retains the active G12.5 core refactor and introduces
@@ -30,6 +30,16 @@ G12.6 Scalable Evidence Registry only after G12.5: E0–E5 evidence levels,
 independent source trust, environment-specific conflicts, coverage, community
 review, and immutable benchmark snapshots. No G12.6 implementation or E4/E5
 claim exists yet; see `docs/roadmap_v0.6.md` and ADR 0009.
+
+v0.5 Registry Management / Trusted Source foundation (2026-10-12): **PASS for
+the read-only first slice.** `registry.v05` records source type, URL, trust,
+license, compatibility claims, component lifecycle, provenance, and a required
+source link. `TrustedSourcePolicy` is pure: BLOCKED sources cannot proceed, and
+allowed metadata is still sandbox-only with human approval required later.
+`GET /api/v1/registry/management` and source-review endpoints expose only
+stored facts; Registry GUI filtering and review controls cannot fetch, install,
+execute, validate, or promote a package. Full suite: **94 tests**. See
+`docs/roadmap_v0.5.md` and ADR 0010.
 
 ## M8 Template Engine / Gate G8
 

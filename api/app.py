@@ -39,11 +39,20 @@ from agent.mvp_pipeline import (
 )
 from agent.requirement_agent import RequirementAgent
 from agent.evidence_registry import EvidenceRegistry, EvidenceSummary
+from agent.trusted_source import TrustedSourcePolicy
 from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
 from registry.models import RobotKnowledgeRegistry
 from registry.v04 import RegistryDocumentV04
 from registry.v06 import EvidenceEnvironment, EvidenceRecord, RegistryDocumentV06
+from registry.v05 import (
+    CompatibilityClaim,
+    ManagedComponent,
+    RegistryManagementDocumentV05,
+    SourceLicense,
+    SourceReview,
+    TrustedSource,
+)
 
 
 class ProjectSummary(BaseModel):
@@ -194,6 +203,7 @@ def create_app(
     workspace_root: Path | None = None,
     read_only: bool | None = None,
     evidence_document: RegistryDocumentV06 | None = None,
+    management_document: RegistryManagementDocumentV05 | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
     simulation_frame_collector_factory: Callable[[], SimulationFrameCollector] | None = None,
@@ -213,6 +223,7 @@ def create_app(
 
     summary = project_summary or _default_project_summary()
     evidence_document = evidence_document or _default_evidence_document()
+    management_document = management_document or _default_management_document()
     pending_plans: dict[str, WorkspacePlan] = {}
     generated_plans: dict[str, WorkspacePlan] = {}
     collector_factory = build_collector_factory or BuildCommandCollector
@@ -266,6 +277,18 @@ def create_app(
         if not summary.records:
             raise HTTPException(status_code=404, detail="No evidence for component.")
         return summary
+
+    @app.get("/api/v1/registry/management", response_model=RegistryManagementDocumentV05)
+    def read_registry_management() -> RegistryManagementDocumentV05:
+        """Return only stored trusted-source metadata and lifecycle facts."""
+        return management_document
+
+    @app.get("/api/v1/registry/sources/{source_id}/review", response_model=SourceReview)
+    def review_registry_source(source_id: str) -> SourceReview:
+        source = next((item for item in management_document.sources if item.id == source_id), None)
+        if source is None:
+            raise HTTPException(status_code=404, detail="No trusted source with that identifier.")
+        return TrustedSourcePolicy().review(source)
 
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)
     def parse_requirement(request: RequirementRequest) -> RequirementResult:
@@ -489,6 +512,51 @@ def _default_evidence_document() -> RegistryDocumentV06:
     )
 
 
+def _default_management_document() -> RegistryManagementDocumentV05:
+    """Seed the GUI with only the existing virtual-MVP provenance, never discovery results."""
+    registry_v04 = RegistryDocumentV04(
+        source_schema_version="v0.3", registry=_frozen_mvp_registry()
+    )
+    return RegistryManagementDocumentV05(
+        source_schema_version="v0.4",
+        registry_v04=registry_v04,
+        sources=[
+            TrustedSource(
+                id="robot-dev-ai-source",
+                source_type="official-repo",
+                url="https://github.com/kim7170719/robot-dev-ai",
+                trust_level="A",
+                license=SourceLicense(spdx="MIT", redistribution="allowed"),
+                vendor="Robot Dev AI",
+                maintainer="Robot Dev AI maintainers",
+                retrieved_at="2026-10-12",
+                compatibility_claim=CompatibilityClaim(
+                    ros_distros=["jazzy"],
+                    operating_systems=["ubuntu-24-04"],
+                    cpu_architectures=["amd64"],
+                ),
+            )
+        ],
+        components=[
+            ManagedComponent(
+                id="generic-diff-base",
+                kind="hardware",
+                display_name="Generic Differential Drive Base",
+                source_id="robot-dev-ai-source",
+                lifecycle="tested",
+                evidence_component_id="generic-diff-base",
+                provenance="g12-virtual-mvp",
+            ),
+            ManagedComponent(
+                id="generic-diff-driver",
+                kind="driver",
+                display_name="Generic Differential Drive Driver",
+                source_id="robot-dev-ai-source",
+                lifecycle="discovered",
+                provenance="migrated-v0.3",
+            ),
+        ],
+    )
 def _branch_from_head(head_path: Path) -> str:
     """Return the ref name in a standard Git worktree, or explicit unknown."""
 

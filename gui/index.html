@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="./m14-landing.css?v=1">
     <link rel="stylesheet" href="./m14-topnav.css?v=5">
     <link rel="stylesheet" href="./m14-humanoid.css?v=3">
-    <link rel="stylesheet" href="./m14-control.css?v=2">
+    <link rel="stylesheet" href="./m14-control.css?v=3">
     <link rel="stylesheet" href="./m14-3d-hero.css?v=5">
     <link rel="stylesheet" href="./m14-landing-apple.css?v=1">
     <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
@@ -48,13 +48,14 @@
           <a href="#runtime" data-view-link="runtime"><i aria-hidden="true"></i>Run</a>
           <a href="#validation" data-view-link="validation"><i aria-hidden="true"></i>Diagnose</a>
           <a href="#evidence" data-view-link="evidence"><i aria-hidden="true"></i>Evidence</a>
+          <a href="#registry" data-view-link="registry"><i aria-hidden="true"></i>Registry</a>
         </nav>
         <div class="sidebar-footer"><span class="dot"></span><span><strong>Virtual-only evidence</strong><small>G12 frozen · G14 GUI</small></span></div>
       </aside>
       <main class="main-content" id="workspace-main" tabindex="-1">
         <header class="topbar">
           <a class="top-brand" href="#landing" data-view-link="landing" aria-label="Robot Dev AI animated home"><span class="top-brand-mark" aria-hidden="true"><i></i><i></i></span><strong>Robot Dev AI</strong></a>
-          <nav class="top-workflow" aria-label="Workspace navigation"><a href="#dashboard" data-view-link="dashboard" data-i18n="nav.overview">Overview</a><a href="#requirement" data-view-link="requirement" data-i18n="nav.design">Design</a><a href="#configuration" data-view-link="configuration" data-i18n="nav.build">Build</a><a href="#runtime" data-view-link="runtime" data-i18n="nav.run">Run</a><a href="#validation" data-view-link="validation" data-i18n="nav.diagnose">Diagnose</a><a href="#evidence" data-view-link="evidence">Evidence</a></nav>
+          <nav class="top-workflow" aria-label="Workspace navigation"><a href="#dashboard" data-view-link="dashboard" data-i18n="nav.overview">Overview</a><a href="#requirement" data-view-link="requirement" data-i18n="nav.design">Design</a><a href="#configuration" data-view-link="configuration" data-i18n="nav.build">Build</a><a href="#runtime" data-view-link="runtime" data-i18n="nav.run">Run</a><a href="#validation" data-view-link="validation" data-i18n="nav.diagnose">Diagnose</a><a href="#evidence" data-view-link="evidence" data-i18n="nav.evidence">Evidence</a><a href="#registry" data-view-link="registry" data-i18n="nav.registry">Registry</a></nav>
           <div class="topbar-actions"><button class="language-toggle" data-action="toggle-language" type="button" aria-label="Switch interface language"><span class="language-current">EN</span><span class="language-divider">/</span><span class="language-alternate">中</span></button><span class="shield" data-i18n="chrome.safety">Safety boundary active</span><span class="avatar">YU</span></div>
         </header>
 
@@ -155,6 +156,16 @@
           </article>
           <p class="evidence-boundary">E3 表示在記錄的模擬環境通過；它不是 E4 真機驗證，也不代表其他硬體、作業系統或 ROS 版本均可使用。</p>
           <div id="evidence-summary" class="evidence-summary" aria-live="polite"><div class="evidence-skeleton"></div><div class="evidence-skeleton"></div><div class="evidence-skeleton"></div></div>
+        </section>
+
+        <section class="view" id="registry" data-view aria-labelledby="registry-title">
+          <div class="page-header registry-heading"><div><h1 id="registry-title">元件來源與使用狀態</h1><p>查看目前已登錄的硬體與軟體來源。這一頁只提供審查資訊，不會下載、安裝或執行外部套件。</p></div><span>R</span></div>
+          <div class="registry-toolbar">
+            <label for="registry-filter">顯示類型<select id="registry-filter"><option value="all">全部元件</option><option value="hardware">硬體</option><option value="driver">驅動程式</option><option value="adapter">轉接層</option><option value="template">整合範本</option></select></label>
+            <div class="registry-safety"><strong>安全審查中</strong><span>外部來源只會進入後續 sandbox 流程。</span></div>
+          </div>
+          <div id="registry-catalog" class="registry-catalog" aria-live="polite"><div class="registry-skeleton"></div><div class="registry-skeleton"></div></div>
+          <section class="source-review" aria-labelledby="source-review-title"><div><h2 id="source-review-title">來源審查結果</h2><p>選取一個元件後，查看它目前可進行的下一步。</p></div><output id="source-review-result" aria-live="polite">正在等待元件資料。</output></section>
         </section>
       </main>
     </div>

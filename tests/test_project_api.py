@@ -94,6 +94,21 @@ def test_evidence_endpoint_returns_contextual_summary_only() -> None:
     assert response.json()["records"][0]["evidence_level"] == "E3"
 
 
+def test_registry_management_endpoints_are_read_only_and_traceable() -> None:
+    client = TestClient(create_app(read_only=True))
+
+    catalog = client.get("/api/v1/registry/management")
+    review = client.get("/api/v1/registry/sources/robot-dev-ai-source/review")
+    blocked_write = client.post("/api/v1/registry/components", json={})
+
+    assert catalog.status_code == 200
+    assert catalog.json()["schema_version"] == "v0.5"
+    assert catalog.json()["components"][0]["source_id"] == "robot-dev-ai-source"
+    assert review.status_code == 200
+    assert review.json()["disposition"] == "sandbox-only"
+    assert blocked_write.status_code == 403
+
+
 def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:
     response = TestClient(create_app()).post(
         "/api/v1/requirements/parse",

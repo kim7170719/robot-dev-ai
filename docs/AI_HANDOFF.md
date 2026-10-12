@@ -1,10 +1,10 @@
 # AI handoff (live)
 
-Updated: 2026-10-12. v0.4/G12.5 composable-architecture refactor is active; v0.6/G12.6 is accepted future sequencing; M15 is paused.
+Updated: 2026-10-12. G12.5 composable core is complete; v0.5 Registry Management / Trusted Source read-only foundation is active; M15 is paused.
 
 ## Where we are
 
-**G0–G12, G12.5, and G14 PASS** on Ubuntu. M13/G13 is deferred as Optional Extension O1. G12.6 Scalable Evidence Registry is now active; M15 preflight is paused and G15 is not passed. Isaac Sim remains the physics authority.
+**G0–G12, G12.5, and G14 PASS** on Ubuntu. M13/G13 is deferred as Optional Extension O1. v0.5 now provides trusted-source metadata and a read-only Registry Management surface; broader G12.6 population/community work and M15 remain open. Isaac Sim remains the physics authority.
 
 The active branch is `refactor/composable-architecture-v0.4`; do not develop directly on `develop`. The real target profile is Jetson Orin Nano + differential-drive base + Intel RealSense D455, but physical 2D LiDAR, wheel encoders, independent emergency stop, base controller, power system, and their evidence remain prerequisites, not assumptions.
 
@@ -33,7 +33,7 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 - **Gate G12.5 PASS:** `docs/g125_acceptance.md` maps all eight accepted criteria to named tests and historical virtual-MVP evidence. The frozen v0.4 core includes schema migration, architecture resolution, component planning/expansion, adapter contracts, unknown-device fallback, readiness, mutation safety, and `GET /api/v1/core/schema`; the complete suite passed with 89 tests. This does not authorize M15 motion or claim G15.
 - M14 remains a completed presentation layer. Do not reshape its core API/GUI schema until G12.5 freezes the new contract. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
-- M14B Evidence Explorer is now a read-only extension of the existing GUI. It reads `/api/v1/evidence/generic-diff-base` and labels the default G12 virtual MVP record as E3 simulation evidence, not E4 real-hardware proof. Registry CRUD, promotion, and community review are not exposed in the GUI.
+- M14B Evidence Explorer is now a read-only extension of the existing GUI. It reads `/api/v1/evidence/generic-diff-base` and labels the default G12 virtual MVP record as E3 simulation evidence, not E4 real-hardware proof. The v0.5 Registry view reads `/api/v1/registry/management` and `/api/v1/registry/sources/{id}/review`; it filters stored lifecycle/provenance data but cannot discover, clone, install, execute, validate, promote, or edit an external package. See `docs/roadmap_v0.5.md` and ADR 0010.
 - G12.6 now has an environment-bound evidence schema, conflict-preserving query,
   read-only API, and `RegistrySnapshot.create()` for deterministic benchmark
   inputs. It does not yet meet the broader population/community gate and does

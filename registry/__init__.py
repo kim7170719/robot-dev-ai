@@ -18,6 +18,14 @@ from .v06 import (
     RegistryDocumentV06,
     migrate_v04_registry,
 )
+from .v05 import (
+    CompatibilityClaim,
+    ManagedComponent,
+    RegistryManagementDocumentV05,
+    SourceLicense,
+    SourceReview,
+    TrustedSource,
+)
 
 __all__ = [
     "AdapterContract",
@@ -34,4 +42,10 @@ __all__ = [
     "EvidenceRecord",
     "RegistryDocumentV06",
     "migrate_v04_registry",
+    "CompatibilityClaim",
+    "ManagedComponent",
+    "RegistryManagementDocumentV05",
+    "SourceLicense",
+    "SourceReview",
+    "TrustedSource",
 ]

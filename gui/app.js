@@ -1,7 +1,7 @@
 const api = "/api/v1";
 const translations = {
-  zh: { "nav.overview": "概覽", "nav.design": "設計", "nav.build": "建置", "nav.run": "運行", "nav.diagnose": "診斷", "chrome.safety": "安全邊界啟用中", "landing.kicker": "設計、驗證、模擬", "landing.title": "讓第一台機器人<br>先在虛擬世界醒來。", "landing.summary": "從自然語言需求出發，建立具備 LiDAR、Camera 與導航能力的差速機器人；每個動作都先在可審閱的安全邊界內完成。", "landing.enter": "進入工作區", "landing.direct": "直接建立方案", "landing.status": "Virtual-first robot development", "overview.title": "從想法到機器人", "overview.summary": "先告訴我們你想做的機器人；我們會整理可行建議，確認後才會建立專案。", "overview.design": "開始規劃", "overview.runtime": "查看目前狀態", views: { landing: "首頁", dashboard: "概覽", requirement: "設計", configuration: "建置", runtime: "運行", validation: "診斷", evidence: "證據" } },
-  en: { "nav.overview": "Overview", "nav.design": "Design", "nav.build": "Build", "nav.run": "Run", "nav.diagnose": "Diagnose", "chrome.safety": "Safety boundary active", "landing.kicker": "DESIGN · VALIDATE · SIMULATE", "landing.title": "Let your first robot<br>wake up virtually.", "landing.summary": "Start with a natural-language request and build a differential-drive robot with LiDAR, camera, and navigation—each action remains within a reviewable safety boundary.", "landing.enter": "Enter workspace", "landing.direct": "Create a design plan", "landing.status": "Virtual-first robot development", "overview.title": "From idea to robot", "overview.summary": "Tell us what you want to build. We will organise practical suggestions before anything is created.", "overview.design": "Start planning", "overview.runtime": "View current status", views: { landing: "Home", dashboard: "Overview", requirement: "Design", configuration: "Build", runtime: "Run", validation: "Diagnose", evidence: "Evidence" } },
+  zh: { "nav.overview": "概覽", "nav.design": "設計", "nav.build": "建置", "nav.run": "運行", "nav.diagnose": "診斷", "nav.evidence": "證據", "nav.registry": "元件庫", "chrome.safety": "安全邊界啟用中", "landing.kicker": "設計、驗證、模擬", "landing.title": "讓第一台機器人<br>先在虛擬世界醒來。", "landing.summary": "從自然語言需求出發，建立具備 LiDAR、Camera 與導航能力的差速機器人；每個動作都先在可審閱的安全邊界內完成。", "landing.enter": "進入工作區", "landing.direct": "直接建立方案", "landing.status": "Virtual-first robot development", "overview.title": "從想法到機器人", "overview.summary": "先告訴我們你想做的機器人；我們會整理可行建議，確認後才會建立專案。", "overview.design": "開始規劃", "overview.runtime": "查看目前狀態", views: { landing: "首頁", dashboard: "概覽", requirement: "設計", configuration: "建置", runtime: "運行", validation: "診斷", evidence: "證據", registry: "元件庫" } },
+  en: { "nav.overview": "Overview", "nav.design": "Design", "nav.build": "Build", "nav.run": "Run", "nav.diagnose": "Diagnose", "nav.evidence": "Evidence", "nav.registry": "Registry", "chrome.safety": "Safety boundary active", "landing.kicker": "DESIGN · VALIDATE · SIMULATE", "landing.title": "Let your first robot<br>wake up virtually.", "landing.summary": "Start with a natural-language request and build a differential-drive robot with LiDAR, camera, and navigation—each action remains within a reviewable safety boundary.", "landing.enter": "Enter workspace", "landing.direct": "Create a design plan", "landing.status": "Virtual-first robot development", "overview.title": "From idea to robot", "overview.summary": "Tell us what you want to build. We will organise practical suggestions before anything is created.", "overview.design": "Start planning", "overview.runtime": "View current status", views: { landing: "Home", dashboard: "Overview", requirement: "Design", configuration: "Build", runtime: "Run", validation: "Diagnose", evidence: "Evidence", registry: "Registry" } },
 };
 let locale = localStorage.getItem("robot-dev-ai-locale") === "en" ? "en" : "zh";
 function applyLocale() {
@@ -262,6 +262,47 @@ function renderEvidence(summary) {
   if (!record) { target.textContent = "No recorded evidence."; return; }
   target.innerHTML = `<article><small>EVIDENCE LEVEL</small><strong>${record.evidence_level}</strong><p>${record.status.toUpperCase()} · trust ${record.source_trust}</p></article><article><small>RECORDED ENVIRONMENT</small><strong>${record.environment.os}</strong><p>${record.environment.ros_distro} · ${record.environment.cpu_arch}</p></article><article><small>PROVENANCE</small><strong>${record.provenance}</strong><p>${summary.coverage_levels.join(" · ")} coverage${summary.conflict_record_ids.length ? " · conflict recorded" : ""}</p></article>`;
 }
+let registryCatalog = null;
+function registryText(value) { return String(value || "—").replaceAll("-", " "); }
+function renderSourceReview(review) {
+  const target = document.querySelector("#source-review-result");
+  target.replaceChildren();
+  const title = document.createElement("strong");
+  title.textContent = review.disposition === "sandbox-only" ? "僅可進入安全測試環境" : review.disposition === "blocked" ? "此來源已被阻擋" : "目前僅能檢視資料";
+  const detail = document.createElement("p");
+  detail.textContent = review.reasons.join(" ");
+  target.append(title, detail);
+}
+async function reviewSource(sourceId) {
+  try { renderSourceReview(await request(`/registry/sources/${sourceId}/review`)); }
+  catch (error) { document.querySelector("#source-review-result").textContent = error.message; }
+}
+function renderRegistry() {
+  const target = document.querySelector("#registry-catalog");
+  if (!registryCatalog) return;
+  const filter = document.querySelector("#registry-filter").value;
+  const sources = new Map(registryCatalog.sources.map((source) => [source.id, source]));
+  const components = registryCatalog.components.filter((component) => filter === "all" || component.kind === filter);
+  target.replaceChildren();
+  if (!components.length) { target.textContent = "目前沒有符合篩選條件的元件。"; return; }
+  components.forEach((component) => {
+    const source = sources.get(component.source_id);
+    const article = document.createElement("article"); article.className = "registry-row";
+    const identity = document.createElement("div");
+    const title = document.createElement("h2"); title.textContent = component.display_name;
+    const meta = document.createElement("p"); meta.textContent = `${registryText(component.kind)} · ${registryText(component.version)}`;
+    identity.append(title, meta);
+    const state = document.createElement("span"); state.className = `lifecycle lifecycle-${component.lifecycle}`; state.textContent = registryText(component.lifecycle);
+    const provenance = document.createElement("div"); provenance.className = "registry-source";
+    provenance.textContent = `${source?.trust_level || "—"} trust · ${source?.license?.spdx || "license pending"}`;
+    const button = document.createElement("button"); button.type = "button"; button.className = "secondary"; button.textContent = "查看來源審查"; button.addEventListener("click", () => reviewSource(component.source_id));
+    article.append(identity, state, provenance, button); target.append(article);
+  });
+}
+async function loadRegistry() {
+  try { registryCatalog = await request("/registry/management"); renderRegistry(); if (registryCatalog.components[0]) reviewSource(registryCatalog.components[0].source_id); }
+  catch (error) { document.querySelector("#registry-catalog").textContent = error.message; }
+}
 document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); setView(link.dataset.viewLink); }));
 document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go)));
 document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); }));
@@ -270,6 +311,7 @@ document.querySelector('[data-action="load-evidence"]').addEventListener("click"
   try { renderEvidence(await request("/evidence/generic-diff-base")); }
   catch (error) { document.querySelector("#evidence-summary").textContent = error.message; }
 });
+document.querySelector("#registry-filter")?.addEventListener("change", renderRegistry);
 document.querySelector('[data-action="refresh-simulation"]').addEventListener("click", refreshSimulation);
 document.querySelector('[data-action="refresh-camera"]').addEventListener("click", () => {
   if (document.querySelector("#camera-source").value === "webcam") stopMjpegPreview();
@@ -320,6 +362,7 @@ if (initialView?.matches("[data-view]")) {
 } else activateView("landing");
 applyLocale();
 request("/evidence/generic-diff-base").then(renderEvidence).catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; });
+loadRegistry();
 refreshSimulation();
 window.setInterval(() => {
   if (document.querySelector("#live-preview").checked && document.querySelector("#camera-source").value !== "webcam") refreshSimulationFrame();
