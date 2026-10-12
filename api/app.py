@@ -38,9 +38,12 @@ from agent.mvp_pipeline import (
     SimulationValidationResult,
 )
 from agent.requirement_agent import RequirementAgent
+from agent.evidence_registry import EvidenceRegistry, EvidenceSummary
 from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
 from registry.models import RobotKnowledgeRegistry
+from registry.v04 import RegistryDocumentV04
+from registry.v06 import EvidenceEnvironment, EvidenceRecord, RegistryDocumentV06
 
 
 class ProjectSummary(BaseModel):
@@ -190,6 +193,7 @@ def create_app(
     project_summary: ProjectSummary | None = None,
     workspace_root: Path | None = None,
     read_only: bool | None = None,
+    evidence_document: RegistryDocumentV06 | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
     simulation_frame_collector_factory: Callable[[], SimulationFrameCollector] | None = None,
@@ -208,6 +212,7 @@ def create_app(
         read_only = os.environ.get("ROBOT_DEV_AI_READ_ONLY", "false").lower() == "true"
 
     summary = project_summary or _default_project_summary()
+    evidence_document = evidence_document or _default_evidence_document()
     pending_plans: dict[str, WorkspacePlan] = {}
     generated_plans: dict[str, WorkspacePlan] = {}
     collector_factory = build_collector_factory or BuildCommandCollector
@@ -254,6 +259,13 @@ def create_app(
             ],
             next_gate="G12.6",
         )
+
+    @app.get("/api/v1/evidence/{component_id}", response_model=EvidenceSummary)
+    def read_evidence(component_id: str) -> EvidenceSummary:
+        summary = EvidenceRegistry().summarize(evidence_document, component_id)
+        if not summary.records:
+            raise HTTPException(status_code=404, detail="No evidence for component.")
+        return summary
 
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)
     def parse_requirement(request: RequirementRequest) -> RequirementResult:
@@ -449,6 +461,31 @@ def _default_project_summary() -> ProjectSummary:
         latest_passed_gate="G12",
         evidence_scope="virtual-only",
         cosmos_status="deferred",
+    )
+
+
+def _default_evidence_document() -> RegistryDocumentV06:
+    """Expose only the existing virtual-MVP evidence as a contextual E3 record."""
+
+    registry_v04 = RegistryDocumentV04(
+        source_schema_version="v0.3", registry=_frozen_mvp_registry()
+    )
+    return RegistryDocumentV06(
+        source_schema_version="v0.4",
+        registry_v04=registry_v04,
+        evidence_records=[
+            EvidenceRecord(
+                id="generic-diff-base-e3",
+                component_id="generic-diff-base",
+                evidence_level="E3",
+                source_trust="A",
+                status="pass",
+                environment=EvidenceEnvironment(
+                    os="ubuntu-24-04", ros_distro="jazzy", cpu_arch="amd64"
+                ),
+                provenance="g12-virtual-mvp",
+            )
+        ],
     )
 
 

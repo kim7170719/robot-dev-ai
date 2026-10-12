@@ -225,6 +225,11 @@ returns environment-bound observations, covered E-levels, and record IDs in a
 same-context PASS/FAIL conflict without overwriting either result. The complete
 suite passed: **88 tests**. API, snapshot, and GUI work remain open.
 
+G12.6 evidence API (2026-10-12): **PASS.** `GET /api/v1/evidence/{component}`
+returns the read-only contextual summary used by M14B. The default document
+contains only the existing G12 virtual-MVP E3 record for `generic-diff-base`;
+it is not a real-hardware claim. The complete suite passed: **89 tests**.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |

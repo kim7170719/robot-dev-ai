@@ -10,7 +10,7 @@
 ## Active next — G12.6 Scalable Evidence Registry
 
 - **Purpose:** Preserve contextual E0–E5 evidence without overstating simulation or documentation as real-hardware validation.
-- **Status (2026-10-12):** v0.6 envelope, evidence records, and context-aware query/coverage/conflict summary are implemented. Immutable snapshots and M14B GUI remain next.
+- **Status (2026-10-12):** v0.6 envelope, evidence records, context-aware query/coverage/conflict summary, and read-only evidence API are implemented. Immutable snapshots and M14B Evidence Explorer remain next.
 
 ## Paused — M15 Jetson + real-robot bring-up (Gate G15)
 

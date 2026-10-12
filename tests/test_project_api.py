@@ -14,6 +14,9 @@ from agent.mvp_pipeline import (
     SimulationCommandEvidence,
 )
 from api.app import ProjectSummary, create_app
+from registry.models import RobotKnowledgeRegistry
+from registry.v04 import RegistryDocumentV04
+from registry.v06 import EvidenceEnvironment, EvidenceRecord, RegistryDocumentV06
 
 
 def test_project_summary_exposes_the_frozen_mvp_status() -> None:
@@ -61,6 +64,34 @@ def test_core_schema_summary_exposes_frozen_g125_contract() -> None:
         ],
         "next_gate": "G12.6",
     }
+
+
+def test_evidence_endpoint_returns_contextual_summary_only() -> None:
+    evidence_document = RegistryDocumentV06(
+        source_schema_version="v0.4",
+        registry_v04=RegistryDocumentV04(
+            source_schema_version="v0.3",
+            registry=RobotKnowledgeRegistry.model_validate(
+                {"hardware": [{"id": "diff-base", "kind": "mobile-base", "vendor": "Example"}]}
+            ),
+        ),
+        evidence_records=[
+            EvidenceRecord(
+                id="diff-base-e3", component_id="diff-base", evidence_level="E3",
+                source_trust="A", status="pass",
+                environment=EvidenceEnvironment(os="ubuntu-24-04", ros_distro="jazzy", cpu_arch="amd64"),
+                provenance="m4-navigation",
+            )
+        ],
+    )
+
+    response = TestClient(create_app(evidence_document=evidence_document)).get(
+        "/api/v1/evidence/diff-base"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["coverage_levels"] == ["E3"]
+    assert response.json()["records"][0]["evidence_level"] == "E3"
 
 
 def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:
