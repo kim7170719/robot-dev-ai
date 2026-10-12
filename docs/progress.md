@@ -478,3 +478,16 @@ model, claim photogrammetric accuracy, or represent a physical robot. JavaScript
 syntax validation passed and the local GUI returned HTTP 200. Full visual
 comparison remains a manual browser review because the headless browser cannot
 settle the continuous render loop.
+
+## M14 supplied-GLB landing integration (2026-10-12)
+
+The user-provided static Tripo GLB is now the primary landing WebGL asset,
+normalised to the existing floor and camera and presented with a bounded idle
+float and pointer parallax. The original procedural robot remains in memory as
+a no-network load-error fallback. The source contains no skeleton or animation
+clips, so the landing makes no body-animation claim. A reproducible
+glTF-Transform 4.5.1 run reduced the source from 67.8 MB to 1.59 MB with
+Meshopt, 2048px WebP textures, and an 8% geometry target; validation found no
+errors (the source material's tangent-space warning remains). GLB assets are
+Git LFS tracked. This remains presentation-only: no ROS, Isaac, API, or
+hardware behaviour changed.

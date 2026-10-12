@@ -2,10 +2,10 @@
 
 ## Three.js
 
-The local landing-page WebGL runtime is derived from the
+The local landing-page WebGL runtime, including the GLTFLoader and Meshopt
+decoder addons, is derived from the
 [Three.js repository](https://github.com/mrdoob/three.js), which is released
-under the MIT License. The landing humanoid itself is original procedural
-geometry built by this project.
+under the MIT License.
 
 Copyright © 2010–2026 Three.js authors
 
@@ -34,3 +34,12 @@ The landing-page entry choreography locally vendors GSAP 3.12.5 as
 [GSAP Standard License](https://gsap.com/standard-license/). The original
 copyright and license header remains in the vendored file. GSAP only
 orchestrates DOM entry motion; it has no ROS, API, or simulator access.
+
+## User-supplied humanoid GLB
+
+`gui/assets/humanoid-reference.glb` is a Web-optimised derivative of the GLB
+the project user supplied on 2026-10-12. The source metadata names `Tripo` as
+generator. It is used only as the landing-page visual asset; it has no skeleton
+or animation clips and does not represent a robot capability, Isaac Sim scene,
+or physical hardware. The user must retain the source model's applicable
+licence and usage rights before any public deployment.

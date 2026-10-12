@@ -1,20 +1,23 @@
 import * as THREE from "three";
+import { GLTFLoader } from "./vendor/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "./vendor/addons/libs/meshopt_decoder.module.js";
 
 const host = document.querySelector("#hero-robot-3d");
 const canvas = document.querySelector("#hero-robot-canvas");
 const status = document.querySelector(".humanoid-pose");
+const loading = document.querySelector(".hero-robot-loading");
 
 if (host && canvas && window.WebGLRenderingContext) {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.12;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.domElement.setAttribute("role", "img");
-  renderer.domElement.setAttribute("aria-label", "原創三維人形機器人，以獨立外置肩軸執行掃描、確認與移動展示。");
+  renderer.domElement.setAttribute("aria-label", "三維人形機器人展示，可用滑鼠或觸控移動視角。載入失敗時使用本機原創備援模型。");
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(27, 1, .1, 40);
@@ -44,6 +47,8 @@ if (host && canvas && window.WebGLRenderingContext) {
   const robot = new THREE.Group();
   robot.rotation.y = -.3;
   scene.add(robot);
+  let referenceRig = null;
+  const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
 
   const setShadow = (node) => { node.castShadow = true; node.receiveShadow = true; return node; };
   const mesh = (geometry, material, position = [0, 0, 0], scale = [1, 1, 1]) => {
@@ -198,30 +203,88 @@ if (host && canvas && window.WebGLRenderingContext) {
     camera.updateProjectionMatrix();
   };
   new ResizeObserver(resize).observe(host);
+  host.addEventListener("pointermove", (event) => {
+    const bounds = host.getBoundingClientRect();
+    pointer.targetX = THREE.MathUtils.clamp(((event.clientX - bounds.left) / bounds.width - .5) * 2, -1, 1);
+    pointer.targetY = THREE.MathUtils.clamp(((event.clientY - bounds.top) / bounds.height - .5) * 2, -1, 1);
+  });
+  host.addEventListener("pointerleave", () => {
+    pointer.targetX = 0;
+    pointer.targetY = 0;
+  });
   resize();
   host.classList.add("is-ready");
+
+  const activateReferenceModel = (gltf) => {
+    const model = gltf.scene;
+    const bounds = new THREE.Box3().setFromObject(model);
+    const size = bounds.getSize(new THREE.Vector3());
+    const center = bounds.getCenter(new THREE.Vector3());
+    const targetHeight = 4.15;
+    const scale = targetHeight / size.y;
+
+    referenceRig = new THREE.Group();
+    model.position.set(-center.x, -bounds.min.y, -center.z);
+    referenceRig.add(model);
+    referenceRig.scale.setScalar(scale);
+    referenceRig.position.set(0, floor.position.y + .02, 0);
+    referenceRig.rotation.y = -.35;
+    model.traverse((node) => {
+      if (node.isMesh) {
+        node.castShadow = true;
+        node.receiveShadow = true;
+      }
+    });
+    scene.add(referenceRig);
+    robot.visible = false;
+    if (status) status.textContent = "REFERENCE MODEL READY";
+    if (loading) loading.textContent = "REFERENCE MODEL READY";
+  };
+
+  const loader = new GLTFLoader();
+  loader.setMeshoptDecoder(MeshoptDecoder);
+  loader.load(
+    "./assets/humanoid-reference.glb",
+    activateReferenceModel,
+    (event) => {
+      if (loading && event.total) loading.textContent = `LOADING REFERENCE ${Math.round((event.loaded / event.total) * 100)}%`;
+    },
+    (error) => {
+      console.warn("Reference GLB did not load; keeping the local procedural fallback.", error);
+      if (status) status.textContent = "LOCAL MODEL READY";
+      if (loading) loading.textContent = "LOCAL MODEL READY";
+    },
+  );
 
   function render(now) {
     requestAnimationFrame(render);
     const delta = Math.min(clock.getDelta(), .05);
     if (active()) {
-      if (!started) started = now;
-      if (now - started > 3600) {
-        pose = (pose + 1) % labels.length;
-        started = now;
-        if (status) status.textContent = labels[pose];
+      pointer.x = THREE.MathUtils.damp(pointer.x, pointer.targetX, 4.5, delta);
+      pointer.y = THREE.MathUtils.damp(pointer.y, pointer.targetY, 4.5, delta);
+      if (referenceRig) {
+        referenceRig.rotation.y = -.35 + Math.sin(now / 7200) * .055 + pointer.x * .16;
+        referenceRig.rotation.x = pointer.y * -.035;
+        referenceRig.position.y = floor.position.y + .02 + Math.sin(now / 2100) * .018;
+      } else {
+        if (!started) started = now;
+        if (now - started > 3600) {
+          pose = (pose + 1) % labels.length;
+          started = now;
+          if (status) status.textContent = labels[pose];
+        }
+        setPose(now);
+        Object.keys(state).forEach((key) => { state[key] = THREE.MathUtils.damp(state[key], target[key], 5.5, delta); });
+        head.rotation.set(state.headPitch, state.headYaw, 0);
+        leftArm.shoulder.rotation.z = state.leftArm;
+        rightArm.shoulder.rotation.z = state.rightArm;
+        leftArm.forearm.rotation.z = state.leftElbow;
+        rightArm.forearm.rotation.z = state.rightElbow;
+        leftLeg.hip.rotation.x = state.leftLeg;
+        rightLeg.hip.rotation.x = state.rightLeg;
+        robot.rotation.z = state.body;
+        robot.rotation.y = -.3 + Math.sin(now / 5400) * .03;
       }
-      setPose(now);
-      Object.keys(state).forEach((key) => { state[key] = THREE.MathUtils.damp(state[key], target[key], 5.5, delta); });
-      head.rotation.set(state.headPitch, state.headYaw, 0);
-      leftArm.shoulder.rotation.z = state.leftArm;
-      rightArm.shoulder.rotation.z = state.rightArm;
-      leftArm.forearm.rotation.z = state.leftElbow;
-      rightArm.forearm.rotation.z = state.rightElbow;
-      leftLeg.hip.rotation.x = state.leftLeg;
-      rightLeg.hip.rotation.x = state.rightLeg;
-      robot.rotation.z = state.body;
-      robot.rotation.y = -.3 + Math.sin(now / 5400) * .03;
     }
     renderer.render(scene, camera);
   }
