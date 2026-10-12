@@ -43,6 +43,26 @@ def test_project_summary_exposes_the_frozen_mvp_status() -> None:
     }
 
 
+def test_core_schema_summary_exposes_frozen_g125_contract() -> None:
+    response = TestClient(create_app()).get("/api/v1/core/schema")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "schema_version": "v0.4",
+        "gate": "G12.5",
+        "status": "frozen",
+        "capabilities": [
+            "architecture-resolution",
+            "composition-planning",
+            "adapter-resolution",
+            "hardware-readiness",
+            "mutation-safety",
+            "unknown-component-flow",
+        ],
+        "next_gate": "G12.6",
+    }
+
+
 def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:
     response = TestClient(create_app()).post(
         "/api/v1/requirements/parse",

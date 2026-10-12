@@ -208,6 +208,12 @@ human-approved provisional path, while absent sources are blocked. This is not
 an external discovery or adapter execution path. Remaining acceptance matrix
 and core API freeze work are still required before a G12.5 gate claim.
 
+G12.5 Task 10 (2026-10-12): **PASS.** `GET /api/v1/core/schema` freezes a
+read-only v0.4 contract summary for presentation clients: G12.5 state,
+supported core seams, and G12.6 as the next gate. It accepts no registry write,
+ROS command, or mutation. The complete suite passed: **86 tests**. G12.5
+acceptance consolidation remains pending before the gate itself can be claimed.
+
 ## M15 Jetson + real-robot bring-up (paused)
 
 | Criterion | Status | Evidence / boundary |

@@ -57,6 +57,18 @@ class ProjectSummary(BaseModel):
     cosmos_status: str
 
 
+class CoreSchemaSummary(BaseModel):
+    """Frozen, read-only G12.5 contract metadata for presentation clients."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal["v0.4"]
+    gate: Literal["G12.5"]
+    status: Literal["frozen"]
+    capabilities: list[str]
+    next_gate: Literal["G12.6"]
+
+
 class RequirementRequest(BaseModel):
     """Natural-language input accepted by the Requirement view."""
 
@@ -225,6 +237,23 @@ def create_app(
     @app.get("/api/v1/project/summary", response_model=ProjectSummary)
     def read_project_summary() -> ProjectSummary:
         return summary
+
+    @app.get("/api/v1/core/schema", response_model=CoreSchemaSummary)
+    def read_core_schema() -> CoreSchemaSummary:
+        return CoreSchemaSummary(
+            schema_version="v0.4",
+            gate="G12.5",
+            status="frozen",
+            capabilities=[
+                "architecture-resolution",
+                "composition-planning",
+                "adapter-resolution",
+                "hardware-readiness",
+                "mutation-safety",
+                "unknown-component-flow",
+            ],
+            next_gate="G12.6",
+        )
 
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)
     def parse_requirement(request: RequirementRequest) -> RequirementResult:

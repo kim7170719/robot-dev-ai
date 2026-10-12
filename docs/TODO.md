@@ -4,7 +4,7 @@
 
 - **Purpose:** Upgrade the frozen virtual-MVP core from complete-template/package assembly to architecture-aware, capability-aware, composable integration without rewriting historical evidence.
 - **Files:** `docs/roadmap_v0.4.md`, `docs/roadmap_v0.6.md`, `docs/architecture_v0.4.md`, `docs/decisions/0008-composable-architecture-before-real-hardware.md`; future core work starts with schemas and migration.
-- **Status (2026-10-12):** Tasks 1–8 PASS; Task 9 regression/acceptance is active. The suite includes documented/undocumented unknown-device fallback coverage. No real-hardware action or G12.5 gate claim has been made.
+- **Status (2026-10-12):** Tasks 1–8 and 10 PASS; Task 9 regression/acceptance is active. The v0.4 core schema is exposed as a read-only API contract. No real-hardware action or G12.5 gate claim has been made.
 - **Done when:** all eight G12.5 acceptance criteria in `docs/roadmap_v0.4.md` pass with tests and evidence; only then freeze the core API and align the M14B GUI.
 
 ## Paused — M15 Jetson + real-robot bring-up (Gate G15)
