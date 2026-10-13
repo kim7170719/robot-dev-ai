@@ -83,6 +83,10 @@ class RegistryDocumentV06(RegistryModel):
         record_ids = [record.id for record in self.evidence_records]
         if len(record_ids) != len(set(record_ids)):
             raise ValueError("v0.6 registry contains duplicate evidence identifiers")
+        if any(record.evidence_level == "E5" for record in self.evidence_records):
+            raise ValueError(
+                "E5 community evidence must be represented by accepted community submissions"
+            )
         missing = sorted({record.component_id for record in self.evidence_records} - available)
         if missing:
             raise ValueError("evidence references unknown component: " + ", ".join(missing))

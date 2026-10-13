@@ -158,6 +158,11 @@ component, outcome, and environment, and duplicate record IDs are rejected
 across submitted and accepted evidence. No community report was created or
 accepted by this change.
 
+v0.6 E5 boundary hardening (2026-10-13): direct evidence records cannot claim
+E5. The only E5 path is two independent, accepted community submissions in one
+environment, so an unreviewed aggregate cannot bypass the review queue. No E5
+claim was added.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

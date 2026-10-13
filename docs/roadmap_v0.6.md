@@ -36,7 +36,8 @@ Cosmos remains optional and never validates physics, ROS, or real hardware.
   a distinct review queue; pending reports cannot silently become accepted
   evidence or E5 claims. Accepted community reports are queryable evidence;
   an E5 claim requires at least two distinct accepted submitters agreeing on
-  component, outcome, and environment.
+  component, outcome, and environment. Direct evidence records cannot claim
+  E5 and bypass that review boundary.
 - `EvidenceRegistry` reports coverage, same-context PASS/FAIL conflicts, and
   pending community-review identifiers without collapsing observations.
 - `RegistrySnapshot.create()` provides a deterministic content hash. The

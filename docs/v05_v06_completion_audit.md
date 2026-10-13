@@ -13,7 +13,7 @@ Updated: 2026-10-13. This is a status audit, not new validation evidence.
 | E2 evidence | no recorded isolated build of an approved archive | External prerequisite remains |
 | External discovery, clone/download | no candidate source or human review authorization is present | External/human prerequisite remains |
 | Promotion/deprecation CRUD | no persistent reviewer identity, reviewed diff, or observed build/hardware evidence exists | Human evidence prerequisite remains |
-| v0.6 schema, query, snapshot, review queue | `registry.v06`, `EvidenceRegistry`, snapshot/API tests; pending reports excluded, accepted reports queryable, two independent accepted submitters required for E5 | Complete foundation |
+| v0.6 schema, query, snapshot, review queue | `registry.v06`, `EvidenceRegistry`, snapshot/API tests; pending reports excluded, accepted reports queryable, and E5 only arises from two independent accepted submitters | Complete foundation |
 | M14B coverage/conflict/reference views | `/api/v1/evidence/overview`, Evidence Explorer, API tests | Complete foundation |
 | Ten E0/E1 provenance records | current default document has one E3 record only | External evidence remains |
 | Three E2 recorded sandbox builds | no local Jazzy build image or approved archives | External prerequisite remains |

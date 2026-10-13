@@ -92,6 +92,19 @@ def test_e5_requires_two_independent_accepted_community_submitters() -> None:
     assert EvidenceRegistry().summarize(document, "lidar").coverage_levels == ["E5"]
 
 
+def test_e5_cannot_bypass_community_review_as_a_direct_evidence_record() -> None:
+    environment = EvidenceEnvironment(os="ubuntu-24-04", ros_distro="jazzy", cpu_arch="amd64")
+    registry_v04 = RegistryDocumentV04(source_schema_version="v0.3", registry=RobotKnowledgeRegistry.model_validate({"hardware": [{"id": "lidar", "kind": "lidar", "vendor": "Example"}]}))
+
+    with pytest.raises(ValueError, match="accepted community submissions"):
+        RegistryDocumentV06(
+            source_schema_version="v0.4", registry_v04=registry_v04,
+            evidence_records=[
+                EvidenceRecord(id="lidar-direct-e5", component_id="lidar", evidence_level="E5", source_trust="A", status="pass", environment=environment, provenance="unreviewed-aggregate")
+            ],
+        )
+
+
 def test_overview_keeps_coverage_conflicts_and_planned_reference_robot_separate() -> None:
     environment = EvidenceEnvironment(os="ubuntu-24-04", ros_distro="jazzy", cpu_arch="amd64")
     document = RegistryDocumentV06(
