@@ -7,6 +7,7 @@ from registry.v05 import (
     SourceLicense,
     TrustedSource,
 )
+import pytest
 
 
 def _source(*, trust_level: str = "A", redistribution: str = "allowed") -> TrustedSource:
@@ -57,3 +58,15 @@ def test_management_document_rejects_component_without_traceable_source() -> Non
         assert "unknown source" in str(error)
     else:
         raise AssertionError("a component must retain a trusted source reference")
+
+
+def test_trusted_source_requires_a_real_retrieval_date() -> None:
+    with pytest.raises(ValueError):
+        TrustedSource(
+            id="source-invalid-date",
+            source_type="official-repo",
+            url="https://example.test/repo",
+            trust_level="A",
+            license=SourceLicense(spdx="MIT", redistribution="allowed"),
+            retrieved_at="not-a-date",
+        )

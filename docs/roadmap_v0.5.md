@@ -28,6 +28,10 @@ The initial catalog contains only historical virtual-MVP facts. `tested` means
 the listed component has the stored virtual evidence boundary; it is not a
 claim of real-world VERIFIED support.
 
+Trusted-source retrieval dates are schema-validated calendar dates. This makes
+catalog metadata traceable without implying that the application fetched or
+revalidated the source.
+
 ## Deferred v0.5 stages
 
 - Discovery jobs and external metadata retrieval.

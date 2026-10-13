@@ -163,6 +163,11 @@ E5. The only E5 path is two independent, accepted community submissions in one
 environment, so an unreviewed aggregate cannot bypass the review queue. No E5
 claim was added.
 
+v0.5 trusted-source timestamp validation (2026-10-13): `retrieved_at` is now a
+schema-validated calendar date instead of arbitrary text. This validates
+operator-supplied provenance metadata only; it does not fetch or revalidate a
+source.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

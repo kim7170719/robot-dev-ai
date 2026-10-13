@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Literal
 
 from pydantic import Field, model_validator
@@ -58,7 +59,7 @@ class TrustedSource(RegistryModel):
     maintainer: str | None = Field(default=None, max_length=128)
     release: str | None = Field(default=None, max_length=128)
     commit: str | None = Field(default=None, max_length=128)
-    retrieved_at: str = Field(min_length=10, max_length=64)
+    retrieved_at: date
     compatibility_claim: CompatibilityClaim = Field(default_factory=CompatibilityClaim)
 
 
