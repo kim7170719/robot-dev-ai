@@ -1,4 +1,5 @@
 import subprocess
+from pathlib import Path
 
 from agent.source_onboarding import IsolatedSandboxRunner, SandboxRunnerProfile
 
@@ -37,3 +38,14 @@ def test_docker_command_never_pulls_and_enforces_isolation_limits() -> None:
     assert "--read-only" in command
     assert ["--cap-drop", "ALL"] == command[command.index("--cap-drop") : command.index("--cap-drop") + 2]
     assert "local/sandbox:stable" in command
+
+
+def test_dependency_scan_mounts_one_archive_read_only_without_extracting() -> None:
+    command = IsolatedSandboxRunner.dependency_scan_command(
+        SandboxRunnerProfile(runner="docker", image="local/sandbox:stable"),
+        Path("/safe/root/source.tar.gz"),
+    )
+
+    assert "--mount" in command
+    assert "dst=/bundle/source,readonly" in command[command.index("--mount") + 1]
+    assert command[-1] == "tar -tzf /bundle/source"

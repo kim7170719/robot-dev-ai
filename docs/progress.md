@@ -93,6 +93,13 @@ Preview needs sandbox authorization and appends an audit result; it does not
 mount, unpack, build, execute, clone, or download the bundle. Full suite:
 **112 tests**.
 
+v0.5 isolated archive dependency scan (2026-10-13): **PASS.** A verified local
+`.tar.gz` can now be bind-mounted as one read-only Docker file and examined
+only with fixed `tar -tzf`; the output contains an entry count and top-level
+names. A temporary archive containing the internal v0.5 roadmap passed with
+one listed entry. No archive was extracted, no shell input accepted, and no
+source code executed. Full suite: **113 tests**.
+
 ## M8 Template Engine / Gate G8
 
 | Criterion | Status | Evidence |

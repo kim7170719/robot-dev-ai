@@ -53,6 +53,7 @@ from agent.source_onboarding import (
     SandboxRunnerProfile,
     SandboxRunnerReadiness,
     IsolatedSandboxRunner,
+    DependencyScanResult,
     LocalSourceBundleGate,
     LocalSourceBundleRequest,
     LocalSourceBundleVerification,
@@ -423,6 +424,33 @@ def create_app(
             transaction,
             "bundle-verified" if result.status == "verified" else "blocked",
             result.sha256 if result.status == "verified" else "; ".join(result.issues),
+        )
+        return result
+
+    @app.post(
+        "/api/v1/registry/onboarding/{transaction_id}/bundle/dependency-scan",
+        response_model=DependencyScanResult,
+    )
+    def scan_verified_bundle_dependencies(
+        transaction_id: str, request: LocalSourceBundleRequest
+    ) -> DependencyScanResult:
+        transaction = pending_onboarding.get(transaction_id)
+        if transaction is None:
+            raise HTTPException(status_code=404, detail="onboarding transaction was not found")
+        if not audit_store.has_event(transaction_id, "bundle-verified"):
+            raise HTTPException(status_code=409, detail="verified local source bundle is required")
+        profile = sandbox_profile_from_environment()
+        bundle_path = bundle_gate.verified_path(request)
+        if profile is None or bundle_path is None:
+            return DependencyScanResult(
+                status="blocked", runner="docker", entry_count=0,
+                detail="configured Docker runner and verified local tar bundle are required",
+            )
+        result = isolated_runner.dependency_scan(profile, bundle_path)
+        audit_store.append(
+            transaction,
+            "dependency-scan-passed" if result.status == "passed" else "blocked",
+            result.detail,
         )
         return result
 

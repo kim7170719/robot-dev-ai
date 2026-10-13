@@ -65,6 +65,13 @@ class LocalSourceBundleGate:
             status="verified", filename=resolved.name, sha256=digest, size_bytes=size
         )
 
+    def verified_path(self, request: LocalSourceBundleRequest) -> Path | None:
+        """Return a path only after repeating the complete verification gate."""
+        result = self.verify(request)
+        if result.status != "verified":
+            return None
+        return Path(request.path).resolve(strict=True)
+
     @staticmethod
     def _sha256(path: Path) -> str:
         hasher = hashlib.sha256()

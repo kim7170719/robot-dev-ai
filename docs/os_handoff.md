@@ -49,6 +49,12 @@ an allowlisted SHA-256 matching the operator-supplied expected hash. Verificatio
 only reads and hashes the archive then appends audit evidence—no mount, unpack,
 build, clone, download, or execution. Full suite: **112 tests passed**.
 
+Fixed Docker dependency scan is now PASS for verified `.tar.gz`/`.tgz`: it
+read-only mounts exactly one archive and runs only `tar -tzf`, reporting entry
+count/top-level names. Internal roadmap archive self-test listed one entry;
+nothing was extracted or executed. Full suite: **113 tests passed**. ZIP scan
+and all build/installation steps remain intentionally absent.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import subprocess
+from pathlib import Path
 from typing import Callable, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -18,6 +19,18 @@ class SandboxSelfTestResult(BaseModel):
     network_disabled: Literal[True] = True
     root_read_only: Literal[True] = True
     temporary_workspace: Literal[True] = True
+    detail: str = Field(min_length=1, max_length=1024)
+
+
+class DependencyScanResult(BaseModel):
+    """Archive listing evidence; no entry is extracted or executed."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["passed", "blocked", "failed"]
+    runner: Literal["docker"]
+    entry_count: int = Field(ge=0)
+    top_level_entries: list[str] = Field(default_factory=list)
     detail: str = Field(min_length=1, max_length=1024)
 
 
@@ -70,6 +83,36 @@ class IsolatedSandboxRunner:
             status="failed", runner=profile.runner,
             detail=(completed.stderr or completed.stdout or "isolated self-test failed")[:1024],
         )
+
+    @staticmethod
+    def dependency_scan_command(profile: SandboxRunnerProfile, bundle_path: Path) -> list[str]:
+        if profile.runner != "docker" or profile.image is None:
+            raise ValueError("dependency scan requires a configured Docker sandbox profile")
+        if not bundle_path.name.endswith((".tar.gz", ".tgz")):
+            raise ValueError("dependency scan currently supports verified tar archives only")
+        return [
+            "docker", "run", "--rm", "--pull", "never", "--network", "none",
+            "--read-only", "--tmpfs", "/tmp:rw,nosuid,nodev,noexec,size=64m",
+            "--pids-limit", "64", "--memory", "512m", "--cpus", "1",
+            "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+            "--user", "65534:65534", "--mount",
+            f"type=bind,src={bundle_path},dst=/bundle/source,readonly",
+            profile.image, "/bin/sh", "-c", "tar -tzf /bundle/source",
+        ]
+
+    def dependency_scan(self, profile: SandboxRunnerProfile, bundle_path: Path) -> DependencyScanResult:
+        readiness = SandboxRunnerPreflight().evaluate(profile)
+        if readiness.status != "available":
+            return DependencyScanResult(status="blocked", runner="docker", entry_count=0, detail="; ".join(readiness.issues))
+        try:
+            completed = self.command_runner(self.dependency_scan_command(profile, bundle_path))
+        except (ValueError, OSError, subprocess.TimeoutExpired) as error:
+            return DependencyScanResult(status="blocked", runner="docker", entry_count=0, detail=str(error))
+        if completed.returncode != 0:
+            return DependencyScanResult(status="failed", runner="docker", entry_count=0, detail=(completed.stderr or completed.stdout or "dependency scan failed")[:1024])
+        entries = [line for line in completed.stdout.splitlines() if line][:4096]
+        roots = sorted({entry.split("/", 1)[0] for entry in entries})[:64]
+        return DependencyScanResult(status="passed", runner="docker", entry_count=len(entries), top_level_entries=roots, detail="archive entries listed in an isolated read-only container; nothing was extracted or executed")
 
     @staticmethod
     def _run_command(command: list[str]) -> subprocess.CompletedProcess[str]:

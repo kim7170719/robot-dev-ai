@@ -82,3 +82,10 @@ configured root, within the size limit, whose streamed SHA-256 matches both
 the operator-provided expected hash and the server allowlist can be marked
 verified. Bundle preview requires the prior sandbox authorization and writes an
 audit event, but does not mount, unpack, build, or execute the bundle.
+
+The first fixed dependency scan is now implemented for verified `.tar.gz` and
+`.tgz` inputs. Docker bind-mounts exactly one archive as `/bundle/source`
+read-only and runs only `tar -tzf`; it returns entry count and top-level names,
+without extraction or shell input. The full authorization/hash gate remains
+required. A local internal archive scan passed on 2026-10-13 under the existing
+no-network/no-pull Docker profile.
