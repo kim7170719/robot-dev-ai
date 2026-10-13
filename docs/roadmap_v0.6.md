@@ -45,6 +45,9 @@ Cosmos remains optional and never validates physics, ROS, or real hardware.
   snapshot and exposes its identifier and counts to the Evidence GUI; clients
   can retrieve the exact captured document through
   `/api/v1/evidence/snapshots/{snapshot_id}` for reproducible benchmark input.
+  A caller may configure a `RegistrySnapshotStore` directory to retain those
+  content-addressed documents across a restart; saved content is re-hashed on
+  read, while the default store remains in memory and writes nothing.
 - M14B Evidence Explorer shows the current snapshot and explicitly labels
   pending community reports as not yet evidence.
 - The read-only evidence overview now supplies a coverage matrix for every

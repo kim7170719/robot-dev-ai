@@ -389,3 +389,9 @@ v0.6 retrievable snapshot pass (2026-10-13): the evidence API now captures a
 content-addressed Registry snapshot and serves that exact, isolated document by
 snapshot ID for the lifetime of the application. It is read-only and supplies
 benchmark input reproducibility, not new evidence.
+
+v0.6 durable snapshot option (2026-10-13): callers can opt into a
+caller-owned snapshot directory for cross-restart benchmark inputs. Each file
+is content-addressed, created without overwriting an existing snapshot, and
+re-hashed when read; tampering is rejected. Default API operation remains
+memory-only and does not create files.
