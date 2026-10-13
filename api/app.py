@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
-from api.sandbox import sandbox_profile_from_environment
+from api.sandbox import SandboxBuildReadiness, sandbox_build_readiness_from_environment, sandbox_profile_from_environment
 
 from agent.compatibility_resolver import (
     CompatibilityResolver,
@@ -387,6 +387,10 @@ def create_app(
         if profile is None:
             return SandboxRunnerPreflight().evaluate(None)
         return SandboxRunnerPreflight().evaluate(profile)
+
+    @app.get("/api/v1/registry/sandbox/build-readiness", response_model=SandboxBuildReadiness)
+    def read_sandbox_build_readiness() -> SandboxBuildReadiness:
+        return sandbox_build_readiness_from_environment()
 
     @app.post(
         "/api/v1/registry/onboarding/authorize-sandbox",

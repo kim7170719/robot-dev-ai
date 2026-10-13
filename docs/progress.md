@@ -131,6 +131,12 @@ when the source provides one and never treats a filename or license prose as a
 legal conclusion. The local Apache 2.0 license test correctly returned no
 SPDX declaration. Full suite: **125 tests**.
 
+v0.5 E2 build-image preflight (2026-10-13): **PASS for readiness only.** The
+read-only API reports whether an explicitly selected local ROS build image is
+available without pulling it or starting a container. This host has no Jazzy
+build image configured, so no E2 build evidence is claimed. Full suite:
+**127 tests**.
+
 v0.5 local source bundle gate (2026-10-13): **PASS.** Future sandbox inputs
 must be operator-supplied local archives under a configured root, with an
 allowlisted `.tar.gz`/`.tgz`/`.zip` type, non-symlink identity, size limit, and

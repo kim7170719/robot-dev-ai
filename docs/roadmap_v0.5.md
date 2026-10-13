@@ -117,3 +117,9 @@ the first scan-listed `LICENSE*`, `COPYING*`, or `NOTICE*`, streams at most
 `SPDX-License-Identifier` when one is present. Its output is source-provided
 metadata only, not a license interpretation or authorization to redistribute,
 install, build, or execute code.
+
+`GET /api/v1/registry/sandbox/build-readiness` now makes the E2 prerequisite
+explicit: only a caller-selected `ROBOT_DEV_AI_SANDBOX_BUILD_IMAGE` already
+present in the local Docker image store is `available`. The check never pulls
+an image or starts a container; without a ROS Jazzy build image, E2 remains
+unproven.

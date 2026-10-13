@@ -98,6 +98,10 @@ Isaac Sim G4 CLI results (2026-09-21):
   reads only the first scan-listed license candidate, capped at 32 KiB under
   the same Docker isolation and SHA-bound audit gate. It returns a declared
   SPDX header only if present and is never a license or redistribution ruling.
+- E2 build preflight: `GET /registry/sandbox/build-readiness` checks only an
+  explicitly configured, already-local `ROBOT_DEV_AI_SANDBOX_BUILD_IMAGE`.
+  It never pulls images or starts containers. No local Jazzy build image is
+  currently configured, therefore E2 remains unproven.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus
