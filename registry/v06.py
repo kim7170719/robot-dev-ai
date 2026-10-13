@@ -89,6 +89,9 @@ class RegistryDocumentV06(RegistryModel):
         submission_ids = [submission.id for submission in self.community_submissions]
         if len(submission_ids) != len(set(submission_ids)):
             raise ValueError("v0.6 registry contains duplicate community submission identifiers")
+        community_record_ids = [submission.record.id for submission in self.community_submissions]
+        if len(record_ids + community_record_ids) != len(set(record_ids + community_record_ids)):
+            raise ValueError("v0.6 registry contains duplicate evidence record identifiers")
         submission_components = {
             submission.record.component_id for submission in self.community_submissions
         }
@@ -97,6 +100,23 @@ class RegistryDocumentV06(RegistryModel):
             raise ValueError(
                 "community submission references unknown component: "
                 + ", ".join(missing_submissions)
+            )
+        accepted_e5_groups: dict[tuple[str, str, str, str, str], set[str]] = {}
+        for submission in self.community_submissions:
+            record = submission.record
+            if record.evidence_level != "E5" or submission.review_state != "accepted":
+                continue
+            key = (
+                record.component_id,
+                record.status,
+                record.environment.os,
+                record.environment.ros_distro,
+                record.environment.cpu_arch,
+            )
+            accepted_e5_groups.setdefault(key, set()).add(submission.submitted_by)
+        if any(len(reviewers) < 2 for reviewers in accepted_e5_groups.values()):
+            raise ValueError(
+                "E5 community evidence requires two independent accepted submitters in one environment"
             )
         reference_ids = [reference.id for reference in self.reference_robots]
         if len(reference_ids) != len(set(reference_ids)):

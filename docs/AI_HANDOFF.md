@@ -367,3 +367,10 @@ v0.5 E2 snapshot file-type hardening (2026-10-13): snapshot creation now opens
 the source with no-follow semantics and checks the opened descriptor is a
 regular file. A regression test replaces the reviewed path with a symlink after
 verification and confirms the build handoff is rejected. No E2 build ran.
+
+v0.6 community-evidence consistency pass (2026-10-13): pending C-trust reports
+remain outside evidence queries; explicitly accepted reports are now queryable.
+An E5 record requires two different accepted submitters with the same
+component, outcome, and environment, and duplicate record IDs are rejected
+across submitted and accepted evidence. No community report was created or
+accepted by this change.

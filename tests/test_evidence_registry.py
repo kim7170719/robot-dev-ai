@@ -3,6 +3,7 @@ from registry.models import RobotKnowledgeRegistry
 from registry.v04 import RegistryDocumentV04
 from registry.v06 import EvidenceEnvironment, EvidenceRecord, ReferenceRobot, RegistryDocumentV06
 from registry.v06 import CommunityEvidenceSubmission
+import pytest
 
 
 def test_summary_preserves_same_environment_pass_fail_conflict() -> None:
@@ -45,6 +46,50 @@ def test_pending_community_submission_is_visible_but_not_accepted_evidence() -> 
 
     assert summary.records == []
     assert summary.pending_community_submission_ids == ["lidar-community-e3"]
+
+
+def test_accepted_community_submission_is_queryable_evidence() -> None:
+    environment = EvidenceEnvironment(os="ubuntu-24-04", ros_distro="jazzy", cpu_arch="amd64")
+    document = RegistryDocumentV06(
+        source_schema_version="v0.4",
+        registry_v04=RegistryDocumentV04(source_schema_version="v0.3", registry=RobotKnowledgeRegistry.model_validate({"hardware": [{"id": "lidar", "kind": "lidar", "vendor": "Example"}]})),
+        community_submissions=[
+            CommunityEvidenceSubmission(
+                id="lidar-community-e3", submitted_by="reviewer-a", review_state="accepted",
+                record=EvidenceRecord(id="lidar-community-record", component_id="lidar", evidence_level="E3", source_trust="C", status="pass", environment=environment, provenance="community-report"),
+            )
+        ],
+    )
+
+    summary = EvidenceRegistry().summarize(document, "lidar")
+
+    assert [record.id for record in summary.records] == ["lidar-community-record"]
+    assert summary.pending_community_submission_ids == []
+
+
+def test_e5_requires_two_independent_accepted_community_submitters() -> None:
+    environment = EvidenceEnvironment(os="ubuntu-24-04", ros_distro="jazzy", cpu_arch="amd64")
+    registry_v04 = RegistryDocumentV04(source_schema_version="v0.3", registry=RobotKnowledgeRegistry.model_validate({"hardware": [{"id": "lidar", "kind": "lidar", "vendor": "Example"}]}))
+    submission = CommunityEvidenceSubmission(
+        id="lidar-community-e5-a", submitted_by="reviewer-a", review_state="accepted",
+        record=EvidenceRecord(id="lidar-community-record-a", component_id="lidar", evidence_level="E5", source_trust="C", status="pass", environment=environment, provenance="community-report-a"),
+    )
+
+    with pytest.raises(ValueError, match="two independent"):
+        RegistryDocumentV06(source_schema_version="v0.4", registry_v04=registry_v04, community_submissions=[submission])
+
+    document = RegistryDocumentV06(
+        source_schema_version="v0.4", registry_v04=registry_v04,
+        community_submissions=[
+            submission,
+            CommunityEvidenceSubmission(
+                id="lidar-community-e5-b", submitted_by="reviewer-b", review_state="accepted",
+                record=EvidenceRecord(id="lidar-community-record-b", component_id="lidar", evidence_level="E5", source_trust="C", status="pass", environment=environment, provenance="community-report-b"),
+            ),
+        ],
+    )
+
+    assert EvidenceRegistry().summarize(document, "lidar").coverage_levels == ["E5"]
 
 
 def test_overview_keeps_coverage_conflicts_and_planned_reference_robot_separate() -> None:

@@ -50,7 +50,15 @@ class EvidenceRegistry:
 
     def summarize(self, document: RegistryDocumentV06, component_id: Identifier) -> EvidenceSummary:
         records = sorted(
-            (record for record in document.evidence_records if record.component_id == component_id),
+            (
+                [record for record in document.evidence_records if record.component_id == component_id]
+                + [
+                    submission.record
+                    for submission in document.community_submissions
+                    if submission.record.component_id == component_id
+                    and submission.review_state == "accepted"
+                ]
+            ),
             key=lambda record: record.id,
         )
         grouped: dict[tuple[str, str, str, str, str], set[str]] = {}
