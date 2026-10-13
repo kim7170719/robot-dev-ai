@@ -123,6 +123,16 @@ def test_evidence_snapshot_persistence_requires_an_explicit_operator_directory(t
     assert (snapshot_root / f"{response.json()['snapshot_id']}.json").is_file()
 
 
+def test_read_only_api_never_persists_evidence_snapshots(tmp_path, monkeypatch) -> None:
+    snapshot_root = tmp_path / "snapshots"
+    monkeypatch.setenv("ROBOT_DEV_AI_EVIDENCE_SNAPSHOT_ROOT", str(snapshot_root))
+
+    response = TestClient(create_app(read_only=True)).get("/api/v1/evidence/snapshot")
+
+    assert response.status_code == 200
+    assert not snapshot_root.exists()
+
+
 def test_evidence_overview_exposes_coverage_and_planned_reference_without_promoting_it() -> None:
     response = TestClient(create_app()).get("/api/v1/evidence/overview")
 

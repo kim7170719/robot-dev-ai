@@ -184,6 +184,10 @@ uses `ROBOT_DEV_AI_EVIDENCE_SNAPSHOT_ROOT` only when an operator explicitly
 sets it. The configured directory receives content-addressed snapshots; an
 unset value preserves memory-only, no-write operation.
 
+v0.6 read-only snapshot boundary (2026-10-13): LAN read-only mode now forces
+an in-memory snapshot store, ignoring configured persistence. A GET request
+cannot create a snapshot directory or write evidence data in that mode.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

@@ -50,7 +50,8 @@ Cosmos remains optional and never validates physics, ROS, or real hardware.
   read, while the default store remains in memory and writes nothing.
   The standard API factory reads that optional directory from
   `ROBOT_DEV_AI_EVIDENCE_SNAPSHOT_ROOT`; an unset variable preserves the
-  no-write default.
+  no-write default. M14 LAN read-only mode always uses an in-memory store and
+  never creates persistent snapshots, even if that variable is set.
 - M14B Evidence Explorer shows the current snapshot and explicitly labels
   pending community reports as not yet evidence.
 - The read-only evidence overview now supplies a coverage matrix for every

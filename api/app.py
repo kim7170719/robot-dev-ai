@@ -278,7 +278,11 @@ def create_app(
 
     summary = project_summary or _default_project_summary()
     evidence_document = evidence_document or _default_evidence_document()
-    snapshot_store = evidence_snapshot_store or _snapshot_store_from_environment()
+    snapshot_store = (
+        RegistrySnapshotStore()
+        if read_only
+        else evidence_snapshot_store or _snapshot_store_from_environment()
+    )
     management_document = management_document or _default_management_document()
     audit_store = onboarding_audit_store or OnboardingAuditStore()
     transaction_store = onboarding_transaction_store or OnboardingTransactionStore()
