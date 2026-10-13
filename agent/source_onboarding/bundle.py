@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 import hashlib
+import os
 from pathlib import Path
-from typing import Literal
+import tempfile
+from typing import Iterator, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -71,6 +74,36 @@ class LocalSourceBundleGate:
         if result.status != "verified":
             return None
         return Path(request.path).resolve(strict=True)
+
+    @contextmanager
+    def verified_snapshot(self, request: LocalSourceBundleRequest) -> Iterator[Path | None]:
+        """Yield a short-lived read-only copy bound to the reviewed digest."""
+        verification = self.verify(request)
+        if verification.status != "verified" or verification.sha256 is None:
+            yield None
+            return
+        with tempfile.TemporaryDirectory(prefix="robot-dev-ai-source-") as directory:
+            snapshot_directory = Path(directory)
+            os.chmod(snapshot_directory, 0o755)
+            snapshot = snapshot_directory / verification.filename
+            hasher = hashlib.sha256()
+            copied = 0
+            try:
+                with Path(request.path).open("rb") as source, snapshot.open("xb") as target:
+                    for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                        copied += len(chunk)
+                        if copied > self.max_bytes:
+                            yield None
+                            return
+                        hasher.update(chunk)
+                        target.write(chunk)
+                if hasher.hexdigest() != verification.sha256:
+                    yield None
+                    return
+                os.chmod(snapshot, 0o444)
+                yield snapshot
+            except OSError:
+                yield None
 
     @staticmethod
     def _sha256(path: Path) -> str:

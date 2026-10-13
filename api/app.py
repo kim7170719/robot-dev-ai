@@ -538,17 +538,22 @@ def create_app(
         ):
             raise HTTPException(status_code=409, detail="authorized bundle metadata review is required before an isolated build")
         build_readiness = sandbox_build_readiness_from_environment()
-        bundle_path = bundle_gate.verified_path(request)
-        if build_readiness.status != "available" or build_readiness.image is None or bundle_path is None:
+        if build_readiness.status != "available" or build_readiness.image is None:
             return SandboxBuildResult(
                 status="blocked", runner="docker", image=build_readiness.image,
                 detail="; ".join(build_readiness.issues) or "a verified local archive and configured ROS build image are required",
             )
-        result = isolated_runner.build(
-            SandboxRunnerProfile(
-                runner="docker", image=build_readiness.image_id or build_readiness.image
-            ), bundle_path
-        )
+        with bundle_gate.verified_snapshot(request) as bundle_snapshot:
+            if bundle_snapshot is None:
+                return SandboxBuildResult(
+                    status="blocked", runner="docker", image=build_readiness.image,
+                    detail="the local archive changed after verification or could not be snapshotted",
+                )
+            result = isolated_runner.build(
+                SandboxRunnerProfile(
+                    runner="docker", image=build_readiness.image_id or build_readiness.image
+                ), bundle_snapshot
+            )
         audit_store.append(
             transaction, "sandbox-build-passed" if result.status == "passed" else "blocked",
             result.detail, bundle_sha256=request.expected_sha256,

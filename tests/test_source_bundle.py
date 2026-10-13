@@ -15,6 +15,23 @@ def test_local_bundle_requires_matching_allowlisted_hash(tmp_path) -> None:
     assert result.sha256 == digest
 
 
+def test_verified_snapshot_is_read_only_and_not_the_mutable_source_path(tmp_path) -> None:
+    bundle = tmp_path / "driver.tar.gz"
+    bundle.write_bytes(b"reviewed source archive")
+    digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+    gate = LocalSourceBundleGate(tmp_path, {digest})
+
+    with gate.verified_snapshot(
+        LocalSourceBundleRequest(path=str(bundle), expected_sha256=digest)
+    ) as snapshot:
+        assert snapshot is not None
+        assert snapshot != bundle
+        assert snapshot.read_bytes() == bundle.read_bytes()
+        assert snapshot.stat().st_mode & 0o222 == 0
+
+    assert not snapshot.exists()
+
+
 def test_local_bundle_rejects_path_outside_configured_root(tmp_path) -> None:
     root = tmp_path / "root"
     root.mkdir()

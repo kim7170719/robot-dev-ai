@@ -356,3 +356,9 @@ for its unprivileged build user. The image root filesystem and reviewed source
 archive remain read-only; network, capabilities, and resource limits remain
 unchanged. This is command-level verification only and does not create E2
 runtime evidence.
+
+v0.5 E2 snapshot binding (2026-10-13): before an isolated build, the exact
+reviewed archive is copied to a short-lived, read-only snapshot and its digest
+is checked again. Docker receives that snapshot rather than the operator's
+mutable source path, closing the verification-to-mount replacement window. No
+archive was executed and no E2 result has been recorded.
