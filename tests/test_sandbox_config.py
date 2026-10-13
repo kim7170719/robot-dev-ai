@@ -32,3 +32,15 @@ def test_build_readiness_accepts_only_an_already_local_image(monkeypatch) -> Non
     readiness = sandbox_build_readiness_from_environment(lambda image: image == "local/ros-jazzy:stable")
 
     assert readiness.status == "available"
+
+
+def test_build_readiness_retains_an_immutable_local_image_identifier(monkeypatch) -> None:
+    monkeypatch.setenv("ROBOT_DEV_AI_SANDBOX_BUILD_IMAGE", "local/ros-jazzy:stable")
+
+    readiness = sandbox_build_readiness_from_environment(
+        lambda image: "sha256:" + "a" * 64
+    )
+
+    assert readiness.status == "available"
+    assert readiness.image == "local/ros-jazzy:stable"
+    assert readiness.image_id == "sha256:" + "a" * 64

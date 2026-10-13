@@ -17,6 +17,7 @@ class SandboxBuildReadiness(BaseModel):
 
     status: str
     image: str | None = None
+    image_id: str | None = None
     issues: list[str] = Field(default_factory=list)
 
 
@@ -32,7 +33,7 @@ def sandbox_profile_from_environment() -> SandboxRunnerProfile | None:
 
 
 def sandbox_build_readiness_from_environment(
-    image_inspector: Callable[[str], bool] | None = None,
+    image_inspector: Callable[[str], bool | str | None] | None = None,
 ) -> SandboxBuildReadiness:
     """Never pulls an image or starts a container; reports only local readiness."""
     image = os.environ.get("ROBOT_DEV_AI_SANDBOX_BUILD_IMAGE")
@@ -40,17 +41,22 @@ def sandbox_build_readiness_from_environment(
         return SandboxBuildReadiness(status="not-configured", issues=["no local ROS build image is configured"])
     if shutil.which("docker") is None:
         return SandboxBuildReadiness(status="blocked", image=image, issues=["configured Docker runner is unavailable"])
-    inspector = image_inspector or _docker_image_exists
-    if not inspector(image):
+    inspector = image_inspector or _docker_image_identifier
+    inspected = inspector(image)
+    if not inspected:
         return SandboxBuildReadiness(status="blocked", image=image, issues=["configured ROS build image is not available locally"])
-    return SandboxBuildReadiness(status="available", image=image)
+    return SandboxBuildReadiness(
+        status="available", image=image,
+        image_id=inspected if isinstance(inspected, str) else None,
+    )
 
 
-def _docker_image_exists(image: str) -> bool:
+def _docker_image_identifier(image: str) -> str | None:
     try:
         completed = subprocess.run(
-            ["docker", "image", "inspect", image], capture_output=True, text=True, timeout=10, check=False
+            ["docker", "image", "inspect", "--format", "{{.Id}}", image], capture_output=True, text=True, timeout=10, check=False
         )
     except (OSError, subprocess.TimeoutExpired):
-        return False
-    return completed.returncode == 0
+        return None
+    identifier = completed.stdout.strip()
+    return identifier if completed.returncode == 0 and identifier.startswith("sha256:") else None

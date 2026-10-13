@@ -25,6 +25,10 @@ ROS manifest metadata, and license metadata gates; it runs a fixed no-network
 `ros:jazzy-ros-base`, so it is an explicit operator action and must be recorded
 separately from candidate-source evidence.
 
+When the configured tag is available, readiness also records Docker's local
+`sha256:` image ID. The isolated build uses that immutable ID rather than the
+tag, so a later tag retarget cannot silently change the audited build input.
+
 This image definition does not authorize acquisition, promotion, or
 installation of any third-party source archive. A successful isolated build is
 an auditable observation, not an automatic E2 record or a compatibility claim.

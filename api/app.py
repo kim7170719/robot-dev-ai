@@ -545,7 +545,9 @@ def create_app(
                 detail="; ".join(build_readiness.issues) or "a verified local archive and configured ROS build image are required",
             )
         result = isolated_runner.build(
-            SandboxRunnerProfile(runner="docker", image=build_readiness.image), bundle_path
+            SandboxRunnerProfile(
+                runner="docker", image=build_readiness.image_id or build_readiness.image
+            ), bundle_path
         )
         audit_store.append(
             transaction, "sandbox-build-passed" if result.status == "passed" else "blocked",

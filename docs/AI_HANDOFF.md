@@ -334,3 +334,8 @@ after authorization, scan, ROS-manifest, and license gates. It uses a fixed,
 no-network Docker `colcon build` with a read-only root, non-root user, dropped
 capabilities, resource limits, and tmpfs workspace. It appends an audit event
 but never promotes registry state or creates evidence records.
+
+v0.5 E2 build provenance hardening (2026-10-13): Docker readiness now returns
+the local `sha256:` image ID when available, and the build runner uses that ID
+instead of the configured tag. No local Jazzy build image is configured on this
+host, so this is tested implementation rather than runtime evidence.

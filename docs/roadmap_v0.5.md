@@ -134,7 +134,8 @@ allowlisted local tar archive that already passed authorization, dependency
 scan, ROS manifest metadata, and license metadata gates. The Docker command is
 fixed: no network, pull policy `never`, read-only root, non-root user, dropped
 capabilities, no-new-privileges, bounded CPU/memory/PIDs, a read-only archive
-mount, and a disposable tmpfs workspace. It records the build outcome in the
+mount, and a disposable tmpfs workspace. When Docker returns a local image ID,
+the build uses that immutable ID rather than the configured mutable tag. It records the build outcome in the
 append-only audit log but neither promotes a component nor creates an E2 record.
 No local Jazzy image or approved archive has yet run this endpoint, so E2
 evidence remains unproven.

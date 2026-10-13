@@ -117,6 +117,11 @@ read-only root/archive mount, non-root user, dropped capabilities, constrained
 resources, and a disposable tmpfs workspace. It writes audit evidence only;
 no image or approved candidate has run it, so no E2 record is claimed.
 
+v0.5 E2 build provenance hardening (2026-10-13): local build-image readiness
+now resolves Docker's `sha256:` image ID when available. The sandbox uses that
+immutable ID instead of the configured tag, preventing a later tag retarget
+from silently changing the recorded build input.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,
