@@ -2,9 +2,9 @@
 
 After every reboot, open this file in the browser first:
 
-https://github.com/kim7170719/robot-dev-ai/blob/develop/docs/os_handoff.md
+https://github.com/kim7170719/robot-dev-ai/blob/refactor/composable-architecture-v0.4/docs/os_handoff.md
 
-## Current packet (2026-10-12)
+## Historical packet (2026-10-12, superseded)
 
 v0.5 Trusted Source / Registry Management first slice is ready on
 `refactor/composable-architecture-v0.4`: `registry/v05.py` keeps source,
@@ -131,6 +131,32 @@ the next scope. Full suite: **99 tests passed**.
 | Do not do | ROS on Windows; Isaac Sim on Windows; Cosmos |
 
 G12 and G14 completed: the frozen virtual MVP and its typed five-view GUI passed. M14's landing page uses the locally stored, user-supplied rigged GLB model with local Three.js interaction and bundled animation clips; it is presentation art, not a simulator viewport or a physical controller. v0.4 now inserts G12.5 before M15: the core must gain versioned architecture/capability/composition/adapter/readiness/safety/evidence models before heterogeneous real-hardware execution resumes. M15's Jetson Orin Nano + differential-drive + D455 preflight is retained but paused; do not claim real-robot success or enable motors. M13 Cosmos remains Optional Extension O1 and must not be installed on this RTX 2080 Ti (Turing, 11 GB). See `docs/roadmap_v0.4.md`, `docs/architecture_v0.4.md`, `docs/decisions/0008-composable-architecture-before-real-hardware.md`, and `docs/m15_hardware_integration.md`.
+
+## Current packet (2026-10-13)
+
+| Field | Value |
+|---|---|
+| Last writer | Ubuntu |
+| Ubuntu / Windows branch | `refactor/composable-architecture-v0.4` |
+| Last pushed checkpoint | `2ec0d48 onboarding: add bounded sandbox build gate` |
+| Gates | G12, G12.5, G12.6 foundation, and G14 pass; evidence remains virtual-only unless explicitly stated |
+| v0.5 state | Trusted-source metadata, registry GUI, audit persistence/hash chain, verified local bundle gates, bounded metadata scan, and fixed sandbox build endpoint are implemented |
+| v0.6 state | Evidence schema/query/snapshot/review queue and M14B coverage/conflict/reference views are implemented |
+| Current E2 state | No `ROBOT_DEV_AI_SANDBOX_BUILD_IMAGE` is configured or present; no approved source archive has run an isolated build; no E2 record exists |
+| M15 / Cosmos | M15 waits for physical hardware; Cosmos O1 remains deferred on this RTX 2080 Ti |
+| Windows scope | Git, Cursor, and docs only; never install ROS, Isaac Sim, Nav2, or Cosmos |
+
+The next valid v0.5 action needs an operator-reviewed local Jazzy build image
+and a separately reviewed, allowlisted source archive. The fixed endpoint
+`POST /api/v1/registry/onboarding/{id}/bundle/build` already enforces human
+authorization, one exact archive hash, passed scan/ROS-manifest/license gates,
+and a no-network/non-root/read-only Docker boundary. Do not claim E2 merely
+because the endpoint or Dockerfile exists.
+
+The remaining G12.6 population gate needs authoritative observations: ten
+E0/E1 source records, three real isolated-build E2 observations, human-reviewed
+community reports for E5, and M15 hardware for E4. Do not fabricate records or
+reinterpret E3 simulation results as hardware validation.
 
 ### After reboot → Windows
 
