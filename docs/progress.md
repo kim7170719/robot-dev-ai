@@ -74,6 +74,12 @@ records include a canonical SHA-256 hash linked to the prior record; reload
 rejects a modified hashed record. Historical unhashed JSONL remains readable
 but is not represented as hash-verified evidence.
 
+v0.5/v0.6 completion audit (2026-10-13): `docs/v05_v06_completion_audit.md`
+maps every active roadmap requirement to its current proof or prerequisite.
+It confirms that the implementable foundations are complete while E0/E1
+population, E2 builds, E4 hardware, and E5 review remain external evidence
+requirements rather than missing code claims.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

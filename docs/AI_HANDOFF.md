@@ -31,6 +31,11 @@ Isaac Sim G4 CLI results (2026-09-21):
 
 ## Next
 
+`docs/v05_v06_completion_audit.md` is the authoritative concise checklist for
+the active v0.5/v0.6 work: it separates completed foundations from the external
+source, image, human-review, and hardware evidence still required for the
+numerical G12.6 gate.
+
 - **Gate G12.5 PASS:** `docs/g125_acceptance.md` maps all eight accepted criteria to named tests and historical virtual-MVP evidence. The frozen v0.4 core includes schema migration, architecture resolution, component planning/expansion, adapter contracts, unknown-device fallback, readiness, mutation safety, and `GET /api/v1/core/schema`; the complete suite passed with 89 tests. This does not authorize M15 motion or claim G15.
 - M14 remains a completed presentation layer. Do not reshape its core API/GUI schema until G12.5 freezes the new contract. M13 is Optional Extension O1: do not pull Cosmos models on this Turing 11 GB GPU.
 - M14B Evidence Explorer is now a read-only extension of the existing GUI. It reads `/api/v1/evidence/generic-diff-base` and labels the default G12 virtual MVP record as E3 simulation evidence, not E4 real-hardware proof. The v0.5 Registry view reads `/api/v1/registry/management` and `/api/v1/registry/sources/{id}/review`; it filters stored lifecycle/provenance data but cannot discover, clone, install, execute, validate, promote, or edit an external package. See `docs/roadmap_v0.5.md` and ADR 0010.
