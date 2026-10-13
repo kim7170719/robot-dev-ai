@@ -1,7 +1,7 @@
 const api = "/api/v1";
 const translations = {
-  zh: { "nav.overview": "概覽", "nav.design": "設計", "nav.build": "建置", "nav.run": "運行", "nav.diagnose": "診斷", "nav.evidence": "證據", "nav.registry": "元件庫", "chrome.safety": "安全邊界啟用中", "landing.kicker": "設計、驗證、模擬", "landing.title": "讓第一台機器人<br>先在虛擬世界醒來。", "landing.summary": "從自然語言需求出發，建立具備 LiDAR、Camera 與導航能力的差速機器人；每個動作都先在可審閱的安全邊界內完成。", "landing.enter": "進入工作區", "landing.direct": "直接建立方案", "landing.status": "Virtual-first robot development", "overview.title": "從想法到機器人", "overview.summary": "先告訴我們你想做的機器人；我們會整理可行建議，確認後才會建立專案。", "overview.design": "開始規劃", "overview.runtime": "查看目前狀態", views: { landing: "首頁", dashboard: "概覽", requirement: "設計", configuration: "建置", runtime: "運行", validation: "診斷", evidence: "證據", registry: "元件庫" } },
-  en: { "nav.overview": "Overview", "nav.design": "Design", "nav.build": "Build", "nav.run": "Run", "nav.diagnose": "Diagnose", "nav.evidence": "Evidence", "nav.registry": "Registry", "chrome.safety": "Safety boundary active", "landing.kicker": "DESIGN · VALIDATE · SIMULATE", "landing.title": "Let your first robot<br>wake up virtually.", "landing.summary": "Start with a natural-language request and build a differential-drive robot with LiDAR, camera, and navigation—each action remains within a reviewable safety boundary.", "landing.enter": "Enter workspace", "landing.direct": "Create a design plan", "landing.status": "Virtual-first robot development", "overview.title": "From idea to robot", "overview.summary": "Tell us what you want to build. We will organise practical suggestions before anything is created.", "overview.design": "Start planning", "overview.runtime": "View current status", views: { landing: "Home", dashboard: "Overview", requirement: "Design", configuration: "Build", runtime: "Run", validation: "Diagnose", evidence: "Evidence", registry: "Registry" } },
+  zh: { "nav.overview": "總覽", "nav.design": "規劃", "nav.build": "建立", "nav.run": "模擬", "nav.diagnose": "協助", "nav.evidence": "測試紀錄", "nav.registry": "來源與元件", "chrome.safety": "操作前會先確認", "landing.kicker": "想法 · 模擬 · 結果", "landing.title": "先說你想做什麼，<br>再讓機器人在電腦裡試跑。", "landing.summary": "描述你想要的機器人。我們會整理可行選項，先在模擬中檢查，再把結果清楚告訴你。", "landing.enter": "開始使用", "landing.direct": "描述我的想法", "landing.status": "先在模擬中測試", "overview.title": "從想法開始", "overview.summary": "告訴我們機器人要做什麼；你可以先看建議，再決定下一步。", "overview.design": "描述需求", "overview.runtime": "查看模擬", views: { landing: "首頁", dashboard: "總覽", requirement: "規劃", configuration: "建立", runtime: "模擬", validation: "協助", evidence: "測試紀錄", registry: "來源與元件" } },
+  en: { "nav.overview": "Overview", "nav.design": "Plan", "nav.build": "Create", "nav.run": "Simulate", "nav.diagnose": "Help", "nav.evidence": "Test records", "nav.registry": "Sources & components", "chrome.safety": "Review before actions", "landing.kicker": "IDEA · SIMULATE · RESULTS", "landing.title": "Describe what you want,<br>then try it in simulation.", "landing.summary": "Tell us about your robot. We will show practical options, check them in simulation, and explain the result clearly.", "landing.enter": "Get started", "landing.direct": "Describe my idea", "landing.status": "Test in simulation first", "overview.title": "Start with an idea", "overview.summary": "Tell us what the robot should do. Review the suggestions, then choose the next step.", "overview.design": "Describe your needs", "overview.runtime": "View simulation", views: { landing: "Home", dashboard: "Overview", requirement: "Plan", configuration: "Create", runtime: "Simulate", validation: "Help", evidence: "Test records", registry: "Sources & components" } },
 };
 let locale = localStorage.getItem("robot-dev-ai-locale") === "en" ? "en" : "zh";
 const staticEnglish = new Map([
@@ -13,8 +13,14 @@ const staticEnglish = new Map([
   ["模擬系統狀態", "Simulation status"], ["重新檢查模擬系統", "Check simulation again"], ["連線服務", "Available services"], ["資料通道", "Data channels"], ["位置關係", "Robot positions"],
   ["告訴我們你想做的機器人", "Tell us about your robot"], ["用日常語言描述你的想法；我們會先整理建議，讓你看過再決定下一步。", "Describe your idea in everyday language. We will suggest options for you to review before the next step."],
   ["你希望機器人做什麼？", "What would you like the robot to do?"], ["產生建議", "Show suggestions"], ["確認推薦內容", "Review the suggestions"], ["查看模擬狀態", "Check simulation status"], ["遇到問題時再來這裡", "Get help when something needs attention"],
-  ["導航功能測試", "Test navigation"], ["開始檢查", "Start check"], ["查看修正建議", "View suggested fixes"], ["驗證資料的真實範圍", "What the evidence actually shows"],
-  ["重新讀取證據", "Reload evidence"], ["證據覆蓋範圍", "Evidence coverage"], ["矛盾與待審查資料", "Conflicts and pending reviews"],
+  ["導航功能測試", "Test navigation"], ["開始檢查", "Start check"], ["查看修正建議", "View suggested fixes"], ["測試結果說明", "About these test results"],
+  ["查看此元件在哪些環境中被測試，以及每筆結果代表的範圍。模擬成功不代表真機已測試。", "See where this component was tested and what each result means. A simulation pass does not mean real hardware has been tested."],
+  ["目前只顯示既有模擬專案留下的測試結果。", "Only recorded results from the existing simulation project are available here."], ["重新讀取測試結果", "Reload test results"],
+  ["目前的 E3 是「模擬測試通過」：不代表真機已測試，也不代表所有電腦都能使用。", "E3 means this passed in the recorded simulation. It does not mean real hardware was tested or that it will work on every computer."],
+  ["目前測試資料版本", "Current test-data version"], ["社群提交：尚無待審查資料", "Community submissions: none waiting for review"], ["測試紀錄總覽", "Test-record overview"],
+  ["每列代表一個已知元件；空白表示尚未有記錄，並不代表可用或不可用。", "Each row is a known component. A blank entry means no result is recorded yet; it does not mean it will or will not work."],
+  ["元件", "Component"], ["測試等級", "Test level"], ["結果筆數", "Results"], ["需要注意", "Things to note"], ["正在讀取測試資料…", "Loading test results…"],
+  ["結果不一致與等待確認的資料", "Conflicting or pending results"], ["相同環境下的通過與失敗會並列保留；社群資料要先經過人工確認，才會列入正式測試紀錄。", "Passes and failures from the same setup are kept side by side. Community submissions stay out of accepted results until a person reviews them."], ["正在讀取資料…", "Loading results…"],
   ["元件來源與使用狀態", "Component sources and status"], ["顯示類型", "Show"], ["全部元件", "All components"], ["硬體", "Hardware"], ["驅動程式", "Drivers"], ["轉接層", "Adapters"], ["整合範本", "Templates"], ["來源審查結果", "Source review"], ["查看來源審查", "Review source"], ["預覽安全測試計畫", "Preview safe test plan"],
 ]);
 const originalStaticText = new WeakMap();
@@ -389,8 +395,8 @@ async function previewOnboarding(component) {
         authorize.disabled = true;
         try {
           const result = await request("/registry/onboarding/authorize-sandbox", { method: "POST", body: JSON.stringify({ transaction_id: plan.id, confirmed: true }) });
-          title.textContent = "已記錄 sandbox runner 授權";
-          detail.textContent = `${result.audit_record.recorded_at} 已寫入審計紀錄；主機沒有執行任何來源程式。`;
+          title.textContent = locale === "en" ? "Sandbox review approval recorded" : "已記錄安全測試授權";
+          detail.textContent = locale === "en" ? `${result.audit_record.recorded_at} was saved to the activity record; no source program ran on this computer.` : `${result.audit_record.recorded_at} 已寫入操作紀錄；這台電腦沒有執行任何來源程式。`;
           authorize.remove();
         } catch (error) { detail.textContent = error.message; authorize.disabled = false; }
       });
@@ -484,7 +490,7 @@ bindAction('[data-action="resolve-configuration"]', "configuration-result", () =
 bindAction('[data-action="preview-template"]', "configuration-result", () => request("/templates/preview", { method: "POST", body: JSON.stringify({ registry: demoRegistry, request: { hardware_id: "generic-diff-base", capability_id: "differential-drive", values: { package_name: "demo_robot", base_frame: "base_link", cmd_vel_topic: "/cmd_vel", wheel_radius_m: "0.05", wheel_separation_m: "0.30" } } }) }), "TEMPLATE PREVIEW");
 bindAction('[data-action="runtime-snapshot"]', "runtime-result", () => request("/runtime/snapshot"), "READ-ONLY RUNTIME SNAPSHOT");
 bindAction('[data-action="validate-navigation"]', "validation-result", async () => {
-  if (!document.querySelector("#validation-confirm").checked) throw new Error("請先確認固定的 virtual navigation validation。");
+  if (!document.querySelector("#validation-confirm").checked) throw new Error(locale === "en" ? "Confirm the simulation navigation check first." : "請先確認要執行模擬導航檢查。");
   return request("/validation/m4-navigation", { method: "POST", body: JSON.stringify({ confirmed: true }) });
 }, "FIXED SCENARIO VALIDATION");
 bindAction('[data-action="propose-repair"]', "validation-result", () => request("/repairs/propose", { method: "POST", body: JSON.stringify({ path: "src/demo_robot/package.xml", contents: '<package format="3">\n  <name>demo_robot</name>\n</package>\n', missing_dependency: "geometry_msgs" }) }), "REPAIR PROPOSAL · REVIEW ONLY");

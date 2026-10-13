@@ -654,12 +654,12 @@ def test_gui_entrypoint_exposes_all_m14_views() -> None:
     assert response.status_code == 200
     for view_name in (
         "Overview",
-        "Design",
-        "Build",
-        "Run",
-        "Diagnose",
-        "Evidence",
-        "驗證資料的真實範圍",
+        "Plan",
+        "Create",
+        "Simulate",
+        "Help",
+        "Test records",
+        "測試結果說明",
     ):
         assert view_name in response.text
 

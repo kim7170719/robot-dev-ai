@@ -86,6 +86,11 @@ in addition to the existing navigation translations. Chinese copy is being
 rewritten as direct task language rather than internal AI/registry phrasing;
 technical ROS/API identifiers remain literal evidence.
 
+M14 newcomer terminology pass (2026-10-13): user-facing “Evidence” is now
+“Test records” / 「測試紀錄」, with E3 retained only as a technical result level.
+The landing page now explains the actual flow—describe a robot, try it in
+simulation, then read the result—without implying real-hardware validation.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

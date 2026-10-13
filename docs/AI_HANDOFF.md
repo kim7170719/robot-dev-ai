@@ -298,3 +298,8 @@ FastDDS Humble 2.x ↔ Jazzy 3.x is one-way; do not go back to FastDDS for host�
 1. Finish G12.5 Task 9 acceptance consolidation. The read-only `/api/v1/core/schema` v0.4 contract is frozen; then begin G12.6 evidence-registry schema work. `docs/roadmap_v0.6.md`, the linked v0.4 architecture, ADR 0008, and ADR 0009 are the authority.
 2. The M14 GUI may still be demonstrated with `bash scripts/run_m14_demo.sh`; its Dashboard remains read-only and is not proof of v0.4/M15 execution.
 M12 simulation-validator evidence (2026-10-06): isolated G4 Isaac Sim, SLAM, and Nav2 were started; `/controller_server`, `/planner_server`, and `/bt_navigator` reached `active [3]`. The fixed `m4-navigation` validator sent the `(1.0, 0.0)` map goal and received `SUCCEEDED`. The Isaac container and host launch processes remain running for interactive testing.
+
+M14 newcomer terminology pass (2026-10-13): change the visible Evidence area
+to Test records / 「測試紀錄」 and clarify that E3 is a simulation-only result.
+Landing copy now describes the flow in plain language: describe, simulate,
+then review the result. Internal API names remain unchanged.

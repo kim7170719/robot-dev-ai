@@ -42,26 +42,26 @@
         <div class="workspace"><span class="dot"></span><span><small>WORKSPACE</small><strong>Virtual MVP</strong></span><b aria-hidden="true"></b></div>
         <nav class="workflow-nav" aria-label="M14 視圖">
           <p>WORKSPACE</p>
-          <a href="#dashboard" data-view-link="dashboard"><i aria-hidden="true"></i>Overview</a>
-          <a href="#requirement" data-view-link="requirement"><i aria-hidden="true"></i>Design</a>
-          <a href="#configuration" data-view-link="configuration"><i aria-hidden="true"></i>Build</a>
-          <a href="#runtime" data-view-link="runtime"><i aria-hidden="true"></i>Run</a>
-          <a href="#validation" data-view-link="validation"><i aria-hidden="true"></i>Diagnose</a>
-          <a href="#evidence" data-view-link="evidence"><i aria-hidden="true"></i>Evidence</a>
-          <a href="#registry" data-view-link="registry"><i aria-hidden="true"></i>Registry</a>
+          <a href="#dashboard" data-view-link="dashboard" data-i18n="nav.overview"><i aria-hidden="true"></i>Overview</a>
+          <a href="#requirement" data-view-link="requirement" data-i18n="nav.design"><i aria-hidden="true"></i>Plan</a>
+          <a href="#configuration" data-view-link="configuration" data-i18n="nav.build"><i aria-hidden="true"></i>Create</a>
+          <a href="#runtime" data-view-link="runtime" data-i18n="nav.run"><i aria-hidden="true"></i>Simulate</a>
+          <a href="#validation" data-view-link="validation" data-i18n="nav.diagnose"><i aria-hidden="true"></i>Help</a>
+          <a href="#evidence" data-view-link="evidence" data-i18n="nav.evidence"><i aria-hidden="true"></i>Test records</a>
+          <a href="#registry" data-view-link="registry" data-i18n="nav.registry"><i aria-hidden="true"></i>Sources &amp; components</a>
         </nav>
         <div class="sidebar-footer"><span class="dot"></span><span><strong>Virtual-only evidence</strong><small>G12 frozen · G14 GUI</small></span></div>
       </aside>
       <main class="main-content" id="workspace-main" tabindex="-1">
         <header class="topbar">
           <a class="top-brand" href="#landing" data-view-link="landing" aria-label="Robot Dev AI animated home"><span class="top-brand-mark" aria-hidden="true"><i></i><i></i></span><strong>Robot Dev AI</strong></a>
-          <nav class="top-workflow" aria-label="Workspace navigation"><a href="#dashboard" data-view-link="dashboard" data-i18n="nav.overview">Overview</a><a href="#requirement" data-view-link="requirement" data-i18n="nav.design">Design</a><a href="#configuration" data-view-link="configuration" data-i18n="nav.build">Build</a><a href="#runtime" data-view-link="runtime" data-i18n="nav.run">Run</a><a href="#validation" data-view-link="validation" data-i18n="nav.diagnose">Diagnose</a><a href="#evidence" data-view-link="evidence" data-i18n="nav.evidence">Evidence</a><a href="#registry" data-view-link="registry" data-i18n="nav.registry">Registry</a></nav>
+          <nav class="top-workflow" aria-label="Workspace navigation"><a href="#dashboard" data-view-link="dashboard" data-i18n="nav.overview">Overview</a><a href="#requirement" data-view-link="requirement" data-i18n="nav.design">Plan</a><a href="#configuration" data-view-link="configuration" data-i18n="nav.build">Create</a><a href="#runtime" data-view-link="runtime" data-i18n="nav.run">Simulate</a><a href="#validation" data-view-link="validation" data-i18n="nav.diagnose">Help</a><a href="#evidence" data-view-link="evidence" data-i18n="nav.evidence">Test records</a><a href="#registry" data-view-link="registry" data-i18n="nav.registry">Sources &amp; components</a></nav>
           <div class="topbar-actions"><button class="language-toggle" data-action="toggle-language" type="button" aria-label="Switch interface language"><span class="language-current">EN</span><span class="language-divider">/</span><span class="language-alternate">中</span></button><span class="shield" data-i18n="chrome.safety">Safety boundary active</span><span class="avatar">YU</span></div>
         </header>
 
         <section class="view landing" id="landing" data-view aria-labelledby="landing-title">
           <div class="landing-topline"><span>ROBOT DEV AI</span><span>VIRTUAL ROBOT STUDIO</span></div>
-          <div class="landing-copy"><p data-i18n="landing.kicker">設計、驗證、模擬</p><h1 id="landing-title" data-i18n-html="landing.title">讓第一台機器人<br>先在虛擬世界醒來。</h1><p class="landing-summary" data-i18n="landing.summary">從自然語言需求出發，建立具備 LiDAR、Camera 與導航能力的差速機器人；每個動作都先在可審閱的安全邊界內完成。</p><div class="landing-actions"><button class="landing-enter" data-go="dashboard"><span data-i18n="landing.enter">進入工作區</span> <span aria-hidden="true">→</span></button><button class="landing-text-action" data-go="requirement" data-i18n="landing.direct">直接建立方案</button></div></div>
+          <div class="landing-copy"><p data-i18n="landing.kicker">想法 · 模擬 · 結果</p><h1 id="landing-title" data-i18n-html="landing.title">先說你想做什麼，<br>再讓機器人在電腦裡試跑。</h1><p class="landing-summary" data-i18n="landing.summary">描述你想要的機器人。我們會整理可行選項，先在模擬中檢查，再把結果清楚告訴你。</p><div class="landing-actions"><button class="landing-enter" data-go="dashboard"><span data-i18n="landing.enter">開始使用</span> <span aria-hidden="true">→</span></button><button class="landing-text-action" data-go="requirement" data-i18n="landing.direct">描述我的想法</button></div></div>
           <div class="landing-robot" aria-label="一台差速機器人的啟動動畫">
             <svg viewBox="0 0 720 720" role="img" aria-labelledby="robot-scene-title robot-scene-desc">
               <title id="robot-scene-title">虛擬差速機器人啟動</title><desc id="robot-scene-desc">機器人以 LiDAR 與相機感測器掃描環境，準備進入虛擬開發工作區。</desc>
@@ -148,21 +148,21 @@
         </section>
 
         <section class="view" id="evidence" data-view aria-labelledby="evidence-title">
-          <div class="page-header"><div><h1 id="evidence-title">驗證資料的真實範圍</h1><p>查看此元件在哪些環境中被驗證，以及每筆證據代表的界線。模擬成功不代表真機已驗證。</p></div><span>E</span></div>
+          <div class="page-header"><div><h1 id="evidence-title">測試結果說明</h1><p>查看此元件在哪些環境中被測試，以及每筆結果代表的範圍。模擬成功不代表真機已測試。</p></div><span>E</span></div>
           <article class="evidence-hero" aria-live="polite">
-            <div class="evidence-hero-copy"><p class="evidence-label">REFERENCE COMPONENT</p><h2>Generic Differential Drive Base</h2><p>目前只公開既有 virtual MVP 的可追溯驗證資料。</p></div>
+            <div class="evidence-hero-copy"><p class="evidence-label">REFERENCE COMPONENT</p><h2>Generic Differential Drive Base</h2><p>目前只顯示既有模擬專案留下的測試結果。</p></div>
             <div class="evidence-level" id="evidence-level" aria-label="Evidence level">—</div>
-            <button class="secondary" data-action="load-evidence">重新讀取證據</button>
+            <button class="secondary" data-action="load-evidence">重新讀取測試結果</button>
           </article>
-          <p class="evidence-boundary">E3 表示在記錄的模擬環境通過；它不是 E4 真機驗證，也不代表其他硬體、作業系統或 ROS 版本均可使用。</p>
-          <div class="evidence-audit" aria-live="polite"><span>目前證據快照</span><code id="evidence-snapshot">讀取中…</code><small id="community-review-count">社群提交：尚無待審查資料</small></div>
+          <p class="evidence-boundary">目前的 E3 是「模擬測試通過」：不代表真機已測試，也不代表所有電腦都能使用。</p>
+          <div class="evidence-audit" aria-live="polite"><span>目前測試資料版本</span><code id="evidence-snapshot">讀取中…</code><small id="community-review-count">社群提交：尚無待審查資料</small></div>
           <div id="evidence-summary" class="evidence-summary" aria-live="polite"><div class="evidence-skeleton"></div><div class="evidence-skeleton"></div><div class="evidence-skeleton"></div></div>
           <section class="evidence-ledger" aria-labelledby="coverage-title">
-            <header><div><h2 id="coverage-title">證據覆蓋範圍</h2><p>每列代表一個已知元件；空白表示尚未有記錄，並不代表可用或不可用。</p></div><span id="evidence-matrix-count">讀取中…</span></header>
-            <div class="evidence-table-wrap"><table><thead><tr><th scope="col">元件</th><th scope="col">證據等級</th><th scope="col">觀察筆數</th><th scope="col">需要注意</th></tr></thead><tbody id="evidence-matrix"><tr><td colspan="4">正在讀取覆蓋資料…</td></tr></tbody></table></div>
+            <header><div><h2 id="coverage-title">測試紀錄總覽</h2><p>每列代表一個已知元件；空白表示尚未有記錄，並不代表可用或不可用。</p></div><span id="evidence-matrix-count">讀取中…</span></header>
+            <div class="evidence-table-wrap"><table><thead><tr><th scope="col">元件</th><th scope="col">測試等級</th><th scope="col">結果筆數</th><th scope="col">需要注意</th></tr></thead><tbody id="evidence-matrix"><tr><td colspan="4">正在讀取測試資料…</td></tr></tbody></table></div>
           </section>
           <section class="evidence-ledger evidence-ledger-secondary" aria-labelledby="conflict-title">
-            <header><div><h2 id="conflict-title">矛盾與待審查資料</h2><p>相同環境下的通過與失敗會並列保留；待人工審查的社群資料不會納入已接受證據。</p></div></header>
+            <header><div><h2 id="conflict-title">結果不一致與等待確認的資料</h2><p>相同環境下的通過與失敗會並列保留；社群資料要先經過人工確認，才會列入正式測試紀錄。</p></div></header>
             <output id="evidence-conflicts" class="evidence-empty" aria-live="polite">正在讀取資料…</output>
           </section>
           <section class="reference-robots" aria-labelledby="reference-robots-title">
