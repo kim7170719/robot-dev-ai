@@ -10,7 +10,13 @@
 ## Active — G12.6 Scalable Evidence Registry
 
 - **Purpose:** Preserve contextual E0–E5 evidence without overstating simulation or documentation as real-hardware validation.
-- **Status (2026-10-12):** v0.6 envelope, evidence records, context-aware query/coverage/conflict summary, read-only evidence API, M14B Evidence Explorer, and immutable snapshots are implemented. Community review and broader G12.6 gate population remain future work.
+- **Status (2026-10-13):** v0.6 envelope, evidence records, context-aware
+  query/coverage/conflict summary, read-only evidence API, M14B Evidence
+  Explorer, immutable snapshots, and the isolated community-submission queue
+  are implemented. Pending reports remain outside evidence queries; accepted
+  reports are queryable, and E5 requires two independent accepted submitters.
+  Identity-backed human review and broader G12.6 gate population remain
+  external prerequisites.
 
 ## Paused — M15 Jetson + real-robot bring-up (Gate G15)
 

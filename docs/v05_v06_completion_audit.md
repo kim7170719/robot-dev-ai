@@ -27,3 +27,10 @@ The implementation foundations above are complete only within their stated
 boundaries. The remaining rows require new authoritative observations or human
 decisions; creating synthetic records, pulling unreviewed sources, or treating
 simulation as hardware would violate the roadmap and AGENTS.md safety rules.
+
+## 2026-10-13 verification checkpoint
+
+The full local test suite passed after the trusted-source timestamp, snapshot,
+and community-evidence hardening. The checked-out project worktree contains no
+tracked uncommitted changes. The only local untracked path is `.agents/`, which
+contains machine-local skills and is intentionally excluded from the project.
