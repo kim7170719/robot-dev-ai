@@ -105,3 +105,8 @@ streams no more than 128 KiB to an XML parser and returns only the ROS package
 name plus declared dependency identifiers. It does not write the manifest to
 the host, resolve dependency versions, validate licenses, install, build, or
 execute the candidate source.
+
+Every artifact stage is bound to the same verified SHA-256 in append-only audit
+evidence. A dependency scan or ROS manifest request for a different—even also
+allowlisted—archive is rejected until that exact archive has passed its own
+preceding gate.

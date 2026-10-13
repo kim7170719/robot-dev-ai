@@ -107,6 +107,14 @@ The live Docker check on the existing `simple_diff_robot/package.xml` returned
 `simple_diff_robot` and nine declared dependencies under that boundary. XML
 DTD/entity declarations are rejected before parsing. Full suite: **120 tests**.
 
+v0.5 artifact-bound audit gates (2026-10-13): **PASS.** Bundle verification,
+dependency scan, and ROS manifest evidence now each retain the verified
+SHA-256. Later gates require the exact same hash, so a separate allowlisted
+archive cannot borrow another archive's transaction evidence. This remains
+read-only analysis, not an authorization to install, build, or execute source.
+The full local API flow passed against a temporary archive containing the
+existing `simple_diff_robot/package.xml`. Full suite: **122 tests**.
+
 v0.5 local source bundle gate (2026-10-13): **PASS.** Future sandbox inputs
 must be operator-supplied local archives under a configured root, with an
 allowlisted `.tar.gz`/`.tgz`/`.zip` type, non-symlink identity, size limit, and

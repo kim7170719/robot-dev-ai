@@ -86,6 +86,10 @@ Isaac Sim G4 CLI results (2026-09-21):
   package name and declared dependency IDs. It neither writes, installs, builds,
   resolves, nor executes source. A successful result appends
   `manifest-metadata-extracted` audit evidence.
+- Artifact-bound gates: bundle verification, dependency scan, and ROS manifest
+  audit evidence retain the verified SHA-256. Each later endpoint requires the
+  exact same hash; a second allowlisted archive cannot reuse an earlier
+  artifact's transaction evidence.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus

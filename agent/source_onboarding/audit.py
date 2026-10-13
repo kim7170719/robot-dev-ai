@@ -20,6 +20,7 @@ class OnboardingAuditRecord(BaseModel):
     event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "dependency-scan-passed", "manifest-metadata-extracted", "blocked"]
     recorded_at: datetime
     detail: str = Field(min_length=1, max_length=512)
+    bundle_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
 
 
 class OnboardingAuditStore:
@@ -38,13 +39,19 @@ class OnboardingAuditStore:
             self.records.append(OnboardingAuditRecord.model_validate_json(line))
 
     def append(
-        self, transaction: OnboardingTransaction, event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "dependency-scan-passed", "manifest-metadata-extracted", "blocked"], detail: str
+        self,
+        transaction: OnboardingTransaction,
+        event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "dependency-scan-passed", "manifest-metadata-extracted", "blocked"],
+        detail: str,
+        *,
+        bundle_sha256: str | None = None,
     ) -> OnboardingAuditRecord:
         record = OnboardingAuditRecord(
             transaction_id=transaction.id,
             event=event,
             recorded_at=datetime.now(UTC),
             detail=detail,
+            bundle_sha256=bundle_sha256,
         )
         self.records.append(record)
         if self.path is not None:
@@ -56,6 +63,15 @@ class OnboardingAuditStore:
     def has_event(self, transaction_id: str, event: str) -> bool:
         return any(
             record.transaction_id == transaction_id and record.event == event
+            for record in self.records
+        )
+
+    def has_bundle_event(self, transaction_id: str, event: str, bundle_sha256: str) -> bool:
+        """Match a gate to the exact verified artifact, not merely a transaction."""
+        return any(
+            record.transaction_id == transaction_id
+            and record.event == event
+            and record.bundle_sha256 == bundle_sha256
             for record in self.records
         )
 

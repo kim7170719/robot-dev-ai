@@ -78,6 +78,13 @@ retains its recorded human sandbox authorization, but recovery itself neither
 starts a runner nor authorizes source acquisition, installation, build, or
 execution. Full suite: **121 tests passed**.
 
+Onboarding gates are now artifact-bound: verification, dependency scan, and
+ROS manifest audit records retain the archive SHA-256, and each later endpoint
+requires the exact same hash. A different allowlisted archive cannot reuse a
+previous artifact's transaction evidence. The full local API flow passed on a
+temporary `simple_diff_robot/package.xml` archive. Full suite: **122 tests
+passed**.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

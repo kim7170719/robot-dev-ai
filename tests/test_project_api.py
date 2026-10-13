@@ -205,6 +205,29 @@ def test_bundle_preview_requires_authorization_and_allowlist(tmp_path) -> None:
     assert response.json()["status"] == "verified"
 
 
+def test_dependency_scan_refuses_a_different_bundle_than_the_audited_bundle(tmp_path) -> None:
+    import hashlib
+
+    first_bundle = tmp_path / "first.tar.gz"
+    second_bundle = tmp_path / "second.tar.gz"
+    first_bundle.write_bytes(b"first reviewed archive")
+    second_bundle.write_bytes(b"second reviewed archive")
+    first_hash = hashlib.sha256(first_bundle.read_bytes()).hexdigest()
+    second_hash = hashlib.sha256(second_bundle.read_bytes()).hexdigest()
+    client = TestClient(create_app(
+        source_bundle_gate=LocalSourceBundleGate(tmp_path, {first_hash, second_hash})
+    ))
+    preview = client.post("/api/v1/registry/onboarding/preview", json={"requested_by": "operator", "component": {"id": "candidate-driver", "kind": "driver", "display_name": "Candidate Driver", "source_id": "candidate-source", "lifecycle": "discovered", "provenance": "test"}, "source": {"id": "candidate-source", "source_type": "official-repo", "url": "https://example.test/repo", "trust_level": "A", "license": {"spdx": "MIT", "redistribution": "allowed"}, "retrieved_at": "2026-10-13"}})
+    transaction_id = preview.json()["id"]
+    client.post("/api/v1/registry/onboarding/authorize-sandbox", json={"transaction_id": transaction_id, "confirmed": True})
+    client.post(f"/api/v1/registry/onboarding/{transaction_id}/bundle/preview", json={"path": str(first_bundle), "expected_sha256": first_hash})
+
+    response = client.post(f"/api/v1/registry/onboarding/{transaction_id}/bundle/dependency-scan", json={"path": str(second_bundle), "expected_sha256": second_hash})
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "verified local source bundle is required"
+
+
 def test_ros_manifest_endpoint_requires_a_passed_dependency_scan() -> None:
     client = TestClient(create_app())
     preview = client.post("/api/v1/registry/onboarding/preview", json={"requested_by": "operator", "component": {"id": "candidate-driver", "kind": "driver", "display_name": "Candidate Driver", "source_id": "candidate-source", "lifecycle": "discovered", "provenance": "test"}, "source": {"id": "candidate-source", "source_type": "official-repo", "url": "https://example.test/repo", "trust_level": "A", "license": {"spdx": "MIT", "redistribution": "allowed"}, "retrieved_at": "2026-10-13"}})

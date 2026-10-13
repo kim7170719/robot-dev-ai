@@ -425,6 +425,7 @@ def create_app(
             transaction,
             "bundle-verified" if result.status == "verified" else "blocked",
             result.sha256 if result.status == "verified" else "; ".join(result.issues),
+            bundle_sha256=result.sha256 if result.status == "verified" else None,
         )
         return result
 
@@ -438,7 +439,9 @@ def create_app(
         transaction = pending_onboarding.get(transaction_id)
         if transaction is None:
             raise HTTPException(status_code=404, detail="onboarding transaction was not found")
-        if not audit_store.has_event(transaction_id, "bundle-verified"):
+        if not audit_store.has_bundle_event(
+            transaction_id, "bundle-verified", request.expected_sha256
+        ):
             raise HTTPException(status_code=409, detail="verified local source bundle is required")
         profile = sandbox_profile_from_environment()
         bundle_path = bundle_gate.verified_path(request)
@@ -452,6 +455,7 @@ def create_app(
             transaction,
             "dependency-scan-passed" if result.status == "passed" else "blocked",
             result.detail,
+            bundle_sha256=request.expected_sha256,
         )
         return result
 
@@ -465,7 +469,9 @@ def create_app(
         transaction = pending_onboarding.get(transaction_id)
         if transaction is None:
             raise HTTPException(status_code=404, detail="onboarding transaction was not found")
-        if not audit_store.has_event(transaction_id, "dependency-scan-passed"):
+        if not audit_store.has_bundle_event(
+            transaction_id, "dependency-scan-passed", request.expected_sha256
+        ):
             raise HTTPException(status_code=409, detail="a passed dependency scan is required")
         profile = sandbox_profile_from_environment()
         bundle_path = bundle_gate.verified_path(request)
@@ -479,6 +485,7 @@ def create_app(
             transaction,
             "manifest-metadata-extracted" if result.status == "passed" else "blocked",
             result.detail,
+            bundle_sha256=request.expected_sha256,
         )
         return result
 
