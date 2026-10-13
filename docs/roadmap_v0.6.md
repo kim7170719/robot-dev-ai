@@ -41,8 +41,10 @@ Cosmos remains optional and never validates physics, ROS, or real hardware.
 - `EvidenceRegistry` reports coverage, same-context PASS/FAIL conflicts, and
   pending community-review identifiers without collapsing observations.
 - `RegistrySnapshot.create()` provides a deterministic content hash. The
-  read-only `/api/v1/evidence/snapshot` endpoint exposes its identifier and
-  counts to the Evidence GUI.
+  read-only `/api/v1/evidence/snapshot` endpoint captures an application-lifetime
+  snapshot and exposes its identifier and counts to the Evidence GUI; clients
+  can retrieve the exact captured document through
+  `/api/v1/evidence/snapshots/{snapshot_id}` for reproducible benchmark input.
 - M14B Evidence Explorer shows the current snapshot and explicitly labels
   pending community reports as not yet evidence.
 - The read-only evidence overview now supplies a coverage matrix for every

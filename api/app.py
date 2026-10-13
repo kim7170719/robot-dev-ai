@@ -40,7 +40,13 @@ from agent.mvp_pipeline import (
     SimulationValidationResult,
 )
 from agent.requirement_agent import RequirementAgent
-from agent.evidence_registry import EvidenceOverview, EvidenceRegistry, EvidenceSummary, RegistrySnapshot
+from agent.evidence_registry import (
+    EvidenceOverview,
+    EvidenceRegistry,
+    EvidenceSummary,
+    RegistrySnapshot,
+    RegistrySnapshotStore,
+)
 from agent.trusted_source import TrustedSourcePolicy
 from agent.source_onboarding import (
     OnboardingAuditStore,
@@ -247,6 +253,7 @@ def create_app(
     workspace_root: Path | None = None,
     read_only: bool | None = None,
     evidence_document: RegistryDocumentV06 | None = None,
+    evidence_snapshot_store: RegistrySnapshotStore | None = None,
     management_document: RegistryManagementDocumentV05 | None = None,
     onboarding_audit_store: OnboardingAuditStore | None = None,
     onboarding_transaction_store: OnboardingTransactionStore | None = None,
@@ -271,6 +278,7 @@ def create_app(
 
     summary = project_summary or _default_project_summary()
     evidence_document = evidence_document or _default_evidence_document()
+    snapshot_store = evidence_snapshot_store or RegistrySnapshotStore()
     management_document = management_document or _default_management_document()
     audit_store = onboarding_audit_store or OnboardingAuditStore()
     transaction_store = onboarding_transaction_store or OnboardingTransactionStore()
@@ -326,7 +334,7 @@ def create_app(
 
     @app.get("/api/v1/evidence/snapshot", response_model=EvidenceSnapshotSummary)
     def read_evidence_snapshot() -> EvidenceSnapshotSummary:
-        snapshot = RegistrySnapshot.create(evidence_document)
+        snapshot = snapshot_store.capture(evidence_document)
         return EvidenceSnapshotSummary(
             snapshot_id=snapshot.id,
             evidence_record_count=len(snapshot.document.evidence_records),
@@ -335,6 +343,13 @@ def create_app(
                 for submission in snapshot.document.community_submissions
             ),
         )
+
+    @app.get("/api/v1/evidence/snapshots/{snapshot_id}", response_model=RegistrySnapshot)
+    def read_evidence_snapshot_by_id(snapshot_id: str) -> RegistrySnapshot:
+        snapshot = snapshot_store.get(snapshot_id)
+        if snapshot is None:
+            raise HTTPException(status_code=404, detail="No evidence snapshot with that identifier.")
+        return snapshot
 
     @app.get("/api/v1/evidence/overview", response_model=EvidenceOverview)
     def read_evidence_overview() -> EvidenceOverview:

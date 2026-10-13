@@ -96,11 +96,21 @@ def test_evidence_endpoint_returns_contextual_summary_only() -> None:
 
 
 def test_evidence_snapshot_endpoint_is_read_only_and_content_addressed() -> None:
-    response = TestClient(create_app(read_only=True)).get("/api/v1/evidence/snapshot")
+    client = TestClient(create_app(read_only=True))
+    response = client.get("/api/v1/evidence/snapshot")
 
     assert response.status_code == 200
     assert len(response.json()["snapshot_id"]) == 64
     assert response.json()["evidence_record_count"] == 1
+    stored = client.get(f"/api/v1/evidence/snapshots/{response.json()['snapshot_id']}")
+    assert stored.status_code == 200
+    assert stored.json()["id"] == response.json()["snapshot_id"]
+
+
+def test_unknown_evidence_snapshot_is_not_found() -> None:
+    response = TestClient(create_app()).get(f"/api/v1/evidence/snapshots/{'a' * 64}")
+
+    assert response.status_code == 404
 
 
 def test_evidence_overview_exposes_coverage_and_planned_reference_without_promoting_it() -> None:

@@ -168,6 +168,11 @@ schema-validated calendar date instead of arbitrary text. This validates
 operator-supplied provenance metadata only; it does not fetch or revalidate a
 source.
 
+v0.6 retrievable snapshot pass (2026-10-13): the evidence API now captures a
+content-addressed Registry snapshot and serves that exact, isolated document by
+snapshot ID for the lifetime of the application. It is read-only and supplies
+benchmark input reproducibility, not new evidence.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,
