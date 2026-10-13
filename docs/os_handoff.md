@@ -43,6 +43,12 @@ and PID/memory/CPU limits. Set `ROBOT_DEV_AI_SANDBOX_RUNNER=docker` and
 this verified self-test. It still does not permit source acquisition. Full
 suite: **108 tests passed**.
 
+Local source bundle gate is now PASS: sandbox input must be a user-supplied,
+regular non-symlink `.tar.gz`/`.tgz`/`.zip` below a caller-configured root with
+an allowlisted SHA-256 matching the operator-supplied expected hash. Verification
+only reads and hashes the archive then appends audit evidence—no mount, unpack,
+build, clone, download, or execution. Full suite: **112 tests passed**.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

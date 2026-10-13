@@ -17,7 +17,7 @@ class OnboardingAuditRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     transaction_id: str
-    event: Literal["planned", "sandbox-runner-authorized", "blocked"]
+    event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "blocked"]
     recorded_at: datetime
     detail: str = Field(min_length=1, max_length=512)
 
@@ -30,7 +30,7 @@ class OnboardingAuditStore:
         self.records: list[OnboardingAuditRecord] = []
 
     def append(
-        self, transaction: OnboardingTransaction, event: Literal["planned", "sandbox-runner-authorized", "blocked"], detail: str
+        self, transaction: OnboardingTransaction, event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "blocked"], detail: str
     ) -> OnboardingAuditRecord:
         record = OnboardingAuditRecord(
             transaction_id=transaction.id,

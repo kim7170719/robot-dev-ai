@@ -53,6 +53,9 @@ from agent.source_onboarding import (
     SandboxRunnerProfile,
     SandboxRunnerReadiness,
     IsolatedSandboxRunner,
+    LocalSourceBundleGate,
+    LocalSourceBundleRequest,
+    LocalSourceBundleVerification,
     SandboxSelfTestResult,
     SourceOnboardingPlanner,
 )
@@ -244,6 +247,7 @@ def create_app(
     onboarding_audit_store: OnboardingAuditStore | None = None,
     onboarding_transaction_store: OnboardingTransactionStore | None = None,
     sandbox_runner: IsolatedSandboxRunner | None = None,
+    source_bundle_gate: LocalSourceBundleGate | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
     simulation_frame_collector_factory: Callable[[], SimulationFrameCollector] | None = None,
@@ -267,6 +271,7 @@ def create_app(
     audit_store = onboarding_audit_store or OnboardingAuditStore()
     transaction_store = onboarding_transaction_store or OnboardingTransactionStore()
     isolated_runner = sandbox_runner or IsolatedSandboxRunner()
+    bundle_gate = source_bundle_gate or LocalSourceBundleGate(None)
     pending_onboarding = transaction_store.transactions
     pending_plans: dict[str, WorkspacePlan] = {}
     generated_plans: dict[str, WorkspacePlan] = {}
@@ -400,6 +405,26 @@ def create_app(
                 detail="no sandbox runner profile is configured",
             )
         return isolated_runner.self_test(profile)
+
+    @app.post(
+        "/api/v1/registry/onboarding/{transaction_id}/bundle/preview",
+        response_model=LocalSourceBundleVerification,
+    )
+    def preview_local_source_bundle(
+        transaction_id: str, request: LocalSourceBundleRequest
+    ) -> LocalSourceBundleVerification:
+        transaction = pending_onboarding.get(transaction_id)
+        if transaction is None:
+            raise HTTPException(status_code=404, detail="onboarding transaction was not found")
+        if not audit_store.has_event(transaction_id, "sandbox-runner-authorized"):
+            raise HTTPException(status_code=409, detail="sandbox runner authorization is required")
+        result = bundle_gate.verify(request)
+        audit_store.append(
+            transaction,
+            "bundle-verified" if result.status == "verified" else "blocked",
+            result.sha256 if result.status == "verified" else "; ".join(result.issues),
+        )
+        return result
 
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)
     def parse_requirement(request: RequirementRequest) -> RequirementResult:

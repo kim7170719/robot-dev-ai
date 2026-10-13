@@ -85,6 +85,14 @@ capabilities, no-new-privileges, non-root user, and PID/memory/CPU limits. It
 passed with no source acquisition or external source execution. Full suite:
 **108 tests**.
 
+v0.5 local source bundle gate (2026-10-13): **PASS.** Future sandbox inputs
+must be operator-supplied local archives under a configured root, with an
+allowlisted `.tar.gz`/`.tgz`/`.zip` type, non-symlink identity, size limit, and
+matching streamed SHA-256 supplied by both operator and server configuration.
+Preview needs sandbox authorization and appends an audit result; it does not
+mount, unpack, build, execute, clone, or download the bundle. Full suite:
+**112 tests**.
+
 ## M8 Template Engine / Gate G8
 
 | Criterion | Status | Evidence |

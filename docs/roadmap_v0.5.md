@@ -75,3 +75,10 @@ with `--pull never`, `--network none`, `--read-only`, a noexec tmpfs, dropped
 capabilities, no-new-privileges, non-root UID, and PID/memory/CPU limits. The
 local `nvidia/cuda:12.6.2-base-ubuntu24.04` self-test passed on 2026-10-13. It
 does not establish permission to acquire external source code.
+
+The local source bundle gate is now the prerequisite for future acquisition:
+only a regular non-symlink `.tar.gz`, `.tgz`, or `.zip` below a caller-
+configured root, within the size limit, whose streamed SHA-256 matches both
+the operator-provided expected hash and the server allowlist can be marked
+verified. Bundle preview requires the prior sandbox authorization and writes an
+audit event, but does not mount, unpack, build, or execute the bundle.

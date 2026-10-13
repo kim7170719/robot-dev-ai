@@ -14,7 +14,7 @@ from agent.mvp_pipeline import (
     SimulationCommandEvidence,
 )
 from api.app import ProjectSummary, create_app
-from agent.source_onboarding import OnboardingTransactionStore
+from agent.source_onboarding import LocalSourceBundleGate, OnboardingTransactionStore
 from registry.models import RobotKnowledgeRegistry
 from registry.v04 import RegistryDocumentV04
 from registry.v06 import EvidenceEnvironment, EvidenceRecord, RegistryDocumentV06
@@ -163,6 +163,22 @@ def test_sandbox_self_test_requires_prior_authorization() -> None:
     )
 
     assert response.status_code == 409
+
+
+def test_bundle_preview_requires_authorization_and_allowlist(tmp_path) -> None:
+    bundle = tmp_path / "candidate.tar.gz"
+    bundle.write_bytes(b"reviewed local source")
+    import hashlib
+    digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+    client = TestClient(create_app(source_bundle_gate=LocalSourceBundleGate(tmp_path, {digest})))
+    preview = client.post("/api/v1/registry/onboarding/preview", json={"requested_by": "operator", "component": {"id": "candidate-driver", "kind": "driver", "display_name": "Candidate Driver", "source_id": "candidate-source", "lifecycle": "discovered", "provenance": "test"}, "source": {"id": "candidate-source", "source_type": "official-repo", "url": "https://example.test/repo", "trust_level": "A", "license": {"spdx": "MIT", "redistribution": "allowed"}, "retrieved_at": "2026-10-13"}})
+    transaction_id = preview.json()["id"]
+    client.post("/api/v1/registry/onboarding/authorize-sandbox", json={"transaction_id": transaction_id, "confirmed": True})
+
+    response = client.post(f"/api/v1/registry/onboarding/{transaction_id}/bundle/preview", json={"path": str(bundle), "expected_sha256": digest})
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "verified"
 
 
 def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:

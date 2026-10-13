@@ -63,6 +63,11 @@ Isaac Sim G4 CLI results (2026-09-21):
   self-test passed with `--pull never`, network disabled, read-only root,
   tmpfs, dropped capabilities, no-new-privileges, non-root user, and resource
   limits. This does not authorize external source acquisition.
+- Local source bundle gate: future source input must be a user-supplied,
+  regular non-symlink `.tar.gz`, `.tgz`, or `.zip` below a caller-configured
+  root. `LocalSourceBundleGate` streams SHA-256 and requires both the operator
+  expected hash and server allowlist to match; it appends only an audit result.
+  It does not mount, unpack, build, execute, clone, or download the archive.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus
