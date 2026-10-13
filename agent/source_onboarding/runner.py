@@ -367,8 +367,8 @@ class IsolatedSandboxRunner:
         )
         return [
             "docker", "run", "--rm", "--pull", "never", "--network", "none",
-            "--read-only", "--tmpfs", "/tmp:rw,nosuid,nodev,noexec,size=64m",
-            "--tmpfs", "/work:rw,nosuid,nodev,size=768m", "--pids-limit", "256",
+            "--read-only", "--tmpfs", "/tmp:rw,nosuid,nodev,noexec,mode=1777,size=64m",
+            "--tmpfs", "/work:rw,nosuid,nodev,mode=1777,size=768m", "--pids-limit", "256",
             "--memory", "1024m", "--cpus", "2", "--cap-drop", "ALL",
             "--security-opt", "no-new-privileges", "--user", "65534:65534", "--mount",
             f"type=bind,src={bundle_path},dst=/bundle/source,readonly", profile.image,

@@ -51,7 +51,8 @@ def test_sandbox_build_command_uses_only_a_read_only_archive_and_tmpfs_workspace
     assert ["--network", "none"] == command[command.index("--network") : command.index("--network") + 2]
     assert "--read-only" in command
     assert "dst=/bundle/source,readonly" in command[command.index("--mount") + 1]
-    assert "/work:rw,nosuid,nodev,size=768m" in command
+    assert "/tmp:rw,nosuid,nodev,noexec,mode=1777,size=64m" in command
+    assert "/work:rw,nosuid,nodev,mode=1777,size=768m" in command
     assert ["--cap-drop", "ALL"] == command[command.index("--cap-drop") : command.index("--cap-drop") + 2]
     assert "colcon build" in command[-1]
     assert "unsafe archive member" in command[-1]

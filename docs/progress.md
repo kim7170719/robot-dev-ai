@@ -133,6 +133,13 @@ audit record now retain the effective image reference plus a SHA-256 digest of
 captured stdout/stderr. Legacy audit-chain hashes remain verifiable when these
 new fields are absent. No build output or E2 evidence exists on this host.
 
+v0.5 E2 non-root workspace hardening (2026-10-13): the isolated build command
+now explicitly mounts `/tmp` and `/work` as sticky, writable tmpfs directories
+for its unprivileged build user. The image root filesystem and reviewed source
+archive remain read-only; network, capabilities, and resource limits remain
+unchanged. This is command-level verification only and does not create E2
+runtime evidence.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

@@ -349,3 +349,10 @@ v0.5 E2 build audit provenance (2026-10-13): successful or failed build
 observations now retain the effective sandbox image reference and a SHA-256
 digest of captured stdout/stderr in the hash-chained audit log. Old audit
 records remain verifiable. No E2 observation has been recorded on this host.
+
+v0.5 E2 non-root workspace hardening (2026-10-13): the isolated build command
+now explicitly mounts `/tmp` and `/work` as sticky, writable tmpfs directories
+for its unprivileged build user. The image root filesystem and reviewed source
+archive remain read-only; network, capabilities, and resource limits remain
+unchanged. This is command-level verification only and does not create E2
+runtime evidence.
