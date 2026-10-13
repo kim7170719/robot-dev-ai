@@ -6,6 +6,7 @@ import subprocess
 import xml.etree.ElementTree as ElementTree
 import re
 import shlex
+import textwrap
 from pathlib import Path
 from typing import Callable, Literal
 
@@ -327,13 +328,34 @@ class IsolatedSandboxRunner:
             raise ValueError("sandbox build requires a configured Docker build image")
         if not bundle_path.name.endswith((".tar.gz", ".tgz")):
             raise ValueError("sandbox build currently supports verified tar archives only")
-        extractor = (
-            "import pathlib,shutil,tarfile; "
-            "root=pathlib.Path('/work/src').resolve(); root.mkdir(parents=True,exist_ok=True); "
-            "archive=tarfile.open('/bundle/source','r:gz'); members=archive.getmembers(); "
-            "assert len(members)<=4096, 'archive has too many entries'; "
-            "[(lambda target,member: (target.is_relative_to(root) and (member.isdir() or member.isfile()) or (_ for _ in ()).throw(ValueError('unsafe archive member')))((root/member.name).resolve(),member)) for member in members]; "
-            "[(lambda target,member: (target.mkdir(parents=True,exist_ok=True) if member.isdir() else (target.parent.mkdir(parents=True,exist_ok=True), shutil.copyfileobj(archive.extractfile(member),target.open('wb')))))((root/member.name).resolve(),member)) for member in members]"
+        extractor = textwrap.dedent(
+            """
+            import pathlib
+            import shutil
+            import tarfile
+
+            root = pathlib.Path('/work/src').resolve()
+            root.mkdir(parents=True, exist_ok=True)
+            with tarfile.open('/bundle/source', 'r:gz') as archive:
+                members = archive.getmembers()
+                if len(members) > 4096:
+                    raise ValueError('archive has too many entries')
+                for member in members:
+                    target = (root / member.name).resolve()
+                    if not target.is_relative_to(root) or not (member.isdir() or member.isfile()):
+                        raise ValueError('unsafe archive member')
+                for member in members:
+                    target = (root / member.name).resolve()
+                    if member.isdir():
+                        target.mkdir(parents=True, exist_ok=True)
+                        continue
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    source = archive.extractfile(member)
+                    if source is None:
+                        raise ValueError('archive member could not be read')
+                    with source, target.open('wb') as destination:
+                        shutil.copyfileobj(source, destination)
+            """
         )
         build = (
             f"python3 -c {shlex.quote(extractor)} && "

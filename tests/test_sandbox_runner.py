@@ -1,4 +1,5 @@
 import subprocess
+import shlex
 from pathlib import Path
 
 from agent.source_onboarding import IsolatedSandboxRunner, SandboxRunnerProfile
@@ -54,6 +55,9 @@ def test_sandbox_build_command_uses_only_a_read_only_archive_and_tmpfs_workspace
     assert ["--cap-drop", "ALL"] == command[command.index("--cap-drop") : command.index("--cap-drop") + 2]
     assert "colcon build" in command[-1]
     assert "unsafe archive member" in command[-1]
+    command_parts = shlex.split(command[-1])
+    assert command_parts[:2] == ["python3", "-c"]
+    compile(command_parts[2], "<sandbox-extractor>", "exec")
 
 
 def test_sandbox_build_success_does_not_claim_a_registry_promotion() -> None:

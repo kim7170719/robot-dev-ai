@@ -339,3 +339,8 @@ v0.5 E2 build provenance hardening (2026-10-13): Docker readiness now returns
 the local `sha256:` image ID when available, and the build runner uses that ID
 instead of the configured tag. No local Jazzy build image is configured on this
 host, so this is tested implementation rather than runtime evidence.
+
+v0.5 E2 build command verification (2026-10-13): the exact fixed Python
+archive extractor sent to Docker is now compiled in regression tests. It
+refuses path traversal, links, and non-regular entries before the isolated
+`colcon build`. This verifies command construction only; no E2 build has run.

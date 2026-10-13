@@ -122,6 +122,12 @@ now resolves Docker's `sha256:` image ID when available. The sandbox uses that
 immutable ID instead of the configured tag, preventing a later tag retarget
 from silently changing the recorded build input.
 
+v0.5 E2 build command verification (2026-10-13): corrected the fixed archive
+extractor used inside the isolated build container and added a regression test
+that compiles the exact Python passed to Docker. It rejects traversal, links,
+and non-regular archive entries before `colcon build`; no build was run and no
+E2 evidence is claimed.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,
