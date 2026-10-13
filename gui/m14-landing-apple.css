@@ -92,9 +92,54 @@ body.is-landing .main-content { background: #030609; }
   left: clamp(24px, 10.1vw, 154px);
 }
 .landing-status-dot { background: #8cbcff; }
+.landing-route {
+  align-items: stretch;
+  bottom: clamp(26px, 4vw, 56px);
+  display: grid;
+  gap: 0;
+  grid-template-columns: 132px repeat(3, minmax(126px, 1fr));
+  max-width: min(54vw, 710px);
+  position: absolute;
+  right: clamp(24px, 4vw, 64px);
+  z-index: 3;
+}
+.landing-route-label,
+.landing-route button {
+  border-top: 1px solid rgb(176 202 231 / .26);
+  min-height: 66px;
+  padding-top: 14px;
+}
+.landing-route-label {
+  color: #91a6bd;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .13em;
+}
+.landing-route button {
+  align-items: flex-start;
+  background: transparent;
+  border-bottom: 0;
+  border-left: 0;
+  border-right: 0;
+  color: #dbe6f3;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 18px;
+  text-align: left;
+  transition: color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+.landing-route button + button { border-left: 1px solid rgb(176 202 231 / .16); }
+.landing-route button b { color: #7892af; font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+.landing-route button span { font-size: 13px; font-weight: 680; letter-spacing: -.01em; }
+.landing-route button:hover,
+.landing-route button:focus-visible { border-top-color: #e8f3ff; color: #fff; outline: none; transform: translateY(-2px); }
+.landing-route button:focus-visible { box-shadow: inset 0 3px #78b6ff; }
 @media (max-width: 960px) {
   .landing-copy { max-width: 640px; }
   .humanoid-stage { right: -34px; top: 18%; }
+  .landing-route { left: 24px; max-width: min(84vw, 620px); right: auto; }
 }
 @media (max-width: 640px) {
   .landing { padding: 20px; }
@@ -107,4 +152,9 @@ body.is-landing .main-content { background: #030609; }
   .humanoid-stage { height: min(74vw, 300px); right: 0; top: 4%; width: 100%; }
   .humanoid-stage::after { height: 72vw; width: 72vw; }
   .humanoid-pose { bottom: 2%; right: 13%; }
+  .landing-route { bottom: 18px; grid-template-columns: repeat(3, 1fr); left: 20px; max-width: none; right: 20px; }
+  .landing-route-label { display: none; }
+  .landing-route button { min-height: 50px; padding-left: 10px; padding-top: 10px; }
+  .landing-route button:first-of-type { padding-left: 0; }
+  .landing-route button span { font-size: 11px; }
 }

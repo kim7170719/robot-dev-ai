@@ -100,6 +100,11 @@ M14 landing-copy pass (2026-10-13): replaced the promotional simulation
 wording with a plain description of the actual workflow: describe the robot,
 review compatible components and simulation checks, then choose the next step.
 
+M14 landing composition pass (2026-10-13): the homepage now presents a
+clickable three-stage workflow rail (requirements, proposal review, simulation)
+beside the animated humanoid. It reuses the existing product-stage palette and
+links only to existing local workspace views.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

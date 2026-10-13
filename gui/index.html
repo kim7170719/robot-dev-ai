@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="./m14-humanoid.css?v=3">
     <link rel="stylesheet" href="./m14-control.css?v=3">
     <link rel="stylesheet" href="./m14-3d-hero.css?v=5">
-    <link rel="stylesheet" href="./m14-landing-apple.css?v=1">
+    <link rel="stylesheet" href="./m14-landing-apple.css?v=2">
     <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
   </head>
   <body>
@@ -100,7 +100,13 @@
             </div>
             <p class="humanoid-pose">SYSTEM READY</p>
           </div>
-          <div class="landing-status"><span class="landing-status-dot" aria-hidden="true"></span><span data-i18n="landing.status">Virtual-first robot development</span><span>Jazzy · Isaac Sim 4.5</span></div>
+          <nav class="landing-route" aria-label="開發流程">
+            <span class="landing-route-label" data-i18n="landing.route.label">開發流程</span>
+            <button type="button" data-go="requirement"><b>01</b><span data-i18n="landing.route.plan">規劃需求</span></button>
+            <button type="button" data-go="configuration"><b>02</b><span data-i18n="landing.route.build">確認方案</span></button>
+            <button type="button" data-go="runtime"><b>03</b><span data-i18n="landing.route.simulate">查看模擬</span></button>
+          </nav>
+          <div class="landing-status"><span class="landing-status-dot" aria-hidden="true"></span><span data-i18n="landing.status">模擬優先的開發流程</span><span>Jazzy · Isaac Sim 4.5</span></div>
         </section>
 
         <section class="view active" id="dashboard" data-view>
