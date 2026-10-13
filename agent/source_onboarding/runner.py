@@ -31,6 +31,8 @@ class DependencyScanResult(BaseModel):
     runner: Literal["docker"]
     entry_count: int = Field(ge=0)
     top_level_entries: list[str] = Field(default_factory=list)
+    candidate_dependency_manifests: list[str] = Field(default_factory=list)
+    candidate_license_files: list[str] = Field(default_factory=list)
     detail: str = Field(min_length=1, max_length=1024)
 
 
@@ -112,7 +114,15 @@ class IsolatedSandboxRunner:
             return DependencyScanResult(status="failed", runner="docker", entry_count=0, detail=(completed.stderr or completed.stdout or "dependency scan failed")[:1024])
         entries = [line for line in completed.stdout.splitlines() if line][:4096]
         roots = sorted({entry.split("/", 1)[0] for entry in entries})[:64]
-        return DependencyScanResult(status="passed", runner="docker", entry_count=len(entries), top_level_entries=roots, detail="archive entries listed in an isolated read-only container; nothing was extracted or executed")
+        manifests = [
+            entry for entry in entries
+            if entry.rsplit("/", 1)[-1] in {"package.xml", "package.json", "pyproject.toml", "requirements.txt"}
+        ][:128]
+        licenses = [
+            entry for entry in entries
+            if entry.rsplit("/", 1)[-1].upper().startswith(("LICENSE", "COPYING", "NOTICE"))
+        ][:128]
+        return DependencyScanResult(status="passed", runner="docker", entry_count=len(entries), top_level_entries=roots, candidate_dependency_manifests=manifests, candidate_license_files=licenses, detail="archive entries classified in an isolated read-only container; candidate metadata was not opened, extracted, or executed")
 
     @staticmethod
     def _run_command(command: list[str]) -> subprocess.CompletedProcess[str]:

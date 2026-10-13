@@ -74,6 +74,11 @@ Isaac Sim G4 CLI results (2026-09-21):
   one file and invokes fixed `tar -tzf`, returning entry count/top-level names.
   An internal archive self-test passed on 2026-10-13; nothing was extracted or
   executed. ZIP dependency scanning and builds remain intentionally absent.
+- Candidate archive metadata: dependency scan now identifies only entry-name
+  candidates (`package.xml`, `package.json`, `pyproject.toml`,
+  `requirements.txt`, plus `LICENSE*`/`COPYING*`/`NOTICE*`). It does not open,
+  parse, extract, or execute any candidate file, so these are not dependency
+  validation or license assertions.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus

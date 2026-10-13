@@ -49,3 +49,18 @@ def test_dependency_scan_mounts_one_archive_read_only_without_extracting() -> No
     assert "--mount" in command
     assert "dst=/bundle/source,readonly" in command[command.index("--mount") + 1]
     assert command[-1] == "tar -tzf /bundle/source"
+
+
+def test_dependency_scan_classifies_entry_name_candidates_without_opening_them() -> None:
+    def listing_runner(command: list[str]) -> subprocess.CompletedProcess[str]:
+        return subprocess.CompletedProcess(command, 0, stdout="robot/package.xml\nrobot/LICENSE\nrobot/pyproject.toml\n", stderr="")
+
+    result = IsolatedSandboxRunner(listing_runner).dependency_scan(
+        SandboxRunnerProfile(runner="docker", image="local/sandbox:stable"),
+        Path("/safe/root/source.tar.gz"),
+    )
+
+    assert result.status == "passed"
+    assert result.candidate_dependency_manifests == ["robot/package.xml", "robot/pyproject.toml"]
+    assert result.candidate_license_files == ["robot/LICENSE"]
+    assert "not opened" in result.detail

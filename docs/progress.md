@@ -85,6 +85,12 @@ capabilities, no-new-privileges, non-root user, and PID/memory/CPU limits. It
 passed with no source acquisition or external source execution. Full suite:
 **108 tests**.
 
+v0.5 archive candidate metadata extraction (2026-10-13): **PASS.** The fixed
+read-only archive scan now classifies dependency-manifest and license candidate
+paths purely from `tar -tzf` entry names. It does not open or parse candidate
+files, so the result is discovery metadata rather than validated dependencies
+or license claims. Full suite: **114 tests**.
+
 v0.5 local source bundle gate (2026-10-13): **PASS.** Future sandbox inputs
 must be operator-supplied local archives under a configured root, with an
 allowlisted `.tar.gz`/`.tgz`/`.zip` type, non-symlink identity, size limit, and

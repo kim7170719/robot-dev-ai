@@ -55,6 +55,12 @@ count/top-level names. Internal roadmap archive self-test listed one entry;
 nothing was extracted or executed. Full suite: **113 tests passed**. ZIP scan
 and all build/installation steps remain intentionally absent.
 
+Archive scan now identifies candidate manifest/license paths from entry names
+only (`package.xml`, `package.json`, `pyproject.toml`, `requirements.txt`,
+`LICENSE*`, `COPYING*`, `NOTICE*`). It never opens/parses/extracts the files;
+do not treat candidates as validated dependencies or license claims. Full suite:
+**114 tests passed**.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

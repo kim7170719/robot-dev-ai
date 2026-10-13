@@ -89,3 +89,9 @@ read-only and runs only `tar -tzf`; it returns entry count and top-level names,
 without extraction or shell input. The full authorization/hash gate remains
 required. A local internal archive scan passed on 2026-10-13 under the existing
 no-network/no-pull Docker profile.
+
+Dependency scan results now classify candidate metadata from archive entry
+names only: `package.xml`, `package.json`, `pyproject.toml`, and
+`requirements.txt` are dependency-manifest candidates; `LICENSE*`, `COPYING*`,
+and `NOTICE*` are license candidates. The container still runs only `tar -tzf`:
+candidate files are not opened, extracted, parsed, or executed.
