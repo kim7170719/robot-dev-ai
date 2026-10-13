@@ -157,6 +157,18 @@
           <p class="evidence-boundary">E3 表示在記錄的模擬環境通過；它不是 E4 真機驗證，也不代表其他硬體、作業系統或 ROS 版本均可使用。</p>
           <div class="evidence-audit" aria-live="polite"><span>目前證據快照</span><code id="evidence-snapshot">讀取中…</code><small id="community-review-count">社群提交：尚無待審查資料</small></div>
           <div id="evidence-summary" class="evidence-summary" aria-live="polite"><div class="evidence-skeleton"></div><div class="evidence-skeleton"></div><div class="evidence-skeleton"></div></div>
+          <section class="evidence-ledger" aria-labelledby="coverage-title">
+            <header><div><h2 id="coverage-title">證據覆蓋範圍</h2><p>每列代表一個已知元件；空白表示尚未有記錄，並不代表可用或不可用。</p></div><span id="evidence-matrix-count">讀取中…</span></header>
+            <div class="evidence-table-wrap"><table><thead><tr><th scope="col">元件</th><th scope="col">證據等級</th><th scope="col">觀察筆數</th><th scope="col">需要注意</th></tr></thead><tbody id="evidence-matrix"><tr><td colspan="4">正在讀取覆蓋資料…</td></tr></tbody></table></div>
+          </section>
+          <section class="evidence-ledger evidence-ledger-secondary" aria-labelledby="conflict-title">
+            <header><div><h2 id="conflict-title">矛盾與待審查資料</h2><p>相同環境下的通過與失敗會並列保留；待人工審查的社群資料不會納入已接受證據。</p></div></header>
+            <output id="evidence-conflicts" class="evidence-empty" aria-live="polite">正在讀取資料…</output>
+          </section>
+          <section class="reference-robots" aria-labelledby="reference-robots-title">
+            <div><h2 id="reference-robots-title">Reference Robot</h2><p>這是後續驗證的組合目標；只有明確標示為 evidence-backed 才代表已具有對應記錄。</p></div>
+            <div id="reference-robot-list" aria-live="polite"><p>正在讀取 reference target…</p></div>
+          </section>
         </section>
 
         <section class="view" id="registry" data-view aria-labelledby="registry-title">
@@ -171,7 +183,7 @@
       </main>
     </div>
     <script src="./vendor/gsap.min.js?v=3.12.5"></script>
-    <script type="module" src="./app.js?v=16"></script>
+    <script type="module" src="./app.js?v=17"></script>
     <script type="module" src="./hero-robot.js?v=6"></script>
     <script type="module" src="./hero-motion.js?v=1"></script>
   </body>

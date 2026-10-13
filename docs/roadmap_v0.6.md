@@ -42,6 +42,10 @@ Cosmos remains optional and never validates physics, ROS, or real hardware.
   counts to the Evidence GUI.
 - M14B Evidence Explorer shows the current snapshot and explicitly labels
   pending community reports as not yet evidence.
+- The read-only evidence overview now supplies a coverage matrix for every
+  known component, a separate conflict viewer, and named Reference Robot
+  targets. Reference targets are `planned` unless their own state says
+  `evidence-backed`; naming one never implies E4 hardware verification.
 
 ## Honest completion boundary
 

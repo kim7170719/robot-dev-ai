@@ -13,6 +13,7 @@ from .v04 import EvidenceStatus, RegistryDocumentV04
 EvidenceLevel = Literal["E0", "E1", "E2", "E3", "E4", "E5"]
 SourceTrust = Literal["A", "B", "C", "blocked"]
 CommunityReviewState = Literal["pending-review", "accepted", "rejected"]
+ReferenceRobotState = Literal["planned", "evidence-backed"]
 
 
 class EvidenceEnvironment(RegistryModel):
@@ -52,6 +53,16 @@ class CommunityEvidenceSubmission(RegistryModel):
         return self
 
 
+class ReferenceRobot(RegistryModel):
+    """A named composition target, never an implicit real-hardware claim."""
+
+    id: Identifier
+    display_name: str = Field(min_length=1, max_length=128)
+    component_ids: list[Identifier] = Field(min_length=1)
+    state: ReferenceRobotState = "planned"
+    provenance: str = Field(min_length=1, max_length=128)
+
+
 class RegistryDocumentV06(RegistryModel):
     """v0.6 envelope retaining v0.4 facts and appending contextual evidence."""
 
@@ -60,6 +71,7 @@ class RegistryDocumentV06(RegistryModel):
     registry_v04: RegistryDocumentV04
     evidence_records: list[EvidenceRecord] = Field(default_factory=list)
     community_submissions: list[CommunityEvidenceSubmission] = Field(default_factory=list)
+    reference_robots: list[ReferenceRobot] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_evidence_references(self) -> RegistryDocumentV06:
@@ -85,6 +97,22 @@ class RegistryDocumentV06(RegistryModel):
             raise ValueError(
                 "community submission references unknown component: "
                 + ", ".join(missing_submissions)
+            )
+        reference_ids = [reference.id for reference in self.reference_robots]
+        if len(reference_ids) != len(set(reference_ids)):
+            raise ValueError("v0.6 registry contains duplicate reference robot identifiers")
+        known_components = available | {
+            profile.device_id for profile in self.registry_v04.hardware_profiles
+        }
+        missing_reference_components = sorted({
+            component_id
+            for reference in self.reference_robots
+            for component_id in reference.component_ids
+        } - known_components)
+        if missing_reference_components:
+            raise ValueError(
+                "reference robot references unknown component: "
+                + ", ".join(missing_reference_components)
             )
         return self
 

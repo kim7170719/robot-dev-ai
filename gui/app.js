@@ -268,6 +268,61 @@ function renderEvidenceSnapshot(snapshot) {
   const target = document.querySelector("#evidence-snapshot");
   if (target) target.textContent = `${snapshot.snapshot_id.slice(0, 12)}… · ${snapshot.evidence_record_count} records`;
 }
+function appendEvidenceCell(row, value) {
+  const cell = document.createElement("td");
+  cell.textContent = value;
+  row.append(cell);
+}
+function renderEvidenceOverview(overview) {
+  const matrix = document.querySelector("#evidence-matrix");
+  const count = document.querySelector("#evidence-matrix-count");
+  matrix.replaceChildren();
+  count.textContent = `${overview.coverage_matrix.length} 個已知元件`;
+  if (!overview.coverage_matrix.length) {
+    const row = document.createElement("tr"); const cell = document.createElement("td");
+    cell.colSpan = 4; cell.textContent = "目前沒有可顯示的元件。"; row.append(cell); matrix.append(row);
+  }
+  overview.coverage_matrix.forEach((item) => {
+    const row = document.createElement("tr");
+    appendEvidenceCell(row, item.component_id);
+    appendEvidenceCell(row, item.coverage_levels.join(" · ") || "尚無記錄");
+    appendEvidenceCell(row, String(item.record_count));
+    const notices = [];
+    if (item.conflict_record_ids.length) notices.push("同環境結果矛盾");
+    if (item.pending_community_submission_ids.length) notices.push(`${item.pending_community_submission_ids.length} 筆待審查`);
+    appendEvidenceCell(row, notices.join("；") || "無");
+    matrix.append(row);
+  });
+  const conflicts = document.querySelector("#evidence-conflicts");
+  conflicts.replaceChildren();
+  if (!overview.conflicts.length) {
+    conflicts.textContent = "目前沒有同環境的互相矛盾結果。";
+  } else {
+    overview.conflicts.forEach((conflict) => {
+      const item = document.createElement("p");
+      item.textContent = `${conflict.component_id}：${conflict.record_ids.join("、")}`;
+      conflicts.append(item);
+    });
+  }
+  const references = document.querySelector("#reference-robot-list");
+  references.replaceChildren();
+  if (!overview.reference_robots.length) {
+    references.textContent = "尚未定義 reference robot。";
+  }
+  overview.reference_robots.forEach((reference) => {
+    const item = document.createElement("article");
+    const title = document.createElement("strong"); title.textContent = reference.display_name;
+    const state = document.createElement("span"); state.textContent = reference.state === "planned" ? "計畫中，尚未驗證" : "具有對應證據";
+    const detail = document.createElement("p"); detail.textContent = `元件：${reference.component_ids.join(" · ")} · ${reference.provenance}`;
+    item.append(title, state, detail); references.append(item);
+  });
+}
+async function loadEvidenceViews() {
+  const [summary, overview, snapshot] = await Promise.all([
+    request("/evidence/generic-diff-base"), request("/evidence/overview"), request("/evidence/snapshot"),
+  ]);
+  renderEvidence(summary); renderEvidenceOverview(overview); renderEvidenceSnapshot(snapshot);
+}
 let registryCatalog = null;
 function registryText(value) { return String(value || "—").replaceAll("-", " "); }
 function renderSourceReview(review) {
@@ -355,7 +410,7 @@ document.querySelectorAll("[data-go]").forEach((button) => button.addEventListen
 document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); }));
 bindAction('[data-action="load-summary"]', "summary-result", () => request("/project/summary"), "PROJECT SNAPSHOT");
 document.querySelector('[data-action="load-evidence"]').addEventListener("click", async () => {
-  try { renderEvidence(await request("/evidence/generic-diff-base")); }
+  try { await loadEvidenceViews(); }
   catch (error) { document.querySelector("#evidence-summary").textContent = error.message; }
 });
 document.querySelector("#registry-filter")?.addEventListener("change", renderRegistry);
@@ -408,8 +463,7 @@ if (initialView?.matches("[data-view]")) {
   activateView(initial);
 } else activateView("landing");
 applyLocale();
-request("/evidence/generic-diff-base").then(renderEvidence).catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; });
-request("/evidence/snapshot").then(renderEvidenceSnapshot).catch((error) => { document.querySelector("#evidence-snapshot").textContent = error.message; });
+loadEvidenceViews().catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; });
 loadRegistry();
 loadSandboxReadiness();
 refreshSimulation();

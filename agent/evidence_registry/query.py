@@ -3,7 +3,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 from registry.models import Identifier
-from registry.v06 import EvidenceRecord, RegistryDocumentV06
+from registry.v06 import EvidenceRecord, ReferenceRobot, RegistryDocumentV06
 
 
 class EvidenceSummary(BaseModel):
@@ -14,6 +14,35 @@ class EvidenceSummary(BaseModel):
     coverage_levels: list[str] = Field(default_factory=list)
     conflict_record_ids: list[Identifier] = Field(default_factory=list)
     pending_community_submission_ids: list[Identifier] = Field(default_factory=list)
+
+
+class EvidenceCoverageRow(BaseModel):
+    """One component's visible evidence coverage without a synthetic roll-up."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    component_id: Identifier
+    coverage_levels: list[str] = Field(default_factory=list)
+    record_count: int = Field(ge=0)
+    conflict_record_ids: list[Identifier] = Field(default_factory=list)
+    pending_community_submission_ids: list[Identifier] = Field(default_factory=list)
+
+
+class EvidenceConflict(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    component_id: Identifier
+    record_ids: list[Identifier] = Field(min_length=2)
+
+
+class EvidenceOverview(BaseModel):
+    """Read-only overview for coverage, conflicts, and planned reference targets."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    coverage_matrix: list[EvidenceCoverageRow] = Field(default_factory=list)
+    conflicts: list[EvidenceConflict] = Field(default_factory=list)
+    reference_robots: list[ReferenceRobot] = Field(default_factory=list)
 
 
 class EvidenceRegistry:
@@ -51,4 +80,35 @@ class EvidenceRegistry:
                 if submission.record.component_id == component_id
                 and submission.review_state == "pending-review"
             ),
+        )
+
+    def overview(self, document: RegistryDocumentV06) -> EvidenceOverview:
+        """Show every known component and keep conflicts separately inspectable."""
+        component_ids = sorted({
+            hardware.id for hardware in document.registry_v04.registry.hardware
+        } | {
+            profile.id for profile in document.registry_v04.software_profiles
+        } | {
+            contract.id for contract in document.registry_v04.adapter_contracts
+        })
+        matrix = []
+        conflicts = []
+        for component_id in component_ids:
+            summary = self.summarize(document, component_id)
+            row = EvidenceCoverageRow(
+                component_id=component_id,
+                coverage_levels=summary.coverage_levels,
+                record_count=len(summary.records),
+                conflict_record_ids=summary.conflict_record_ids,
+                pending_community_submission_ids=summary.pending_community_submission_ids,
+            )
+            matrix.append(row)
+            if row.conflict_record_ids:
+                conflicts.append(EvidenceConflict(
+                    component_id=component_id, record_ids=row.conflict_record_ids
+                ))
+        return EvidenceOverview(
+            coverage_matrix=matrix,
+            conflicts=conflicts,
+            reference_robots=sorted(document.reference_robots, key=lambda robot: robot.id),
         )

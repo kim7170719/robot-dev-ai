@@ -115,6 +115,15 @@ read-only analysis, not an authorization to install, build, or execute source.
 The full local API flow passed against a temporary archive containing the
 existing `simple_diff_robot/package.xml`. Full suite: **122 tests**.
 
+v0.6 coverage, conflict, and reference views (2026-10-13): **PASS for the
+software surface.** The evidence API now exposes a read-only overview of all
+known components, their E0–E5 coverage, separately queryable same-context
+conflicts, and Reference Robot targets. M14B renders those facts as a coverage
+table, conflict area, and target list. Reference A is explicitly `planned`,
+not E4 real-hardware proof. The numerical population gate remains honest and
+open: it still needs externally recorded E0/E1, E2, E4, and reviewed E5
+evidence.
+
 v0.5 local source bundle gate (2026-10-13): **PASS.** Future sandbox inputs
 must be operator-supplied local archives under a configured root, with an
 allowlisted `.tar.gz`/`.tgz`/`.zip` type, non-symlink identity, size limit, and

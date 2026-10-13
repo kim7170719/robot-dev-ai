@@ -85,6 +85,12 @@ previous artifact's transaction evidence. The full local API flow passed on a
 temporary `simple_diff_robot/package.xml` archive. Full suite: **122 tests
 passed**.
 
+G12.6 Evidence Explorer now includes a read-only coverage matrix, separate
+same-context conflict viewer, and Reference Robot list through
+`GET /api/v1/evidence/overview`. The default Reference A remains explicitly
+`planned`; it is not real-hardware evidence and does not close the numerical
+G12.6 population gate.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

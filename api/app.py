@@ -40,7 +40,7 @@ from agent.mvp_pipeline import (
     SimulationValidationResult,
 )
 from agent.requirement_agent import RequirementAgent
-from agent.evidence_registry import EvidenceRegistry, EvidenceSummary, RegistrySnapshot
+from agent.evidence_registry import EvidenceOverview, EvidenceRegistry, EvidenceSummary, RegistrySnapshot
 from agent.trusted_source import TrustedSourcePolicy
 from agent.source_onboarding import (
     OnboardingAuditStore,
@@ -65,7 +65,7 @@ from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
 from registry.models import RobotKnowledgeRegistry
 from registry.v04 import RegistryDocumentV04
-from registry.v06 import EvidenceEnvironment, EvidenceRecord, RegistryDocumentV06
+from registry.v06 import EvidenceEnvironment, EvidenceRecord, ReferenceRobot, RegistryDocumentV06
 from registry.v05 import (
     CompatibilityClaim,
     ManagedComponent,
@@ -333,6 +333,11 @@ def create_app(
                 for submission in snapshot.document.community_submissions
             ),
         )
+
+    @app.get("/api/v1/evidence/overview", response_model=EvidenceOverview)
+    def read_evidence_overview() -> EvidenceOverview:
+        """Read coverage, conflicts, and reference targets without changing evidence."""
+        return EvidenceRegistry().overview(evidence_document)
 
     @app.get("/api/v1/evidence/{component_id}", response_model=EvidenceSummary)
     def read_evidence(component_id: str) -> EvidenceSummary:
@@ -706,6 +711,15 @@ def _default_evidence_document() -> RegistryDocumentV06:
                     os="ubuntu-24-04", ros_distro="jazzy", cpu_arch="amd64"
                 ),
                 provenance="g12-virtual-mvp",
+            )
+        ],
+        reference_robots=[
+            ReferenceRobot(
+                id="reference-a-diff-drive",
+                display_name="Reference A · Differential Drive (planned)",
+                component_ids=["generic-diff-base"],
+                state="planned",
+                provenance="m15-hardware-plan",
             )
         ],
     )

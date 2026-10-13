@@ -40,6 +40,10 @@ Isaac Sim G4 CLI results (2026-09-21):
   review state; pending community reports never become accepted evidence. It
   does not meet the broader evidence-population gate and does not imply E2,
   E4, or E5 evidence.
+- G12.6 overview: `GET /api/v1/evidence/overview` returns a read-only matrix
+  for every known component, conflict groups, and Reference Robot targets.
+  M14B renders the same coverage/conflict/reference facts. The only default
+  target, Reference A, is explicitly `planned`; it is not an E4 claim.
 - The next v0.5 step now includes `agent/source_onboarding`: an auditable,
   deterministic preview transaction for a registered source/component pair.
   It lists later sandbox steps but is explicitly non-executing. The Registry

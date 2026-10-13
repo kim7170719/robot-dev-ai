@@ -103,6 +103,14 @@ def test_evidence_snapshot_endpoint_is_read_only_and_content_addressed() -> None
     assert response.json()["evidence_record_count"] == 1
 
 
+def test_evidence_overview_exposes_coverage_and_planned_reference_without_promoting_it() -> None:
+    response = TestClient(create_app()).get("/api/v1/evidence/overview")
+
+    assert response.status_code == 200
+    assert response.json()["coverage_matrix"][0]["coverage_levels"] == ["E3"]
+    assert response.json()["reference_robots"][0]["state"] == "planned"
+
+
 def test_registry_management_endpoints_are_read_only_and_traceable() -> None:
     client = TestClient(create_app(read_only=True))
 
