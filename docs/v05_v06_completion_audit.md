@@ -9,7 +9,8 @@ Updated: 2026-10-13. This is a status audit, not new validation evidence.
 | Verified local artifact boundary | allowlisted SHA-256, path/type/size checks, artifact-bound audit tests | Complete foundation |
 | Dependency, ROS manifest, license metadata inspection | fixed no-network/read-only Docker commands; bounded parsing tests | Complete foundation |
 | Docker sandbox self-test | existing local CUDA image self-test evidence | Complete for the fixed self-test only |
-| Sandbox build execution / E2 evidence | Jazzy/colcon Dockerfile and readiness endpoint exist; no local image or approved candidate archive | External prerequisite remains |
+| Sandbox build execution | fixed, hash-bound no-network Docker build endpoint and tests; no local image or approved candidate archive | Complete implementation; external validation remains |
+| E2 evidence | no recorded isolated build of an approved archive | External prerequisite remains |
 | External discovery, clone/download | no candidate source or human review authorization is present | External/human prerequisite remains |
 | Promotion/deprecation CRUD | no persistent reviewer identity, reviewed diff, or observed build/hardware evidence exists | Human evidence prerequisite remains |
 | v0.6 schema, query, snapshot, review queue | `registry.v06`, `EvidenceRegistry`, snapshot/API tests | Complete foundation |

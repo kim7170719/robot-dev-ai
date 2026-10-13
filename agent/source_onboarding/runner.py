@@ -5,6 +5,7 @@ from __future__ import annotations
 import subprocess
 import xml.etree.ElementTree as ElementTree
 import re
+import shlex
 from pathlib import Path
 from typing import Callable, Literal
 
@@ -61,6 +62,17 @@ class LicenseMetadataResult(BaseModel):
     runner: Literal["docker"]
     license_path: str | None = None
     declared_spdx_expression: str | None = None
+    detail: str = Field(min_length=1, max_length=1024)
+
+
+class SandboxBuildResult(BaseModel):
+    """A bounded build observation; callers decide whether it becomes E2 evidence."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["passed", "blocked", "failed"]
+    runner: Literal["docker"]
+    image: str | None = None
     detail: str = Field(min_length=1, max_length=1024)
 
 
@@ -305,9 +317,57 @@ class IsolatedSandboxRunner:
         return LicenseMetadataResult(status="passed", runner="docker", license_path=license_path, declared_spdx_expression=expression, detail="license metadata read in an isolated read-only container; an SPDX declaration is source-provided metadata, not a legal determination")
 
     @staticmethod
+    def build_command(profile: SandboxRunnerProfile, bundle_path: Path) -> list[str]:
+        """Build a hash-verified tar archive only in an isolated writable tmpfs.
+
+        The fixed extractor refuses links and traversal before invoking colcon.
+        Nothing from the archive is unpacked onto the host filesystem.
+        """
+        if profile.runner != "docker" or profile.image is None:
+            raise ValueError("sandbox build requires a configured Docker build image")
+        if not bundle_path.name.endswith((".tar.gz", ".tgz")):
+            raise ValueError("sandbox build currently supports verified tar archives only")
+        extractor = (
+            "import pathlib,shutil,tarfile; "
+            "root=pathlib.Path('/work/src').resolve(); root.mkdir(parents=True,exist_ok=True); "
+            "archive=tarfile.open('/bundle/source','r:gz'); members=archive.getmembers(); "
+            "assert len(members)<=4096, 'archive has too many entries'; "
+            "[(lambda target,member: (target.is_relative_to(root) and (member.isdir() or member.isfile()) or (_ for _ in ()).throw(ValueError('unsafe archive member')))((root/member.name).resolve(),member)) for member in members]; "
+            "[(lambda target,member: (target.mkdir(parents=True,exist_ok=True) if member.isdir() else (target.parent.mkdir(parents=True,exist_ok=True), shutil.copyfileobj(archive.extractfile(member),target.open('wb')))))((root/member.name).resolve(),member)) for member in members]"
+        )
+        build = (
+            f"python3 -c {shlex.quote(extractor)} && "
+            "source /opt/ros/jazzy/setup.bash && "
+            "colcon build --base-paths /work/src --build-base /work/build "
+            "--install-base /work/install --log-base /work/log --event-handlers console_direct+"
+        )
+        return [
+            "docker", "run", "--rm", "--pull", "never", "--network", "none",
+            "--read-only", "--tmpfs", "/tmp:rw,nosuid,nodev,noexec,size=64m",
+            "--tmpfs", "/work:rw,nosuid,nodev,size=768m", "--pids-limit", "256",
+            "--memory", "1024m", "--cpus", "2", "--cap-drop", "ALL",
+            "--security-opt", "no-new-privileges", "--user", "65534:65534", "--mount",
+            f"type=bind,src={bundle_path},dst=/bundle/source,readonly", profile.image,
+            "/bin/bash", "-o", "pipefail", "-c", build,
+        ]
+
+    def build(self, profile: SandboxRunnerProfile, bundle_path: Path) -> SandboxBuildResult:
+        readiness = SandboxRunnerPreflight().evaluate(profile)
+        if readiness.status != "available":
+            return SandboxBuildResult(status="blocked", runner="docker", image=profile.image, detail="; ".join(readiness.issues) or "sandbox runner is not ready")
+        try:
+            completed = self.command_runner(self.build_command(profile, bundle_path))
+        except (ValueError, OSError, subprocess.TimeoutExpired) as error:
+            return SandboxBuildResult(status="blocked", runner="docker", image=profile.image, detail=str(error))
+        if completed.returncode == 0:
+            return SandboxBuildResult(status="passed", runner="docker", image=profile.image, detail="isolated colcon build passed; no registry promotion or evidence-level change was performed")
+        return SandboxBuildResult(status="failed", runner="docker", image=profile.image, detail=(completed.stderr or completed.stdout or "isolated colcon build failed")[:1024])
+
+    @staticmethod
     def _local_name(tag: str) -> str:
         return tag.rsplit("}", 1)[-1]
 
     @staticmethod
     def _run_command(command: list[str]) -> subprocess.CompletedProcess[str]:
-        return subprocess.run(command, capture_output=True, text=True, timeout=15, check=False)
+        timeout = 120 if "colcon build" in command[-1] else 15
+        return subprocess.run(command, capture_output=True, text=True, timeout=timeout, check=False)

@@ -247,6 +247,19 @@ def test_ros_manifest_endpoint_requires_a_passed_dependency_scan() -> None:
     assert response.status_code == 409
 
 
+def test_sandbox_build_endpoint_requires_authorized_metadata_review() -> None:
+    client = TestClient(create_app())
+    preview = client.post("/api/v1/registry/onboarding/preview", json={"requested_by": "operator", "component": {"id": "candidate-driver", "kind": "driver", "display_name": "Candidate Driver", "source_id": "candidate-source", "lifecycle": "discovered", "provenance": "test"}, "source": {"id": "candidate-source", "source_type": "official-repo", "url": "https://example.test/repo", "trust_level": "A", "license": {"spdx": "MIT", "redistribution": "allowed"}, "retrieved_at": "2026-10-13"}})
+
+    response = client.post(
+        f"/api/v1/registry/onboarding/{preview.json()['id']}/bundle/build",
+        json={"path": "/not-used/source.tar.gz", "expected_sha256": "0" * 64},
+    )
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "authorized bundle metadata review is required before an isolated build"
+
+
 def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:
     response = TestClient(create_app()).post(
         "/api/v1/requirements/parse",

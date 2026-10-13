@@ -110,6 +110,13 @@ from near-black to a readable deep blue-grey and added the existing Chinese /
 English locale control to the landing header. The control uses the same locale
 state as the workspace and is keyboard-focusable.
 
+v0.5 E2 sandbox-build gate (2026-10-13): a hash-bound local tar archive may
+now reach one fixed `colcon build` only after authorization plus passed scan,
+ROS-manifest, and license-metadata gates. The Docker build uses no network, a
+read-only root/archive mount, non-root user, dropped capabilities, constrained
+resources, and a disposable tmpfs workspace. It writes audit evidence only;
+no image or approved candidate has run it, so no E2 record is claimed.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

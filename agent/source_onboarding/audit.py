@@ -18,7 +18,7 @@ class OnboardingAuditRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     transaction_id: str
-    event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "dependency-scan-passed", "manifest-metadata-extracted", "license-metadata-extracted", "blocked"]
+    event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "dependency-scan-passed", "manifest-metadata-extracted", "license-metadata-extracted", "sandbox-build-passed", "blocked"]
     recorded_at: datetime
     detail: str = Field(min_length=1, max_length=512)
     bundle_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
@@ -50,7 +50,7 @@ class OnboardingAuditStore:
     def append(
         self,
         transaction: OnboardingTransaction,
-        event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "dependency-scan-passed", "manifest-metadata-extracted", "license-metadata-extracted", "blocked"],
+        event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "dependency-scan-passed", "manifest-metadata-extracted", "license-metadata-extracted", "sandbox-build-passed", "blocked"],
         detail: str,
         *,
         bundle_sha256: str | None = None,

@@ -17,10 +17,14 @@ export ROBOT_DEV_AI_SANDBOX_BUILD_IMAGE=robot-dev-ai/ros-jazzy-build:0.1
 ```
 
 `GET /api/v1/registry/sandbox/build-readiness` must report `available` before
-any future sandbox build is considered. That check never pulls an image or
-starts a container. Building the image may pull `ros:jazzy-ros-base`, so it is
-an explicit operator action and must be recorded separately from candidate
-source evidence.
+the fixed `POST /api/v1/registry/onboarding/{id}/bundle/build` endpoint can be
+considered. That check never pulls an image or starts a container. The endpoint
+requires the same archive to have passed human authorization, dependency scan,
+ROS manifest metadata, and license metadata gates; it runs a fixed no-network
+`colcon build` in a disposable tmpfs workspace. Building the image may pull
+`ros:jazzy-ros-base`, so it is an explicit operator action and must be recorded
+separately from candidate-source evidence.
 
-This image definition does not authorize acquisition, build, promotion, or
-installation of any third-party source archive.
+This image definition does not authorize acquisition, promotion, or
+installation of any third-party source archive. A successful isolated build is
+an auditable observation, not an automatic E2 record or a compatibility claim.

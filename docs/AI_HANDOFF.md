@@ -320,3 +320,11 @@ and Simulate views; no new control or execution capability was added.
 M14 landing accessibility pass (2026-10-13): lighten the entry stage to a
 readable deep blue-grey and expose the existing locale toggle in its header.
 It changes the same persisted locale state as the workspace toggle.
+
+v0.5 E2 sandbox-build gate (2026-10-13):
+`POST /api/v1/registry/onboarding/{id}/bundle/build` is implemented but has no
+runtime E2 evidence. It only accepts the exact previously verified archive
+after authorization, scan, ROS-manifest, and license gates. It uses a fixed,
+no-network Docker `colcon build` with a read-only root, non-root user, dropped
+capabilities, resource limits, and tmpfs workspace. It appends an audit event
+but never promotes registry state or creates evidence records.

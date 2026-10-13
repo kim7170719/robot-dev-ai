@@ -40,6 +40,34 @@ def test_docker_command_never_pulls_and_enforces_isolation_limits() -> None:
     assert "local/sandbox:stable" in command
 
 
+def test_sandbox_build_command_uses_only_a_read_only_archive_and_tmpfs_workspace() -> None:
+    command = IsolatedSandboxRunner.build_command(
+        SandboxRunnerProfile(runner="docker", image="local/ros-jazzy:stable"),
+        Path("/safe/root/source.tar.gz"),
+    )
+
+    assert command[:5] == ["docker", "run", "--rm", "--pull", "never"]
+    assert ["--network", "none"] == command[command.index("--network") : command.index("--network") + 2]
+    assert "--read-only" in command
+    assert "dst=/bundle/source,readonly" in command[command.index("--mount") + 1]
+    assert "/work:rw,nosuid,nodev,size=768m" in command
+    assert ["--cap-drop", "ALL"] == command[command.index("--cap-drop") : command.index("--cap-drop") + 2]
+    assert "colcon build" in command[-1]
+    assert "unsafe archive member" in command[-1]
+
+
+def test_sandbox_build_success_does_not_claim_a_registry_promotion() -> None:
+    result = IsolatedSandboxRunner(
+        lambda command: subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+    ).build(
+        SandboxRunnerProfile(runner="docker", image="local/ros-jazzy:stable"),
+        Path("/safe/root/source.tar.gz"),
+    )
+
+    assert result.status == "passed"
+    assert "no registry promotion" in result.detail
+
+
 def test_dependency_scan_mounts_one_archive_read_only_without_extracting() -> None:
     command = IsolatedSandboxRunner.dependency_scan_command(
         SandboxRunnerProfile(runner="docker", image="local/sandbox:stable"),
