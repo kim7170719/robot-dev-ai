@@ -60,3 +60,10 @@ does not execute code on the host.
 Next, add a persistent audit store and sandbox executor behind the trusted-
 source and mutation-safety policies. Only then should the Registry GUI expose
 a human-confirmed candidate onboarding action that can acquire code.
+
+Transaction persistence and runner preflight are now implemented. A
+caller-configured JSONL transaction store restores preview IDs after an API
+restart. The GUI exposes a runner status from a read-only preflight: no profile
+is `not-configured`; an unavailable configured binary is `blocked`; only an
+explicit bubblewrap or Docker profile with required isolation settings is
+`ready`. Preflight never starts Docker or bubblewrap.

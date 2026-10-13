@@ -14,6 +14,7 @@ from agent.mvp_pipeline import (
     SimulationCommandEvidence,
 )
 from api.app import ProjectSummary, create_app
+from agent.source_onboarding import OnboardingTransactionStore
 from registry.models import RobotKnowledgeRegistry
 from registry.v04 import RegistryDocumentV04
 from registry.v06 import EvidenceEnvironment, EvidenceRecord, RegistryDocumentV06
@@ -140,6 +141,18 @@ def test_onboarding_authorization_requires_a_previously_previewed_transaction() 
 
     assert response.status_code == 200
     assert response.json()["host_execution_performed"] is False
+
+
+def test_onboarding_transaction_survives_a_new_app_with_configured_store(tmp_path) -> None:
+    path = tmp_path / "transactions.jsonl"
+    first = TestClient(create_app(onboarding_transaction_store=OnboardingTransactionStore(path)))
+    preview = first.post("/api/v1/registry/onboarding/preview", json={"requested_by": "operator", "component": {"id": "candidate-driver", "kind": "driver", "display_name": "Candidate Driver", "source_id": "candidate-source", "lifecycle": "discovered", "provenance": "test"}, "source": {"id": "candidate-source", "source_type": "official-repo", "url": "https://example.test/repo", "trust_level": "A", "license": {"spdx": "MIT", "redistribution": "allowed"}, "retrieved_at": "2026-10-13"}})
+
+    second = TestClient(create_app(onboarding_transaction_store=OnboardingTransactionStore(path)))
+    restored = second.get(f"/api/v1/registry/onboarding/{preview.json()['id']}")
+
+    assert restored.status_code == 200
+    assert restored.json()["id"] == preview.json()["id"]
 
 
 def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:

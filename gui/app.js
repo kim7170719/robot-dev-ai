@@ -341,6 +341,15 @@ async function loadRegistry() {
   try { registryCatalog = await request("/registry/management"); renderRegistry(); if (registryCatalog.components[0]) reviewSource(registryCatalog.components[0].source_id); }
   catch (error) { document.querySelector("#registry-catalog").textContent = error.message; }
 }
+async function loadSandboxReadiness() {
+  try {
+    const readiness = await request("/registry/sandbox/readiness");
+    const title = document.querySelector("#sandbox-readiness");
+    const detail = document.querySelector("#sandbox-readiness-detail");
+    title.textContent = readiness.status === "ready" ? `Sandbox runner：${readiness.runner} 已準備` : readiness.status === "blocked" ? "Sandbox runner：已阻擋" : "Sandbox runner：尚未設定";
+    detail.textContent = readiness.status === "ready" ? "隔離條件已通過 preflight；仍需人工確認與未來 runner 執行。" : readiness.issues.join(" ");
+  } catch (error) { document.querySelector("#sandbox-readiness-detail").textContent = error.message; }
+}
 document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); setView(link.dataset.viewLink); }));
 document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go)));
 document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); }));
@@ -402,6 +411,7 @@ applyLocale();
 request("/evidence/generic-diff-base").then(renderEvidence).catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; });
 request("/evidence/snapshot").then(renderEvidenceSnapshot).catch((error) => { document.querySelector("#evidence-snapshot").textContent = error.message; });
 loadRegistry();
+loadSandboxReadiness();
 refreshSimulation();
 window.setInterval(() => {
   if (document.querySelector("#live-preview").checked && document.querySelector("#camera-source").value !== "webcam") refreshSimulationFrame();

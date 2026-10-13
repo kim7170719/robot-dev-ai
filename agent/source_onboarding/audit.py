@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
@@ -43,6 +44,66 @@ class OnboardingAuditStore:
             with self.path.open("a", encoding="utf-8") as audit_file:
                 audit_file.write(record.model_dump_json() + "\n")
         return record
+
+
+class OnboardingTransactionStore:
+    """Recover preview transactions across API restarts from caller-owned JSONL."""
+
+    def __init__(self, path: Path | None = None) -> None:
+        self.path = path
+        self.transactions: dict[str, OnboardingTransaction] = {}
+        self._load()
+
+    def _load(self) -> None:
+        if self.path is None or not self.path.exists():
+            return
+        for line in self.path.read_text(encoding="utf-8").splitlines():
+            transaction = OnboardingTransaction.model_validate_json(line)
+            self.transactions[transaction.id] = transaction
+
+    def save(self, transaction: OnboardingTransaction) -> None:
+        self.transactions[transaction.id] = transaction
+        if self.path is not None:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            with self.path.open("a", encoding="utf-8") as store_file:
+                store_file.write(transaction.model_dump_json() + "\n")
+
+
+class SandboxRunnerProfile(BaseModel):
+    """The minimum isolation configuration a future runner must satisfy."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    runner: Literal["bubblewrap", "docker"]
+    network_disabled: Literal[True] = True
+    read_only_root: Literal[True] = True
+    temporary_workspace: Literal[True] = True
+
+
+class SandboxRunnerReadiness(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["ready", "not-configured", "blocked"]
+    runner: str | None = None
+    issues: list[str] = Field(default_factory=list)
+
+
+class SandboxRunnerPreflight:
+    """Inspect runner availability only; never starts a container or namespace."""
+
+    def evaluate(self, profile: SandboxRunnerProfile | None) -> SandboxRunnerReadiness:
+        if profile is None:
+            return SandboxRunnerReadiness(
+                status="not-configured",
+                issues=["no sandbox runner profile is configured"],
+            )
+        binary = "bwrap" if profile.runner == "bubblewrap" else "docker"
+        if shutil.which(binary) is None:
+            return SandboxRunnerReadiness(
+                status="blocked", runner=profile.runner,
+                issues=[f"configured sandbox runner is unavailable: {binary}"],
+            )
+        return SandboxRunnerReadiness(status="ready", runner=profile.runner)
 
 
 class SandboxAuthorizationResult(BaseModel):

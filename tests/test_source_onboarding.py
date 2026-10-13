@@ -1,5 +1,11 @@
 from agent.source_onboarding import OnboardingRequest, SourceOnboardingPlanner
-from agent.source_onboarding import OnboardingAuditStore, SandboxExecutorContract
+from agent.source_onboarding import (
+    OnboardingAuditStore,
+    OnboardingTransactionStore,
+    SandboxExecutorContract,
+    SandboxRunnerPreflight,
+    SandboxRunnerProfile,
+)
 from registry.v05 import ManagedComponent, SourceLicense, TrustedSource
 
 
@@ -41,3 +47,19 @@ def test_confirmed_handoff_persists_audit_without_host_execution(tmp_path) -> No
     assert result.status == "sandbox-runner-authorized"
     assert result.host_execution_performed is False
     assert store.path.read_text(encoding="utf-8").count("sandbox-runner-authorized") == 1
+
+
+def test_transaction_store_recovers_preview_across_a_new_store_instance(tmp_path) -> None:
+    transaction = SourceOnboardingPlanner().preview(_request())
+    path = tmp_path / "transactions.jsonl"
+    OnboardingTransactionStore(path).save(transaction)
+
+    restored = OnboardingTransactionStore(path)
+
+    assert restored.transactions[transaction.id] == transaction
+
+
+def test_sandbox_runner_preflight_is_not_configured_without_a_profile() -> None:
+    result = SandboxRunnerPreflight().evaluate(None)
+
+    assert result.status == "not-configured"

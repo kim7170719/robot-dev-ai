@@ -42,10 +42,14 @@ from agent.evidence_registry import EvidenceRegistry, EvidenceSummary, RegistryS
 from agent.trusted_source import TrustedSourcePolicy
 from agent.source_onboarding import (
     OnboardingAuditStore,
+    OnboardingTransactionStore,
     OnboardingRequest,
     OnboardingTransaction,
     SandboxAuthorizationResult,
     SandboxExecutorContract,
+    SandboxRunnerPreflight,
+    SandboxRunnerProfile,
+    SandboxRunnerReadiness,
     SourceOnboardingPlanner,
 )
 from agent.schemas import RequirementResult
@@ -230,6 +234,7 @@ def create_app(
     evidence_document: RegistryDocumentV06 | None = None,
     management_document: RegistryManagementDocumentV05 | None = None,
     onboarding_audit_store: OnboardingAuditStore | None = None,
+    onboarding_transaction_store: OnboardingTransactionStore | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
     simulation_frame_collector_factory: Callable[[], SimulationFrameCollector] | None = None,
@@ -251,7 +256,8 @@ def create_app(
     evidence_document = evidence_document or _default_evidence_document()
     management_document = management_document or _default_management_document()
     audit_store = onboarding_audit_store or OnboardingAuditStore()
-    pending_onboarding: dict[str, OnboardingTransaction] = {}
+    transaction_store = onboarding_transaction_store or OnboardingTransactionStore()
+    pending_onboarding = transaction_store.transactions
     pending_plans: dict[str, WorkspacePlan] = {}
     generated_plans: dict[str, WorkspacePlan] = {}
     collector_factory = build_collector_factory or BuildCommandCollector
@@ -334,13 +340,32 @@ def create_app(
     def preview_source_onboarding(request: OnboardingRequest) -> OnboardingTransaction:
         """Return an audit-ready sandbox plan; it does not acquire or execute a source."""
         transaction = SourceOnboardingPlanner().preview(request)
-        pending_onboarding[transaction.id] = transaction
+        transaction_store.save(transaction)
         audit_store.append(
             transaction,
             "blocked" if transaction.status == "blocked" else "planned",
             "onboarding plan previewed; no source was acquired or executed",
         )
         return transaction
+
+    @app.get(
+        "/api/v1/registry/onboarding/{transaction_id}",
+        response_model=OnboardingTransaction,
+    )
+    def read_onboarding_transaction(transaction_id: str) -> OnboardingTransaction:
+        transaction = pending_onboarding.get(transaction_id)
+        if transaction is None:
+            raise HTTPException(status_code=404, detail="onboarding transaction was not found")
+        return transaction
+
+    @app.get("/api/v1/registry/sandbox/readiness", response_model=SandboxRunnerReadiness)
+    def read_sandbox_readiness() -> SandboxRunnerReadiness:
+        configured = os.environ.get("ROBOT_DEV_AI_SANDBOX_RUNNER")
+        if configured not in {"bubblewrap", "docker"}:
+            return SandboxRunnerPreflight().evaluate(None)
+        return SandboxRunnerPreflight().evaluate(
+            SandboxRunnerProfile(runner=configured)
+        )
 
     @app.post(
         "/api/v1/registry/onboarding/authorize-sandbox",

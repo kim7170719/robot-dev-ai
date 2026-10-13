@@ -45,6 +45,12 @@ Isaac Sim G4 CLI results (2026-09-21):
   It lists later sandbox steps but is explicitly non-executing. The Registry
   GUI offers “預覽安全測試計畫”; it cannot authorize or run acquisition. A
   persistent audit store and sandbox executor remain the next implementation.
+- Transaction recovery and runner preflight: provide an
+  `OnboardingTransactionStore(path)` to persist/recover previews across API
+  restarts. `GET /registry/sandbox/readiness` only checks an explicit
+  `ROBOT_DEV_AI_SANDBOX_RUNNER` choice (`bubblewrap` or `docker`) and binary
+  availability; it never starts a runner. The Registry UI labels this as
+  ready/not configured/blocked. Real sandbox execution remains future work.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus

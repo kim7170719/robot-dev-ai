@@ -63,6 +63,13 @@ state is `sandbox-runner-authorized`, not package execution: host execution is
 hard-coded false. The optional JSONL audit store is caller-configured, keeping
 the project tree free of generated audit logs. Full suite: **99 tests**.
 
+v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
+caller-configured transaction JSONL store restores preview transactions after
+an API restart. Read-only runner preflight reports `not-configured`, `blocked`,
+or `ready` for an explicitly configured Docker/bubblewrap binary; it never
+starts either tool. Registry GUI displays this truthful readiness state. Full
+suite: **102 tests**.
+
 ## M8 Template Engine / Gate G8
 
 | Criterion | Status | Evidence |
