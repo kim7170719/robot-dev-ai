@@ -146,6 +146,11 @@ is checked again. Docker receives that snapshot rather than the operator's
 mutable source path, closing the verification-to-mount replacement window. No
 archive was executed and no E2 result has been recorded.
 
+v0.5 E2 snapshot file-type hardening (2026-10-13): snapshot creation now opens
+the source with no-follow semantics and checks the opened descriptor is a
+regular file. A regression test replaces the reviewed path with a symlink after
+verification and confirms the build handoff is rejected. No E2 build ran.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

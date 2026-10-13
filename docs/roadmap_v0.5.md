@@ -139,8 +139,10 @@ mount, and a disposable tmpfs workspace. When Docker returns a local image ID,
 the build uses that immutable ID rather than the configured mutable tag. Before
 Docker mounts it, the allowlisted archive is copied to a short-lived read-only
 snapshot and re-hashed, so a mutable operator path cannot be replaced between
-verification and build. The append-only audit log retains the image reference
-and a SHA-256 digest of captured build output, but the build neither promotes a
-component nor creates an E2 record.
+verification and build. Snapshot creation refuses symlinks and other
+non-regular source descriptors even if the path changes after initial review.
+The append-only audit log retains the image reference and a SHA-256 digest of
+captured build output, but the build neither promotes a component nor creates
+an E2 record.
 No local Jazzy image or approved archive has yet run this endpoint, so E2
 evidence remains unproven.

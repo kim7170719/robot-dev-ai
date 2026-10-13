@@ -6,6 +6,7 @@ from contextlib import contextmanager
 import hashlib
 import os
 from pathlib import Path
+import stat
 import tempfile
 from typing import Iterator, Literal
 
@@ -89,7 +90,11 @@ class LocalSourceBundleGate:
             hasher = hashlib.sha256()
             copied = 0
             try:
-                with Path(request.path).open("rb") as source, snapshot.open("xb") as target:
+                source_fd = os.open(request.path, os.O_RDONLY | os.O_NOFOLLOW)
+                with os.fdopen(source_fd, "rb") as source, snapshot.open("xb") as target:
+                    if not stat.S_ISREG(os.fstat(source.fileno()).st_mode):
+                        yield None
+                        return
                     for chunk in iter(lambda: source.read(1024 * 1024), b""):
                         copied += len(chunk)
                         if copied > self.max_bytes:

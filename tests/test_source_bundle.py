@@ -60,3 +60,26 @@ def test_local_bundle_rejects_symlink_even_when_it_resolves_inside_root(tmp_path
 
     assert result.status == "blocked"
     assert "symlink" in result.issues[0]
+
+
+def test_verified_snapshot_rejects_a_source_path_replaced_with_a_symlink(tmp_path, monkeypatch) -> None:
+    bundle = tmp_path / "driver.tar.gz"
+    bundle.write_bytes(b"reviewed source archive")
+    replacement = tmp_path / "replacement.tar.gz"
+    replacement.write_bytes(b"replacement")
+    digest = hashlib.sha256(bundle.read_bytes()).hexdigest()
+    gate = LocalSourceBundleGate(tmp_path, {digest})
+    verified = gate.verify
+
+    def verify_then_replace(request: LocalSourceBundleRequest):
+        result = verified(request)
+        bundle.unlink()
+        bundle.symlink_to(replacement)
+        return result
+
+    monkeypatch.setattr(gate, "verify", verify_then_replace)
+
+    with gate.verified_snapshot(
+        LocalSourceBundleRequest(path=str(bundle), expected_sha256=digest)
+    ) as snapshot:
+        assert snapshot is None
