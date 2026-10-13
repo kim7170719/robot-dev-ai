@@ -31,9 +31,10 @@ claim of real-world VERIFIED support.
 ## Deferred v0.5 stages
 
 - Discovery jobs and external metadata retrieval.
-- Audit-log-backed CRUD, user identity, reviewable diffs, and persistence.
-- Sandbox clone/download, dependency scan, build/test, ROS validation, and
+- Identity-backed CRUD, reviewer identity, reviewable diffs, and
   promotion/deprecation mutations.
+- Sandbox clone/download, broader test execution, and ROS interface validation
+  beyond the fixed local-bundle metadata/build gates.
 - Official ROS package onboarding and Vendor SDK/protocol adapter skeletons.
 - Promotion to `verified`, which must require environment, version, hardware,
   evidence, and human approval.
@@ -58,9 +59,9 @@ append-only audited and only authorizes handoff to a future sandbox runner; it
 does not execute code on the host.
 
 The caller-configured transaction and audit JSONL stores now both recover typed
-records after an API restart. The remaining boundary is a deliberately limited
-sandbox executor: no source acquisition, installation, build, test, or registry
-promotion is authorized by persistence or recovery alone.
+records after an API restart. Persistence or recovery alone never authorizes
+source acquisition, installation, broader test execution, or registry
+promotion. The separately gated fixed local-bundle build is described below.
 
 Transaction persistence and runner preflight are now implemented. A
 caller-configured JSONL transaction store restores preview IDs after an API
