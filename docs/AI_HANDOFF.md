@@ -395,3 +395,8 @@ caller-owned snapshot directory for cross-restart benchmark inputs. Each file
 is content-addressed, created without overwriting an existing snapshot, and
 re-hashed when read; tampering is rejected. Default API operation remains
 memory-only and does not create files.
+
+v0.6 snapshot operator configuration (2026-10-13): the standard API factory
+uses `ROBOT_DEV_AI_EVIDENCE_SNAPSHOT_ROOT` only when an operator explicitly
+sets it. The configured directory receives content-addressed snapshots; an
+unset value preserves memory-only, no-write operation.

@@ -278,7 +278,7 @@ def create_app(
 
     summary = project_summary or _default_project_summary()
     evidence_document = evidence_document or _default_evidence_document()
-    snapshot_store = evidence_snapshot_store or RegistrySnapshotStore()
+    snapshot_store = evidence_snapshot_store or _snapshot_store_from_environment()
     management_document = management_document or _default_management_document()
     audit_store = onboarding_audit_store or OnboardingAuditStore()
     transaction_store = onboarding_transaction_store or OnboardingTransactionStore()
@@ -757,6 +757,12 @@ def create_app(
     gui_root = Path(__file__).parents[1] / "gui"
     app.mount("/", StaticFiles(directory=gui_root, html=True), name="gui")
     return app
+
+
+def _snapshot_store_from_environment() -> RegistrySnapshotStore:
+    """Use operator-provided persistence only when its directory is explicit."""
+    root = os.environ.get("ROBOT_DEV_AI_EVIDENCE_SNAPSHOT_ROOT")
+    return RegistrySnapshotStore(Path(root)) if root else RegistrySnapshotStore()
 
 
 def _default_project_summary() -> ProjectSummary:
