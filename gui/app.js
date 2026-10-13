@@ -293,7 +293,7 @@ function renderEvidence(summary) {
   if (!record) { target.textContent = "No recorded evidence."; return; }
   target.innerHTML = `<article><small>EVIDENCE LEVEL</small><strong>${record.evidence_level}</strong><p>${record.status.toUpperCase()} · trust ${record.source_trust}</p></article><article><small>RECORDED ENVIRONMENT</small><strong>${record.environment.os}</strong><p>${record.environment.ros_distro} · ${record.environment.cpu_arch}</p></article><article><small>PROVENANCE</small><strong>${record.provenance}</strong><p>${summary.coverage_levels.join(" · ")} coverage${summary.conflict_record_ids.length ? " · conflict recorded" : ""}</p></article>`;
   const pending = document.querySelector("#community-review-count");
-  if (pending) pending.textContent = summary.pending_community_submission_ids.length ? `社群提交：${summary.pending_community_submission_ids.length} 筆待人工審查，尚未納入證據。` : "社群提交：尚無待審查資料";
+  if (pending) pending.textContent = summary.pending_community_submission_ids.length ? (locale === "en" ? `${summary.pending_community_submission_ids.length} community reports need human review.` : `有 ${summary.pending_community_submission_ids.length} 筆社群資料等待人工確認。`) : (locale === "en" ? "No community reports waiting for review." : "目前沒有等待確認的社群資料。");
 }
 function renderEvidenceSnapshot(snapshot) {
   const target = document.querySelector("#evidence-snapshot");
@@ -308,26 +308,26 @@ function renderEvidenceOverview(overview) {
   const matrix = document.querySelector("#evidence-matrix");
   const count = document.querySelector("#evidence-matrix-count");
   matrix.replaceChildren();
-  count.textContent = `${overview.coverage_matrix.length} 個已知元件`;
+  count.textContent = locale === "en" ? `${overview.coverage_matrix.length} known components` : `${overview.coverage_matrix.length} 個已知元件`;
   if (!overview.coverage_matrix.length) {
     const row = document.createElement("tr"); const cell = document.createElement("td");
-    cell.colSpan = 4; cell.textContent = "目前沒有可顯示的元件。"; row.append(cell); matrix.append(row);
+    cell.colSpan = 4; cell.textContent = locale === "en" ? "No components are available to show." : "目前沒有可顯示的元件。"; row.append(cell); matrix.append(row);
   }
   overview.coverage_matrix.forEach((item) => {
     const row = document.createElement("tr");
     appendEvidenceCell(row, item.component_id);
-    appendEvidenceCell(row, item.coverage_levels.join(" · ") || "尚無記錄");
+    appendEvidenceCell(row, item.coverage_levels.join(" · ") || (locale === "en" ? "No record yet" : "尚無記錄"));
     appendEvidenceCell(row, String(item.record_count));
     const notices = [];
-    if (item.conflict_record_ids.length) notices.push("同環境結果矛盾");
-    if (item.pending_community_submission_ids.length) notices.push(`${item.pending_community_submission_ids.length} 筆待審查`);
-    appendEvidenceCell(row, notices.join("；") || "無");
+    if (item.conflict_record_ids.length) notices.push(locale === "en" ? "Results disagree" : "同一環境的結果不同");
+    if (item.pending_community_submission_ids.length) notices.push(locale === "en" ? `${item.pending_community_submission_ids.length} waiting for review` : `${item.pending_community_submission_ids.length} 筆等待確認`);
+    appendEvidenceCell(row, notices.join(locale === "en" ? "; " : "；") || (locale === "en" ? "None" : "沒有"));
     matrix.append(row);
   });
   const conflicts = document.querySelector("#evidence-conflicts");
   conflicts.replaceChildren();
   if (!overview.conflicts.length) {
-    conflicts.textContent = "目前沒有同環境的互相矛盾結果。";
+    conflicts.textContent = locale === "en" ? "No results disagree in the same environment." : "目前沒有同一環境下互相矛盾的結果。";
   } else {
     overview.conflicts.forEach((conflict) => {
       const item = document.createElement("p");
@@ -338,13 +338,13 @@ function renderEvidenceOverview(overview) {
   const references = document.querySelector("#reference-robot-list");
   references.replaceChildren();
   if (!overview.reference_robots.length) {
-    references.textContent = "尚未定義 reference robot。";
+    references.textContent = locale === "en" ? "No reference robot has been defined." : "尚未設定參考機器人。";
   }
   overview.reference_robots.forEach((reference) => {
     const item = document.createElement("article");
     const title = document.createElement("strong"); title.textContent = reference.display_name;
-    const state = document.createElement("span"); state.textContent = reference.state === "planned" ? "計畫中，尚未驗證" : "具有對應證據";
-    const detail = document.createElement("p"); detail.textContent = `元件：${reference.component_ids.join(" · ")} · ${reference.provenance}`;
+    const state = document.createElement("span"); state.textContent = reference.state === "planned" ? (locale === "en" ? "Planned — not verified yet" : "正在規劃，尚未實際驗證") : (locale === "en" ? "Evidence is available" : "已有對應資料");
+    const detail = document.createElement("p"); detail.textContent = `${locale === "en" ? "Components" : "包含元件"}：${reference.component_ids.join(" · ")} · ${reference.provenance}`;
     item.append(title, state, detail); references.append(item);
   });
 }
@@ -360,7 +360,7 @@ function renderSourceReview(review) {
   const target = document.querySelector("#source-review-result");
   target.replaceChildren();
   const title = document.createElement("strong");
-  title.textContent = review.disposition === "sandbox-only" ? "僅可進入安全測試環境" : review.disposition === "blocked" ? "此來源已被阻擋" : "目前僅能檢視資料";
+  title.textContent = review.disposition === "sandbox-only" ? (locale === "en" ? "Can be checked in a safe test environment" : "目前只能在安全測試環境中檢查") : review.disposition === "blocked" ? (locale === "en" ? "This source is blocked" : "這個來源目前不能使用") : (locale === "en" ? "Information only" : "目前只能查看資料");
   const detail = document.createElement("p");
   detail.textContent = review.reasons.join(" ");
   target.append(title, detail);
@@ -373,18 +373,18 @@ async function previewOnboarding(component) {
   const source = registryCatalog?.sources.find((item) => item.id === component.source_id);
   if (!source) return;
   const target = document.querySelector("#source-review-result");
-  target.textContent = "正在建立安全測試計畫…";
+  target.textContent = locale === "en" ? "Preparing a safe test plan…" : "正在準備安全測試計畫…";
   try {
     const plan = await request("/registry/onboarding/preview", { method: "POST", body: JSON.stringify({ component, source, requested_by: "local-operator" }) });
     target.replaceChildren();
     const title = document.createElement("strong");
-    title.textContent = plan.status === "blocked" ? "此來源無法建立安全測試計畫" : "安全測試計畫等待人工確認";
+    title.textContent = plan.status === "blocked" ? (locale === "en" ? "A safe test plan cannot be made for this source" : "這個來源目前不能建立安全測試計畫") : (locale === "en" ? "Safe test plan needs your confirmation" : "安全測試計畫等待你的確認");
     const detail = document.createElement("p");
     detail.textContent = plan.status === "blocked" ? plan.source_review.reasons.join(" ") : `預定步驟：${plan.sandbox_steps.join(" → ")}。目前沒有任何執行權限。`;
     target.append(title, detail);
     if (plan.status !== "blocked") {
       const authorize = document.createElement("button");
-      authorize.type = "button"; authorize.className = "secondary"; authorize.textContent = "記錄人工確認（不執行）";
+      authorize.type = "button"; authorize.className = "secondary"; authorize.textContent = locale === "en" ? "Record confirmation (do not run)" : "記錄確認（不執行）";
       authorize.addEventListener("click", async () => {
         authorize.disabled = true;
         try {
@@ -405,7 +405,7 @@ function renderRegistry() {
   const sources = new Map(registryCatalog.sources.map((source) => [source.id, source]));
   const components = registryCatalog.components.filter((component) => filter === "all" || component.kind === filter);
   target.replaceChildren();
-  if (!components.length) { target.textContent = "目前沒有符合篩選條件的元件。"; return; }
+  if (!components.length) { target.textContent = locale === "en" ? "No components match this filter." : "沒有符合這個篩選條件的元件。"; return; }
   components.forEach((component) => {
     const source = sources.get(component.source_id);
     const article = document.createElement("article"); article.className = "registry-row";
@@ -417,8 +417,8 @@ function renderRegistry() {
     const provenance = document.createElement("div"); provenance.className = "registry-source";
     provenance.textContent = `${source?.trust_level || "—"} trust · ${source?.license?.spdx || "license pending"}`;
     const actions = document.createElement("div"); actions.className = "registry-actions";
-    const button = document.createElement("button"); button.type = "button"; button.className = "secondary"; button.textContent = "查看來源審查"; button.addEventListener("click", () => reviewSource(component.source_id));
-    const preview = document.createElement("button"); preview.type = "button"; preview.className = "secondary"; preview.textContent = "預覽安全測試計畫"; preview.addEventListener("click", () => previewOnboarding(component));
+    const button = document.createElement("button"); button.type = "button"; button.className = "secondary"; button.textContent = locale === "en" ? "Review source" : "查看來源說明"; button.addEventListener("click", () => reviewSource(component.source_id));
+    const preview = document.createElement("button"); preview.type = "button"; preview.className = "secondary"; preview.textContent = locale === "en" ? "Preview safe test plan" : "預覽安全測試計畫"; preview.addEventListener("click", () => previewOnboarding(component));
     actions.append(button, preview);
     article.append(identity, state, provenance, actions); target.append(article);
   });
