@@ -78,6 +78,13 @@ when the current environment denied loopback configuration
 `available`, not `ready`; only a passed self-test establishes isolation. The
 blocked result is retained as evidence rather than weakening network isolation.
 
+v0.5 Docker isolated runner fallback (2026-10-13): **PASS.** The fixed
+self-test ran from the already-local `nvidia/cuda:12.6.2-base-ubuntu24.04`
+image with `--pull never`, no network, read-only root, noexec tmpfs, dropped
+capabilities, no-new-privileges, non-root user, and PID/memory/CPU limits. It
+passed with no source acquisition or external source execution. Full suite:
+**108 tests**.
+
 ## M8 Template Engine / Gate G8
 
 | Criterion | Status | Evidence |

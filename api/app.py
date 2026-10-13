@@ -12,6 +12,8 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
+from api.sandbox import sandbox_profile_from_environment
+
 from agent.compatibility_resolver import (
     CompatibilityResolver,
     ResolutionRequest,
@@ -368,12 +370,10 @@ def create_app(
 
     @app.get("/api/v1/registry/sandbox/readiness", response_model=SandboxRunnerReadiness)
     def read_sandbox_readiness() -> SandboxRunnerReadiness:
-        configured = os.environ.get("ROBOT_DEV_AI_SANDBOX_RUNNER")
-        if configured not in {"bubblewrap", "docker"}:
+        profile = sandbox_profile_from_environment()
+        if profile is None:
             return SandboxRunnerPreflight().evaluate(None)
-        return SandboxRunnerPreflight().evaluate(
-            SandboxRunnerProfile(runner=configured)
-        )
+        return SandboxRunnerPreflight().evaluate(profile)
 
     @app.post(
         "/api/v1/registry/onboarding/authorize-sandbox",
@@ -393,13 +393,13 @@ def create_app(
     def run_sandbox_self_test(request: SandboxSelfTestRequest) -> SandboxSelfTestResult:
         if not audit_store.has_event(request.transaction_id, "sandbox-runner-authorized"):
             raise HTTPException(status_code=409, detail="sandbox runner authorization is required")
-        configured = os.environ.get("ROBOT_DEV_AI_SANDBOX_RUNNER")
-        if configured not in {"bubblewrap", "docker"}:
+        profile = sandbox_profile_from_environment()
+        if profile is None:
             return SandboxSelfTestResult(
                 status="blocked", runner="unconfigured",
                 detail="no sandbox runner profile is configured",
             )
-        return isolated_runner.self_test(SandboxRunnerProfile(runner=configured))
+        return isolated_runner.self_test(profile)
 
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)
     def parse_requirement(request: RequirementRequest) -> RequirementResult:

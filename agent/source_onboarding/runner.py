@@ -32,8 +32,17 @@ class IsolatedSandboxRunner:
 
     @staticmethod
     def self_test_command(profile: SandboxRunnerProfile) -> list[str]:
-        if profile.runner != "bubblewrap":
-            raise ValueError("only bubblewrap is enabled for the first isolated self-test")
+        if profile.runner == "docker":
+            if profile.image is None:
+                raise ValueError("Docker sandbox runner requires an explicitly configured local image")
+            return [
+                "docker", "run", "--rm", "--pull", "never", "--network", "none",
+                "--read-only", "--tmpfs", "/tmp:rw,nosuid,nodev,noexec,size=64m",
+                "--pids-limit", "64", "--memory", "512m", "--cpus", "1",
+                "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+                "--user", "65534:65534", profile.image, "/bin/sh", "-c",
+                "test ! -w /etc && test -w /tmp",
+            ]
         return [
             "bwrap", "--die-with-parent", "--unshare-user", "--uid", "0", "--gid", "0",
             "--unshare-pid", "--unshare-net", "--new-session", "--ro-bind", "/", "/",
@@ -47,11 +56,6 @@ class IsolatedSandboxRunner:
             return SandboxSelfTestResult(
                 status="blocked", runner=profile.runner,
                 detail="; ".join(readiness.issues) or "sandbox runner is not ready",
-            )
-        if profile.runner != "bubblewrap":
-            return SandboxSelfTestResult(
-                status="blocked", runner=profile.runner,
-                detail="Docker execution is not enabled in the first runner adapter",
             )
         try:
             completed = self.command_runner(self.self_test_command(profile))

@@ -35,6 +35,14 @@ Operation not permitted`. No source was acquired or executed. Treat a detected
 binary as `available`, never `ready`; use a namespace-capable host or a
 separately reviewed Docker runner before source acquisition.
 
+Docker fallback is now **PASS** with the already-local
+`nvidia/cuda:12.6.2-base-ubuntu24.04` image: the fixed test uses `--pull never`,
+no network, read-only root, noexec tmpfs, dropped capabilities, non-root user,
+and PID/memory/CPU limits. Set `ROBOT_DEV_AI_SANDBOX_RUNNER=docker` and
+`ROBOT_DEV_AI_SANDBOX_IMAGE=nvidia/cuda:12.6.2-base-ubuntu24.04` only to expose
+this verified self-test. It still does not permit source acquisition. Full
+suite: **108 tests passed**.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

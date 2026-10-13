@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from .transaction import OnboardingTransaction
 
@@ -81,9 +81,16 @@ class SandboxRunnerProfile(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     runner: Literal["bubblewrap", "docker"]
+    image: str | None = Field(default=None, min_length=1, max_length=256)
     network_disabled: Literal[True] = True
     read_only_root: Literal[True] = True
     temporary_workspace: Literal[True] = True
+
+    @model_validator(mode="after")
+    def validate_docker_image(self) -> SandboxRunnerProfile:
+        if self.runner == "docker" and self.image is None:
+            raise ValueError("Docker sandbox runner requires an explicitly configured local image")
+        return self
 
 
 class SandboxRunnerReadiness(BaseModel):

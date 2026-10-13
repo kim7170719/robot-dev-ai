@@ -56,6 +56,13 @@ Isaac Sim G4 CLI results (2026-09-21):
   (`RTM_NEWADDR: Operation not permitted`). No source was acquired or executed.
   Do not call the local runner ready; use a host that permits the required user
   and network namespace setup, or establish a separately reviewed Docker path.
+- Docker isolated runner: now validated using the already local
+  `nvidia/cuda:12.6.2-base-ubuntu24.04` image. Configure the GUI/API process
+  only when needed with `ROBOT_DEV_AI_SANDBOX_RUNNER=docker` and
+  `ROBOT_DEV_AI_SANDBOX_IMAGE=nvidia/cuda:12.6.2-base-ubuntu24.04`. The fixed
+  self-test passed with `--pull never`, network disabled, read-only root,
+  tmpfs, dropped capabilities, no-new-privileges, non-root user, and resource
+  limits. This does not authorize external source acquisition.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus

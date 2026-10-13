@@ -68,3 +68,10 @@ is `not-configured`; an unavailable configured binary is `blocked`; an
 explicit bubblewrap or Docker profile with required isolation settings is only
 `available` until the isolated self-test passes. Preflight never starts Docker
 or bubblewrap.
+
+Docker is now the validated fallback on this host. It requires an explicit
+`ROBOT_DEV_AI_SANDBOX_IMAGE` that is already local and runs the fixed self-test
+with `--pull never`, `--network none`, `--read-only`, a noexec tmpfs, dropped
+capabilities, no-new-privileges, non-root UID, and PID/memory/CPU limits. The
+local `nvidia/cuda:12.6.2-base-ubuntu24.04` self-test passed on 2026-10-13. It
+does not establish permission to acquire external source code.
