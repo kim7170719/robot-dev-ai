@@ -54,6 +54,7 @@ from agent.source_onboarding import (
     SandboxRunnerReadiness,
     IsolatedSandboxRunner,
     DependencyScanResult,
+    RosManifestMetadataResult,
     LocalSourceBundleGate,
     LocalSourceBundleRequest,
     LocalSourceBundleVerification,
@@ -450,6 +451,33 @@ def create_app(
         audit_store.append(
             transaction,
             "dependency-scan-passed" if result.status == "passed" else "blocked",
+            result.detail,
+        )
+        return result
+
+    @app.post(
+        "/api/v1/registry/onboarding/{transaction_id}/bundle/ros-manifest",
+        response_model=RosManifestMetadataResult,
+    )
+    def extract_verified_ros_manifest_metadata(
+        transaction_id: str, request: LocalSourceBundleRequest
+    ) -> RosManifestMetadataResult:
+        transaction = pending_onboarding.get(transaction_id)
+        if transaction is None:
+            raise HTTPException(status_code=404, detail="onboarding transaction was not found")
+        if not audit_store.has_event(transaction_id, "dependency-scan-passed"):
+            raise HTTPException(status_code=409, detail="a passed dependency scan is required")
+        profile = sandbox_profile_from_environment()
+        bundle_path = bundle_gate.verified_path(request)
+        if profile is None or bundle_path is None:
+            return RosManifestMetadataResult(
+                status="blocked", runner="docker",
+                detail="configured Docker runner and verified local tar bundle are required",
+            )
+        result = isolated_runner.ros_manifest_metadata(profile, bundle_path)
+        audit_store.append(
+            transaction,
+            "manifest-metadata-extracted" if result.status == "passed" else "blocked",
             result.detail,
         )
         return result

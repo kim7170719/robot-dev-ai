@@ -95,3 +95,12 @@ names only: `package.xml`, `package.json`, `pyproject.toml`, and
 `requirements.txt` are dependency-manifest candidates; `LICENSE*`, `COPYING*`,
 and `NOTICE*` are license candidates. The container still runs only `tar -tzf`:
 candidate files are not opened, extracted, parsed, or executed.
+
+For a verified ROS archive, the next bounded step is available at
+`POST /api/v1/registry/onboarding/{id}/bundle/ros-manifest`. It requires the
+previous passed dependency scan, selects the first scan-listed `package.xml`,
+and uses the same no-network/no-pull/read-only Docker profile. A fixed command
+streams no more than 128 KiB to an XML parser and returns only the ROS package
+name plus declared dependency identifiers. It does not write the manifest to
+the host, resolve dependency versions, validate licenses, install, build, or
+execute the candidate source.

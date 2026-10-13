@@ -79,6 +79,13 @@ Isaac Sim G4 CLI results (2026-09-21):
   `requirements.txt`, plus `LICENSE*`/`COPYING*`/`NOTICE*`). It does not open,
   parse, extract, or execute any candidate file, so these are not dependency
   validation or license assertions.
+- Bounded ROS metadata: after the preceding passed scan,
+  `POST /registry/onboarding/{id}/bundle/ros-manifest` selects only the first
+  listed `package.xml` from the already verified archive. The same fixed Docker
+  isolation streams no more than 128 KiB to an XML parser and returns only the
+  package name and declared dependency IDs. It neither writes, installs, builds,
+  resolves, nor executes source. A successful result appends
+  `manifest-metadata-extracted` audit evidence.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus

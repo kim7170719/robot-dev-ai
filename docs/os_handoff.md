@@ -61,6 +61,17 @@ only (`package.xml`, `package.json`, `pyproject.toml`, `requirements.txt`,
 do not treat candidates as validated dependencies or license claims. Full suite:
 **114 tests passed**.
 
+Bounded ROS manifest metadata extraction is now PASS: only after the passed
+authorization/hash/scan gates, Docker selects the first listed `package.xml`
+from the verified archive, applies the existing no-network/no-pull/read-only
+profile, and streams at most 128 KiB into an XML parser. The API returns only
+the package name and declared dependency IDs, appends
+`manifest-metadata-extracted` audit evidence, and never writes, installs,
+builds, or executes candidate source. A live Docker check of the existing
+`simple_diff_robot/package.xml` returned its name plus nine declared
+dependencies. XML DTD/entity declarations are rejected before parsing. Full
+suite: **120 tests passed**.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

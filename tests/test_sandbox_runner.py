@@ -64,3 +64,65 @@ def test_dependency_scan_classifies_entry_name_candidates_without_opening_them()
     assert result.candidate_dependency_manifests == ["robot/package.xml", "robot/pyproject.toml"]
     assert result.candidate_license_files == ["robot/LICENSE"]
     assert "not opened" in result.detail
+
+
+def test_ros_manifest_metadata_reads_only_the_first_scanned_package_xml() -> None:
+    observed: list[list[str]] = []
+
+    def manifest_runner(command: list[str]) -> subprocess.CompletedProcess[str]:
+        observed.append(command)
+        if len(observed) == 1:
+            return subprocess.CompletedProcess(
+                command, 0, stdout="robot/package.xml\nother/package.xml\n", stderr=""
+            )
+        return subprocess.CompletedProcess(
+            command, 0,
+            stdout=("<package format=\"3\"><name>demo_robot</name>"
+                    "<depend>rclpy</depend><exec_depend>sensor_msgs</exec_depend>"
+                    "<depend>rclpy</depend></package>"),
+            stderr="",
+        )
+
+    result = IsolatedSandboxRunner(manifest_runner).ros_manifest_metadata(
+        SandboxRunnerProfile(runner="docker", image="local/sandbox:stable"),
+        Path("/safe/root/source.tar.gz"),
+    )
+
+    assert result.status == "passed"
+    assert result.manifest_path == "robot/package.xml"
+    assert result.package_name == "demo_robot"
+    assert result.dependency_ids == ["rclpy", "sensor_msgs"]
+    assert observed[1][-1] == "robot/package.xml"
+    assert "head -c 131073" in observed[1][-3]
+
+
+def test_ros_manifest_metadata_command_preserves_docker_isolation_boundaries() -> None:
+    command = IsolatedSandboxRunner.ros_manifest_metadata_command(
+        SandboxRunnerProfile(runner="docker", image="local/sandbox:stable"),
+        Path("/safe/root/source.tar.gz"),
+        "robot/package.xml",
+    )
+
+    assert command[:5] == ["docker", "run", "--rm", "--pull", "never"]
+    assert ["--network", "none"] == command[command.index("--network") : command.index("--network") + 2]
+    assert "--read-only" in command
+    assert "dst=/bundle/source,readonly" in command[command.index("--mount") + 1]
+    assert ["--cap-drop", "ALL"] == command[command.index("--cap-drop") : command.index("--cap-drop") + 2]
+
+
+def test_ros_manifest_metadata_rejects_xml_declarations() -> None:
+    calls = 0
+
+    def declaration_runner(command: list[str]) -> subprocess.CompletedProcess[str]:
+        nonlocal calls
+        calls += 1
+        stdout = "robot/package.xml\n" if calls == 1 else "<!DOCTYPE package [<!ENTITY a 'b'>]><package/>"
+        return subprocess.CompletedProcess(command, 0, stdout=stdout, stderr="")
+
+    result = IsolatedSandboxRunner(declaration_runner).ros_manifest_metadata(
+        SandboxRunnerProfile(runner="docker", image="local/sandbox:stable"),
+        Path("/safe/root/source.tar.gz"),
+    )
+
+    assert result.status == "blocked"
+    assert "declarations" in result.detail

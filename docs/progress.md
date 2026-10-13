@@ -91,6 +91,16 @@ paths purely from `tar -tzf` entry names. It does not open or parse candidate
 files, so the result is discovery metadata rather than validated dependencies
 or license claims. Full suite: **114 tests**.
 
+v0.5 bounded ROS manifest metadata extraction (2026-10-13): **PASS.** After a
+passed authorization, hash verification, and dependency scan, the Docker
+sandbox selects only the first listed `package.xml`, mounts the one archive
+read-only, and streams at most 128 KiB to the XML parser. It returns only the
+package name and declared dependency identifiers, records an audit event, and
+never writes the manifest to the host, installs a package, or executes source.
+The live Docker check on the existing `simple_diff_robot/package.xml` returned
+`simple_diff_robot` and nine declared dependencies under that boundary. XML
+DTD/entity declarations are rejected before parsing. Full suite: **120 tests**.
+
 v0.5 local source bundle gate (2026-10-13): **PASS.** Future sandbox inputs
 must be operator-supplied local archives under a configured root, with an
 allowlisted `.tar.gz`/`.tgz`/`.zip` type, non-symlink identity, size limit, and
