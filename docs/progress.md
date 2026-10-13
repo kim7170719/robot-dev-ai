@@ -105,6 +105,11 @@ clickable three-stage workflow rail (requirements, proposal review, simulation)
 beside the animated humanoid. It reuses the existing product-stage palette and
 links only to existing local workspace views.
 
+M14 landing accessibility pass (2026-10-13): raised the entry-stage surface
+from near-black to a readable deep blue-grey and added the existing Chinese /
+English locale control to the landing header. The control uses the same locale
+state as the workspace and is keyboard-focusable.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

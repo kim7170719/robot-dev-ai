@@ -1,14 +1,14 @@
 /* The entry surface is a quiet product stage, distinct from the operating UI. */
-body.is-landing { background: #030609; }
-body.is-landing .main-content { background: #030609; }
+body.is-landing { background: #0a121d; }
+body.is-landing .main-content { background: #0a121d; }
 .landing {
-  background: #030609;
+  background: #0a121d;
   min-height: 100dvh;
   padding: clamp(24px, 3.5vw, 52px) clamp(24px, 4vw, 64px);
 }
 .landing::before { display: none; }
 .landing::after {
-  background: #25303d;
+  background: #405268;
   content: "";
   height: 1px;
   left: clamp(24px, 4vw, 64px);
@@ -24,11 +24,35 @@ body.is-landing .main-content { background: #030609; }
   position: relative;
   z-index: 1;
 }
-.landing-topline span:last-child {
+.landing-topline-actions {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+.landing-topline-actions > span {
   color: #9eabba;
   font-size: 11px;
   letter-spacing: .08em;
 }
+.landing-language-toggle {
+  align-items: center;
+  background: #162334;
+  border: 1px solid #40546a;
+  border-radius: 999px;
+  color: #cbd8e7;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 750;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0 10px;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+.landing-language-toggle .language-current { color: #fff; }
+.landing-language-toggle .language-divider { color: #7d91a7; }
+.landing-language-toggle:hover { background: #20334a; border-color: #8cbcff; color: #fff; }
+.landing-language-toggle:focus-visible { outline: 3px solid #78b6ff; outline-offset: 3px; }
 .landing-copy {
   left: clamp(24px, 10.1vw, 154px);
   max-width: min(47vw, 660px);
@@ -145,6 +169,9 @@ body.is-landing .main-content { background: #030609; }
   .landing { padding: 20px; }
   .landing::after { left: 20px; right: 20px; top: 52px; }
   .landing-topline { font-size: 11px; }
+  .landing-topline-actions > span { display: none; }
+  .landing-language-toggle { min-height: 30px; padding: 0 9px; }
+  .landing-topline .landing-language-toggle .language-alternate { display: inline; }
   .landing-copy { bottom: 78px; left: 20px; max-width: none; right: 20px; top: auto; }
   .landing-copy h1 { font-size: clamp(42px, 12.4vw, 53px); letter-spacing: -.04em; }
   .landing-summary { font-size: 15px; margin: 20px 0 24px; max-width: 31ch; }

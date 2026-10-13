@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="./m14-humanoid.css?v=3">
     <link rel="stylesheet" href="./m14-control.css?v=3">
     <link rel="stylesheet" href="./m14-3d-hero.css?v=5">
-    <link rel="stylesheet" href="./m14-landing-apple.css?v=2">
+    <link rel="stylesheet" href="./m14-landing-apple.css?v=3">
     <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
   </head>
   <body>
@@ -60,7 +60,7 @@
         </header>
 
         <section class="view landing" id="landing" data-view aria-labelledby="landing-title">
-          <div class="landing-topline"><span>ROBOT DEV AI</span><span>VIRTUAL ROBOT STUDIO</span></div>
+          <div class="landing-topline"><span>ROBOT DEV AI</span><div class="landing-topline-actions"><span>VIRTUAL ROBOT STUDIO</span><button class="landing-language-toggle" data-action="toggle-language" type="button" aria-label="切換介面語言為英文"><span class="language-current">中</span><span class="language-divider">/</span><span class="language-alternate">EN</span></button></div></div>
           <div class="landing-copy"><p data-i18n="landing.kicker">開發與測試</p><h1 id="landing-title" data-i18n-html="landing.title">規劃並測試你的機器人</h1><p class="landing-summary" data-i18n="landing.summary">描述你要做的機器人，查看可用元件與模擬檢查結果，再決定下一步。</p><div class="landing-actions"><button class="landing-enter" data-go="dashboard"><span data-i18n="landing.enter">進入工作區</span> <span aria-hidden="true">→</span></button><button class="landing-text-action" data-go="requirement" data-i18n="landing.direct">開始規劃</button></div></div>
           <div class="landing-robot" aria-label="一台差速機器人的啟動動畫">
             <svg viewBox="0 0 720 720" role="img" aria-labelledby="robot-scene-title robot-scene-desc">

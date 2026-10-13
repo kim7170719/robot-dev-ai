@@ -652,6 +652,7 @@ def test_gui_entrypoint_exposes_all_m14_views() -> None:
     response = TestClient(create_app()).get("/")
 
     assert response.status_code == 200
+    assert 'class="landing-language-toggle" data-action="toggle-language"' in response.text
     for view_name in (
         "Overview",
         "Plan",

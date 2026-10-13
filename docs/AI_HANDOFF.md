@@ -316,3 +316,7 @@ components and simulation checks, and choosing the next step.
 M14 landing composition pass (2026-10-13): add a responsive, clickable
 three-stage workflow rail to the landing page. It links only to Plan, Create,
 and Simulate views; no new control or execution capability was added.
+
+M14 landing accessibility pass (2026-10-13): lighten the entry stage to a
+readable deep blue-grey and expose the existing locale toggle in its header.
+It changes the same persisted locale state as the workspace toggle.
