@@ -138,7 +138,7 @@ G12 and G14 completed: the frozen virtual MVP and its typed five-view GUI passed
 |---|---|
 | Last writer | Ubuntu |
 | Ubuntu / Windows branch | `refactor/composable-architecture-v0.4` |
-| Last pushed checkpoint | `2ec0d48 onboarding: add bounded sandbox build gate` |
+| Last pushed checkpoint | `6e10258 sandbox: verify fixed build extractor` |
 | Gates | G12, G12.5, G12.6 foundation, and G14 pass; evidence remains virtual-only unless explicitly stated |
 | v0.5 state | Trusted-source metadata, registry GUI, audit persistence/hash chain, verified local bundle gates, bounded metadata scan, and fixed sandbox build endpoint are implemented |
 | v0.6 state | Evidence schema/query/snapshot/review queue and M14B coverage/conflict/reference views are implemented |
