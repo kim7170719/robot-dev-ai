@@ -91,8 +91,13 @@ Isaac Sim G4 CLI results (2026-09-21):
   stores its transaction in the current API process; only that pending ID plus
   explicit confirmation can call `/authorize-sandbox`. The response records a
   future-runner handoff with `host_execution_performed=false`. The GUI exposes
-  this as an explicit non-executing confirmation. A real isolated runner,
-  persistence across API restarts, and acquisition remain future work.
+  this as an explicit non-executing confirmation. A real isolated runner and
+  acquisition remain future work.
+- Audit recovery: a caller-configured `OnboardingAuditStore(path)` reloads its
+  typed append-only records on API restart, so a transaction restored from the
+  paired transaction store retains its previously recorded sandbox
+  authorization. This restores evidence only; it does not run a sandbox or
+  authorize acquisition.
 
 ## M5 evidence
 

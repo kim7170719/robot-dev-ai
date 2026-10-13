@@ -72,6 +72,12 @@ builds, or executes candidate source. A live Docker check of the existing
 dependencies. XML DTD/entity declarations are rejected before parsing. Full
 suite: **120 tests passed**.
 
+Append-only audit recovery is now PASS: a caller-configured audit JSONL store
+reloads its typed records on API restart. A recovered transaction therefore
+retains its recorded human sandbox authorization, but recovery itself neither
+starts a runner nor authorizes source acquisition, installation, build, or
+execution. Full suite: **121 tests passed**.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

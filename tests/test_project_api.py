@@ -14,7 +14,7 @@ from agent.mvp_pipeline import (
     SimulationCommandEvidence,
 )
 from api.app import ProjectSummary, create_app
-from agent.source_onboarding import LocalSourceBundleGate, OnboardingTransactionStore
+from agent.source_onboarding import LocalSourceBundleGate, OnboardingAuditStore, OnboardingTransactionStore
 from registry.models import RobotKnowledgeRegistry
 from registry.v04 import RegistryDocumentV04
 from registry.v06 import EvidenceEnvironment, EvidenceRecord, RegistryDocumentV06
@@ -153,6 +153,30 @@ def test_onboarding_transaction_survives_a_new_app_with_configured_store(tmp_pat
 
     assert restored.status_code == 200
     assert restored.json()["id"] == preview.json()["id"]
+
+
+def test_sandbox_authorization_audit_survives_a_new_app_with_configured_store(tmp_path) -> None:
+    transaction_path = tmp_path / "transactions.jsonl"
+    audit_path = tmp_path / "audit.jsonl"
+    first = TestClient(create_app(
+        onboarding_transaction_store=OnboardingTransactionStore(transaction_path),
+        onboarding_audit_store=OnboardingAuditStore(audit_path),
+    ))
+    preview = first.post("/api/v1/registry/onboarding/preview", json={"requested_by": "operator", "component": {"id": "candidate-driver", "kind": "driver", "display_name": "Candidate Driver", "source_id": "candidate-source", "lifecycle": "discovered", "provenance": "test"}, "source": {"id": "candidate-source", "source_type": "official-repo", "url": "https://example.test/repo", "trust_level": "A", "license": {"spdx": "MIT", "redistribution": "allowed"}, "retrieved_at": "2026-10-13"}})
+    transaction_id = preview.json()["id"]
+    first.post("/api/v1/registry/onboarding/authorize-sandbox", json={"transaction_id": transaction_id, "confirmed": True})
+
+    second = TestClient(create_app(
+        onboarding_transaction_store=OnboardingTransactionStore(transaction_path),
+        onboarding_audit_store=OnboardingAuditStore(audit_path),
+    ))
+    response = second.post(
+        "/api/v1/registry/sandbox/self-test",
+        json={"transaction_id": transaction_id, "confirmed": True},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "blocked"
 
 
 def test_sandbox_self_test_requires_prior_authorization() -> None:

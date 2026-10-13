@@ -63,6 +63,12 @@ state is `sandbox-runner-authorized`, not package execution: host execution is
 hard-coded false. The optional JSONL audit store is caller-configured, keeping
 the project tree free of generated audit logs. Full suite: **99 tests**.
 
+v0.5 audit recovery (2026-10-13): **PASS.** A caller-configured append-only
+audit JSONL store now reloads typed records when the API restarts, preserving
+the prior human sandbox authorization for the recovered transaction. Recovery
+does not start a runner or grant source acquisition, installation, build, or
+execution authority. Full suite: **121 tests**.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

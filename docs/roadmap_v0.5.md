@@ -57,9 +57,10 @@ GUI can preview that plan for a registered component. Explicit confirmation is
 append-only audited and only authorizes handoff to a future sandbox runner; it
 does not execute code on the host.
 
-Next, add a persistent audit store and sandbox executor behind the trusted-
-source and mutation-safety policies. Only then should the Registry GUI expose
-a human-confirmed candidate onboarding action that can acquire code.
+The caller-configured transaction and audit JSONL stores now both recover typed
+records after an API restart. The remaining boundary is a deliberately limited
+sandbox executor: no source acquisition, installation, build, test, or registry
+promotion is authorized by persistence or recovery alone.
 
 Transaction persistence and runner preflight are now implemented. A
 caller-configured JSONL transaction store restores preview IDs after an API

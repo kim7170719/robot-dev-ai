@@ -28,6 +28,14 @@ class OnboardingAuditStore:
     def __init__(self, path: Path | None = None) -> None:
         self.path = path
         self.records: list[OnboardingAuditRecord] = []
+        self._load()
+
+    def _load(self) -> None:
+        """Restore caller-owned append-only audit evidence without mutating it."""
+        if self.path is None or not self.path.exists():
+            return
+        for line in self.path.read_text(encoding="utf-8").splitlines():
+            self.records.append(OnboardingAuditRecord.model_validate_json(line))
 
     def append(
         self, transaction: OnboardingTransaction, event: Literal["planned", "sandbox-runner-authorized", "bundle-verified", "dependency-scan-passed", "manifest-metadata-extracted", "blocked"], detail: str
