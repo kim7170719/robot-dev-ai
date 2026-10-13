@@ -80,6 +80,12 @@ It confirms that the implementable foundations are complete while E0/E1
 population, E2 builds, E4 hardware, and E5 review remain external evidence
 requirements rather than missing code claims.
 
+M14 language clarity pass (2026-10-13): the GUI now applies one English
+translation layer to static workspace copy, labels, buttons, and ARIA labels,
+in addition to the existing navigation translations. Chinese copy is being
+rewritten as direct task language rather than internal AI/registry phrasing;
+technical ROS/API identifiers remain literal evidence.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

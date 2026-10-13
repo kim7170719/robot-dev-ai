@@ -4,6 +4,36 @@ const translations = {
   en: { "nav.overview": "Overview", "nav.design": "Design", "nav.build": "Build", "nav.run": "Run", "nav.diagnose": "Diagnose", "nav.evidence": "Evidence", "nav.registry": "Registry", "chrome.safety": "Safety boundary active", "landing.kicker": "DESIGN · VALIDATE · SIMULATE", "landing.title": "Let your first robot<br>wake up virtually.", "landing.summary": "Start with a natural-language request and build a differential-drive robot with LiDAR, camera, and navigation—each action remains within a reviewable safety boundary.", "landing.enter": "Enter workspace", "landing.direct": "Create a design plan", "landing.status": "Virtual-first robot development", "overview.title": "From idea to robot", "overview.summary": "Tell us what you want to build. We will organise practical suggestions before anything is created.", "overview.design": "Start planning", "overview.runtime": "View current status", views: { landing: "Home", dashboard: "Overview", requirement: "Design", configuration: "Build", runtime: "Run", validation: "Diagnose", evidence: "Evidence", registry: "Registry" } },
 };
 let locale = localStorage.getItem("robot-dev-ai-locale") === "en" ? "en" : "zh";
+const staticEnglish = new Map([
+  ["跳至主要內容", "Skip to main content"], ["主要工作流", "Main workflow"], ["M14 視圖", "M14 views"],
+  ["從想法到機器人", "From idea to robot"], ["下一步，從方案開始", "Start with a plan"],
+  ["說說你想做什麼", "Describe what you want"], ["用簡單描述告訴我們你需要的機器人", "Tell us what you need in plain language"],
+  ["確認建議內容", "Review the suggestions"], ["查看推薦內容後，再決定是否建立專案", "Review the suggestions before deciding to create a project"],
+  ["在模擬中查看", "Check in simulation"], ["確認機器人、導航與感測器是否正常", "Check that the robot, navigation, and sensors are available"],
+  ["模擬系統狀態", "Simulation status"], ["重新檢查模擬系統", "Check simulation again"], ["連線服務", "Available services"], ["資料通道", "Data channels"], ["位置關係", "Robot positions"],
+  ["告訴我們你想做的機器人", "Tell us about your robot"], ["用日常語言描述你的想法；我們會先整理建議，讓你看過再決定下一步。", "Describe your idea in everyday language. We will suggest options for you to review before the next step."],
+  ["你希望機器人做什麼？", "What would you like the robot to do?"], ["產生建議", "Show suggestions"], ["確認推薦內容", "Review the suggestions"], ["查看模擬狀態", "Check simulation status"], ["遇到問題時再來這裡", "Get help when something needs attention"],
+  ["導航功能測試", "Test navigation"], ["開始檢查", "Start check"], ["查看修正建議", "View suggested fixes"], ["驗證資料的真實範圍", "What the evidence actually shows"],
+  ["重新讀取證據", "Reload evidence"], ["證據覆蓋範圍", "Evidence coverage"], ["矛盾與待審查資料", "Conflicts and pending reviews"],
+  ["元件來源與使用狀態", "Component sources and status"], ["顯示類型", "Show"], ["全部元件", "All components"], ["硬體", "Hardware"], ["驅動程式", "Drivers"], ["轉接層", "Adapters"], ["整合範本", "Templates"], ["來源審查結果", "Source review"], ["查看來源審查", "Review source"], ["預覽安全測試計畫", "Preview safe test plan"],
+]);
+const originalStaticText = new WeakMap();
+function localizeStaticText() {
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    if (!originalStaticText.has(node)) originalStaticText.set(node, node.nodeValue);
+    const original = originalStaticText.get(node); const trimmed = original.trim();
+    if (locale === "en" && staticEnglish.has(trimmed)) node.nodeValue = original.replace(trimmed, staticEnglish.get(trimmed));
+    else node.nodeValue = original;
+  }
+  document.querySelectorAll("[aria-label]").forEach((node) => {
+    if (!node.dataset.originalAriaLabel) node.dataset.originalAriaLabel = node.getAttribute("aria-label");
+    const original = node.dataset.originalAriaLabel;
+    node.setAttribute("aria-label", locale === "en" && staticEnglish.has(original) ? staticEnglish.get(original) : original);
+  });
+}
+function uiText(value) { return locale === "en" ? (staticEnglish.get(String(value)) || value) : value; }
 function applyLocale() {
   const copy = translations[locale];
   document.documentElement.lang = locale === "zh" ? "zh-Hant" : "en";
@@ -15,6 +45,7 @@ function applyLocale() {
   const active = document.querySelector("[data-view].active")?.id;
   const viewTitle = document.querySelector("#view-title");
   if (active && viewTitle) viewTitle.textContent = copy.views[active];
+  localizeStaticText();
 }
 const demoRegistry = { hardware: [{ id: "generic-diff-base", kind: "mobile-base", vendor: "Robot Dev AI", capability_ids: ["differential-drive"] }], drivers: [{ id: "generic-diff-driver", hardware_id: "generic-diff-base", ros_distro: "jazzy" }], capabilities: [{ id: "differential-drive", interface_ids: [], template_id: "differential-drive" }], packages: [{ id: "diff-drive-controller", required_capability_ids: ["differential-drive"] }], compatibility: [{ hardware_id: "generic-diff-base", package_id: "diff-drive-controller", status: "validated" }] };
 
@@ -77,7 +108,7 @@ function bindAction(selector, resultId, handler, label) {
   if (!target) return;
   target.addEventListener("click", async (event) => {
     const button = event.currentTarget; const original = button.innerHTML;
-    button.disabled = true; button.setAttribute("aria-busy", "true"); button.classList.add("is-working"); button.textContent = "處理中…";
+    button.disabled = true; button.setAttribute("aria-busy", "true"); button.classList.add("is-working"); button.textContent = locale === "en" ? "Working…" : "處理中…";
     try { showResult(resultId, await handler(), label); } catch (error) { showError(resultId, error); }
     finally { button.disabled = false; button.removeAttribute("aria-busy"); button.classList.remove("is-working"); button.innerHTML = original; }
   });
