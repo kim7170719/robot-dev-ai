@@ -552,6 +552,7 @@ def create_app(
         audit_store.append(
             transaction, "sandbox-build-passed" if result.status == "passed" else "blocked",
             result.detail, bundle_sha256=request.expected_sha256,
+            sandbox_image_ref=result.image, output_sha256=result.output_sha256,
         )
         return result
 

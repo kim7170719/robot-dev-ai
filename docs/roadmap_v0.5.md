@@ -137,6 +137,8 @@ fixed: no network, pull policy `never`, read-only root, non-root user, dropped
 capabilities, no-new-privileges, bounded CPU/memory/PIDs, a read-only archive
 mount, and a disposable tmpfs workspace. When Docker returns a local image ID,
 the build uses that immutable ID rather than the configured mutable tag. It records the build outcome in the
-append-only audit log but neither promotes a component nor creates an E2 record.
+append-only audit log together with the image reference and a SHA-256 digest of
+the captured build output, but neither promotes a component nor creates an E2
+record.
 No local Jazzy image or approved archive has yet run this endpoint, so E2
 evidence remains unproven.

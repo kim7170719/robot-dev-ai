@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import subprocess
 import xml.etree.ElementTree as ElementTree
+import hashlib
 import re
 import shlex
 import textwrap
@@ -74,6 +75,7 @@ class SandboxBuildResult(BaseModel):
     status: Literal["passed", "blocked", "failed"]
     runner: Literal["docker"]
     image: str | None = None
+    output_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     detail: str = Field(min_length=1, max_length=1024)
 
 
@@ -381,9 +383,11 @@ class IsolatedSandboxRunner:
             completed = self.command_runner(self.build_command(profile, bundle_path))
         except (ValueError, OSError, subprocess.TimeoutExpired) as error:
             return SandboxBuildResult(status="blocked", runner="docker", image=profile.image, detail=str(error))
+        output = f"{completed.stdout or ''}\n{completed.stderr or ''}"
+        output_sha256 = hashlib.sha256(output.encode("utf-8")).hexdigest()
         if completed.returncode == 0:
-            return SandboxBuildResult(status="passed", runner="docker", image=profile.image, detail="isolated colcon build passed; no registry promotion or evidence-level change was performed")
-        return SandboxBuildResult(status="failed", runner="docker", image=profile.image, detail=(completed.stderr or completed.stdout or "isolated colcon build failed")[:1024])
+            return SandboxBuildResult(status="passed", runner="docker", image=profile.image, output_sha256=output_sha256, detail="isolated colcon build passed; no registry promotion or evidence-level change was performed")
+        return SandboxBuildResult(status="failed", runner="docker", image=profile.image, output_sha256=output_sha256, detail=(completed.stderr or completed.stdout or "isolated colcon build failed")[:1024])
 
     @staticmethod
     def _local_name(tag: str) -> str:

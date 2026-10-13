@@ -61,6 +61,22 @@ def test_audit_store_rejects_a_tampered_hashed_record(tmp_path) -> None:
         OnboardingAuditStore(path)
 
 
+def test_audit_store_chains_build_image_and_output_provenance(tmp_path) -> None:
+    transaction = SourceOnboardingPlanner().preview(_request())
+    path = tmp_path / "audit.jsonl"
+    record = OnboardingAuditStore(path).append(
+        transaction, "sandbox-build-passed", "isolated build passed",
+        bundle_sha256="a" * 64, sandbox_image_ref="sha256:" + "b" * 64,
+        output_sha256="c" * 64,
+    )
+
+    restored = OnboardingAuditStore(path).records[0]
+
+    assert restored.record_hash == record.record_hash
+    assert restored.sandbox_image_ref == "sha256:" + "b" * 64
+    assert restored.output_sha256 == "c" * 64
+
+
 def test_transaction_store_recovers_preview_across_a_new_store_instance(tmp_path) -> None:
     transaction = SourceOnboardingPlanner().preview(_request())
     path = tmp_path / "transactions.jsonl"

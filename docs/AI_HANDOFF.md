@@ -344,3 +344,8 @@ v0.5 E2 build command verification (2026-10-13): the exact fixed Python
 archive extractor sent to Docker is now compiled in regression tests. It
 refuses path traversal, links, and non-regular entries before the isolated
 `colcon build`. This verifies command construction only; no E2 build has run.
+
+v0.5 E2 build audit provenance (2026-10-13): successful or failed build
+observations now retain the effective sandbox image reference and a SHA-256
+digest of captured stdout/stderr in the hash-chained audit log. Old audit
+records remain verifiable. No E2 observation has been recorded on this host.

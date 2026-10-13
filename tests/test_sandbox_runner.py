@@ -62,7 +62,7 @@ def test_sandbox_build_command_uses_only_a_read_only_archive_and_tmpfs_workspace
 
 def test_sandbox_build_success_does_not_claim_a_registry_promotion() -> None:
     result = IsolatedSandboxRunner(
-        lambda command: subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+        lambda command: subprocess.CompletedProcess(command, 0, stdout="build passed", stderr="")
     ).build(
         SandboxRunnerProfile(runner="docker", image="local/ros-jazzy:stable"),
         Path("/safe/root/source.tar.gz"),
@@ -70,6 +70,7 @@ def test_sandbox_build_success_does_not_claim_a_registry_promotion() -> None:
 
     assert result.status == "passed"
     assert "no registry promotion" in result.detail
+    assert result.output_sha256 is not None
 
 
 def test_dependency_scan_mounts_one_archive_read_only_without_extracting() -> None:

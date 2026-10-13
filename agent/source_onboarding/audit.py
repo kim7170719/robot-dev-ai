@@ -22,6 +22,8 @@ class OnboardingAuditRecord(BaseModel):
     recorded_at: datetime
     detail: str = Field(min_length=1, max_length=512)
     bundle_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    sandbox_image_ref: str | None = Field(default=None, min_length=1, max_length=256)
+    output_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     previous_record_hash: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     record_hash: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
 
@@ -54,6 +56,8 @@ class OnboardingAuditStore:
         detail: str,
         *,
         bundle_sha256: str | None = None,
+        sandbox_image_ref: str | None = None,
+        output_sha256: str | None = None,
     ) -> OnboardingAuditRecord:
         record = OnboardingAuditRecord(
             transaction_id=transaction.id,
@@ -61,6 +65,8 @@ class OnboardingAuditStore:
             recorded_at=datetime.now(UTC),
             detail=detail,
             bundle_sha256=bundle_sha256,
+            sandbox_image_ref=sandbox_image_ref,
+            output_sha256=output_sha256,
             previous_record_hash=self._last_record_hash,
         )
         record = record.model_copy(update={"record_hash": self._record_hash(record)})
@@ -75,6 +81,13 @@ class OnboardingAuditStore:
     @staticmethod
     def _record_hash(record: OnboardingAuditRecord) -> str:
         payload = record.model_dump(mode="json", exclude={"record_hash"})
+        # These fields were added after the first chained records. Omit their
+        # absent values so existing hashes remain verifiable; include them once
+        # a build actually supplies provenance.
+        if payload["sandbox_image_ref"] is None:
+            payload.pop("sandbox_image_ref")
+        if payload["output_sha256"] is None:
+            payload.pop("output_sha256")
         canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
