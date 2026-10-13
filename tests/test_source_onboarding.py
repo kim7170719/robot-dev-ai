@@ -1,4 +1,5 @@
 from agent.source_onboarding import OnboardingRequest, SourceOnboardingPlanner
+from agent.source_onboarding import OnboardingAuditStore, SandboxExecutorContract
 from registry.v05 import ManagedComponent, SourceLicense, TrustedSource
 
 
@@ -29,3 +30,14 @@ def test_blocked_source_has_no_sandbox_steps() -> None:
 
     assert result.status == "blocked"
     assert result.sandbox_steps == []
+
+
+def test_confirmed_handoff_persists_audit_without_host_execution(tmp_path) -> None:
+    transaction = SourceOnboardingPlanner().preview(_request())
+    store = OnboardingAuditStore(tmp_path / "audit.jsonl")
+
+    result = SandboxExecutorContract().authorize(transaction, confirmed=True, audit_store=store)
+
+    assert result.status == "sandbox-runner-authorized"
+    assert result.host_execution_performed is False
+    assert store.path.read_text(encoding="utf-8").count("sandbox-runner-authorized") == 1

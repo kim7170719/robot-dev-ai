@@ -1,5 +1,11 @@
 """Auditable, non-executing source-onboarding transaction plans."""
 
 from .transaction import OnboardingRequest, OnboardingTransaction, SourceOnboardingPlanner
+from .audit import (
+    OnboardingAuditRecord,
+    OnboardingAuditStore,
+    SandboxAuthorizationResult,
+    SandboxExecutorContract,
+)
 
-__all__ = ["OnboardingRequest", "OnboardingTransaction", "SourceOnboardingPlanner"]
+__all__ = ["OnboardingRequest", "OnboardingTransaction", "SourceOnboardingPlanner", "OnboardingAuditRecord", "OnboardingAuditStore", "SandboxAuthorizationResult", "SandboxExecutorContract"]

@@ -40,7 +40,14 @@ from agent.mvp_pipeline import (
 from agent.requirement_agent import RequirementAgent
 from agent.evidence_registry import EvidenceRegistry, EvidenceSummary, RegistrySnapshot
 from agent.trusted_source import TrustedSourcePolicy
-from agent.source_onboarding import OnboardingRequest, OnboardingTransaction, SourceOnboardingPlanner
+from agent.source_onboarding import (
+    OnboardingAuditStore,
+    OnboardingRequest,
+    OnboardingTransaction,
+    SandboxAuthorizationResult,
+    SandboxExecutorContract,
+    SourceOnboardingPlanner,
+)
 from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
 from registry.models import RobotKnowledgeRegistry
@@ -209,12 +216,20 @@ class FullMvpRunResult(BaseModel):
     workspace_lifecycle: Literal["ephemeral-cleaned"]
 
 
+class SandboxAuthorizationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    transaction_id: str = Field(min_length=1)
+    confirmed: Literal[True]
+
+
 def create_app(
     project_summary: ProjectSummary | None = None,
     workspace_root: Path | None = None,
     read_only: bool | None = None,
     evidence_document: RegistryDocumentV06 | None = None,
     management_document: RegistryManagementDocumentV05 | None = None,
+    onboarding_audit_store: OnboardingAuditStore | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
     simulation_frame_collector_factory: Callable[[], SimulationFrameCollector] | None = None,
@@ -235,6 +250,8 @@ def create_app(
     summary = project_summary or _default_project_summary()
     evidence_document = evidence_document or _default_evidence_document()
     management_document = management_document or _default_management_document()
+    audit_store = onboarding_audit_store or OnboardingAuditStore()
+    pending_onboarding: dict[str, OnboardingTransaction] = {}
     pending_plans: dict[str, WorkspacePlan] = {}
     generated_plans: dict[str, WorkspacePlan] = {}
     collector_factory = build_collector_factory or BuildCommandCollector
@@ -316,7 +333,28 @@ def create_app(
     @app.post("/api/v1/registry/onboarding/preview", response_model=OnboardingTransaction)
     def preview_source_onboarding(request: OnboardingRequest) -> OnboardingTransaction:
         """Return an audit-ready sandbox plan; it does not acquire or execute a source."""
-        return SourceOnboardingPlanner().preview(request)
+        transaction = SourceOnboardingPlanner().preview(request)
+        pending_onboarding[transaction.id] = transaction
+        audit_store.append(
+            transaction,
+            "blocked" if transaction.status == "blocked" else "planned",
+            "onboarding plan previewed; no source was acquired or executed",
+        )
+        return transaction
+
+    @app.post(
+        "/api/v1/registry/onboarding/authorize-sandbox",
+        response_model=SandboxAuthorizationResult,
+    )
+    def authorize_onboarding_sandbox(
+        request: SandboxAuthorizationRequest,
+    ) -> SandboxAuthorizationResult:
+        transaction = pending_onboarding.get(request.transaction_id)
+        if transaction is None:
+            raise HTTPException(status_code=404, detail="onboarding transaction was not found")
+        return SandboxExecutorContract().authorize(
+            transaction, confirmed=request.confirmed, audit_store=audit_store
+        )
 
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)
     def parse_requirement(request: RequirementRequest) -> RequirementResult:

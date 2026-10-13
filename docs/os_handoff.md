@@ -29,6 +29,12 @@ Registry GUI can preview it, never run it. Next is persistent audit storage and
 the separately authorized sandbox executor. Full suite at this checkpoint:
 **97 tests passed**.
 
+Onboarding audit/runner contract is now in place: a preview is recorded, and
+only its in-process transaction ID plus explicit confirmation produces an
+append-only `sandbox-runner-authorized` audit record. It is still host-zero-
+execution; a true isolated runner and restart-persistent transaction store are
+the next scope. Full suite: **99 tests passed**.
+
 | Field | Value |
 |---|---|
 | Last writer | Ubuntu |

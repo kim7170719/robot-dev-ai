@@ -296,6 +296,20 @@ async function previewOnboarding(component) {
     const detail = document.createElement("p");
     detail.textContent = plan.status === "blocked" ? plan.source_review.reasons.join(" ") : `預定步驟：${plan.sandbox_steps.join(" → ")}。目前沒有任何執行權限。`;
     target.append(title, detail);
+    if (plan.status !== "blocked") {
+      const authorize = document.createElement("button");
+      authorize.type = "button"; authorize.className = "secondary"; authorize.textContent = "記錄人工確認（不執行）";
+      authorize.addEventListener("click", async () => {
+        authorize.disabled = true;
+        try {
+          const result = await request("/registry/onboarding/authorize-sandbox", { method: "POST", body: JSON.stringify({ transaction_id: plan.id, confirmed: true }) });
+          title.textContent = "已記錄 sandbox runner 授權";
+          detail.textContent = `${result.audit_record.recorded_at} 已寫入審計紀錄；主機沒有執行任何來源程式。`;
+          authorize.remove();
+        } catch (error) { detail.textContent = error.message; authorize.disabled = false; }
+      });
+      target.append(authorize);
+    }
   } catch (error) { target.textContent = error.message; }
 }
 function renderRegistry() {

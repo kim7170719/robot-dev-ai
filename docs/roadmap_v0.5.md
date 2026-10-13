@@ -53,7 +53,9 @@ claim of real-world VERIFIED support.
 The audit-ready preview transaction is now implemented: it produces a stable
 identifier, requested-by value, review result, lifecycle diff, and ordered
 sandbox plan, while explicitly returning `execution_authorized=false`. The
-GUI can preview that plan for a registered component; it cannot execute it.
+GUI can preview that plan for a registered component. Explicit confirmation is
+append-only audited and only authorizes handoff to a future sandbox runner; it
+does not execute code on the host.
 
 Next, add a persistent audit store and sandbox executor behind the trusted-
 source and mutation-safety policies. Only then should the Registry GUI expose

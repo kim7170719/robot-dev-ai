@@ -45,6 +45,13 @@ Isaac Sim G4 CLI results (2026-09-21):
   It lists later sandbox steps but is explicitly non-executing. The Registry
   GUI offers “預覽安全測試計畫”; it cannot authorize or run acquisition. A
   persistent audit store and sandbox executor remain the next implementation.
+- Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
+  records at a caller-configured path. `POST /registry/onboarding/preview`
+  stores its transaction in the current API process; only that pending ID plus
+  explicit confirmation can call `/authorize-sandbox`. The response records a
+  future-runner handoff with `host_execution_performed=false`. The GUI exposes
+  this as an explicit non-executing confirmation. A real isolated runner,
+  persistence across API restarts, and acquisition remain future work.
 
 ## M5 evidence
 
