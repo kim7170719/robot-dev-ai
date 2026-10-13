@@ -123,3 +123,7 @@ explicit: only a caller-selected `ROBOT_DEV_AI_SANDBOX_BUILD_IMAGE` already
 present in the local Docker image store is `available`. The check never pulls
 an image or starts a container; without a ROS Jazzy build image, E2 remains
 unproven.
+
+The reproducible image definition is `docker/Dockerfile.sandbox-ros-jazzy-build`.
+`docs/sandbox_build_image.md` makes provisioning an explicit operator step;
+application code never builds or pulls it.

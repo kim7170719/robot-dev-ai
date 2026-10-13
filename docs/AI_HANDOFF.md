@@ -102,6 +102,9 @@ Isaac Sim G4 CLI results (2026-09-21):
   explicitly configured, already-local `ROBOT_DEV_AI_SANDBOX_BUILD_IMAGE`.
   It never pulls images or starts containers. No local Jazzy build image is
   currently configured, therefore E2 remains unproven.
+- E2 image definition: `docker/Dockerfile.sandbox-ros-jazzy-build` plus
+  `docs/sandbox_build_image.md` provide the explicit future provision path for
+  a local Jazzy/colcon image. The application never builds or pulls it.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus

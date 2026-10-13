@@ -137,6 +137,12 @@ available without pulling it or starting a container. This host has no Jazzy
 build image configured, so no E2 build evidence is claimed. Full suite:
 **127 tests**.
 
+v0.5 E2 build-image definition (2026-10-13): **PASS for reproducible
+provisioning.** `docker/Dockerfile.sandbox-ros-jazzy-build` pins the ROS Jazzy
+base tag and provides colcon/rosdep tooling. Its build remains an explicit
+operator action because it can pull the base image; application code never
+performs it. This is build infrastructure, not E2 evidence.
+
 v0.5 local source bundle gate (2026-10-13): **PASS.** Future sandbox inputs
 must be operator-supplied local archives under a configured root, with an
 allowlisted `.tar.gz`/`.tgz`/`.zip` type, non-symlink identity, size limit, and

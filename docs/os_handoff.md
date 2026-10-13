@@ -97,6 +97,11 @@ same isolated Docker profile. Only a literal SPDX header is reported; this is
 not a legal license decision. Local Apache license evidence correctly returned
 no SPDX declaration. Full suite: **125 tests passed**.
 
+The future E2 build environment is now defined (not provisioned) by
+`docker/Dockerfile.sandbox-ros-jazzy-build`; see `docs/sandbox_build_image.md`.
+Building it remains an explicit operator action because it may pull the ROS
+base image. Application code does not build or pull it.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and
