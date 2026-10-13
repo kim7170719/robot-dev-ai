@@ -303,3 +303,8 @@ M14 newcomer terminology pass (2026-10-13): change the visible Evidence area
 to Test records / 「測試紀錄」 and clarify that E3 is a simulation-only result.
 Landing copy now describes the flow in plain language: describe, simulate,
 then review the result. Internal API names remain unchanged.
+
+M14 English-mode coverage pass (2026-10-13): static UI copy, accessible labels,
+loading messages, and sandbox status now have English translations. A locale
+change also refreshes the read-only registry and test-record data, preventing
+already-loaded Chinese status text from remaining on screen.

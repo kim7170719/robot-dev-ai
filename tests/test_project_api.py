@@ -664,6 +664,14 @@ def test_gui_entrypoint_exposes_all_m14_views() -> None:
         assert view_name in response.text
 
 
+def test_gui_english_locale_covers_accessible_labels_and_loaded_views() -> None:
+    app_script = (Path(__file__).parents[1] / "gui" / "app.js").read_text()
+
+    assert 'document.querySelectorAll("[aria-label], [alt], [title]")' in app_script
+    assert 'document.dispatchEvent(new CustomEvent("robot-dev-ai:locale-change"' in app_script
+    assert "if (registryCatalog) renderRegistry(); loadSandboxReadiness(); loadEvidenceViews()" in app_script
+
+
 def test_lan_read_only_mode_allows_dashboard_but_blocks_all_post_apis() -> None:
     """LAN presentation must not expose execution or workspace-write routes."""
     client = TestClient(create_app(read_only=True))

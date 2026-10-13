@@ -22,8 +22,24 @@ const staticEnglish = new Map([
   ["元件", "Component"], ["測試等級", "Test level"], ["結果筆數", "Results"], ["需要注意", "Things to note"], ["正在讀取測試資料…", "Loading test results…"],
   ["結果不一致與等待確認的資料", "Conflicting or pending results"], ["相同環境下的通過與失敗會並列保留；社群資料要先經過人工確認，才會列入正式測試紀錄。", "Passes and failures from the same setup are kept side by side. Community submissions stay out of accepted results until a person reviews them."], ["正在讀取資料…", "Loading results…"],
   ["元件來源與使用狀態", "Component sources and status"], ["顯示類型", "Show"], ["全部元件", "All components"], ["硬體", "Hardware"], ["驅動程式", "Drivers"], ["轉接層", "Adapters"], ["整合範本", "Templates"], ["來源審查結果", "Source review"], ["查看來源審查", "Review source"], ["預覽安全測試計畫", "Preview safe test plan"],
+  ["下一步，從方案開始", "Next, start with a plan"], ["開始", "Start"], ["待確認", "Waiting"], ["檢查中", "Checking"], ["正在讀取模擬系統資料…", "Loading simulation data…"],
+  ["相機畫面與機器人位置在下方查看；這裡只顯示模擬系統是否能正常讀取。", "See the camera and robot position below. This section only shows whether simulation data can be read."],
+  ["選擇經驗證的 ROS 影像來源；畫面僅讀取資料，不發布控制訊息。", "Choose a verified ROS image source. This view only reads data; it never sends control commands."], ["更新畫面", "Refresh image"],
+  ["目前選取 ROS 相機來源的最新影像", "Latest image from the selected ROS camera source"], ["選取來源後讀取最新 ROS frame", "Choose a source to load its latest ROS frame"],
+  ["依真實 odometry 繪製的機器車俯視位置圖", "Top-down robot position drawn from live odometry"],
+  ["告訴我們你想做的機器人", "Tell us about your robot"], ["我要建立一台 NVIDIA 差速機器車，LiDAR + Camera，能自主導航。", "I want to build an NVIDIA differential-drive robot with LiDAR, a camera, and autonomous navigation."],
+  ["可以使用中文或英文 · 送出後不會直接建立任何專案", "You can write in Chinese or English. Sending this does not create a project."], ["你可以放心的原因", "Why this is safe"],
+  ["系統只會根據已驗證的選項整理建議。你先看內容，確認後才會進到建立專案的步驟。", "The system only suggests known options. Review them first, then decide whether to create a project."], ["先看建議", "Review first"], ["可選項目", "Available options"], ["由你確認", "You decide"],
+  ["先查看系統找到的可用選項；你確認後，才會建立專案或開始建置。", "Review the available options first. Nothing is created or built until you confirm."], ["目前建議", "Current suggestion"], ["已確認可用 · Ubuntu x86_64 · Jazzy", "Available in Ubuntu x86_64 · Jazzy"], ["差速驅動", "Differential drive"], ["可使用", "Available"], ["先看再決定", "Review before deciding"], ["查看可用內容", "Review available options"], ["這裡的結果只用來協助你判斷；尚未建立或修改任何專案檔案。", "These results help you decide. No project files have been created or changed."], ["檢查是否可用", "Check availability"], ["查看將建立的內容", "Preview generated files"],
+  ["查看模擬狀態", "Check simulation status"], ["在這裡確認機器人和感測器是否能正常讀取。遇到問題時，再到診斷頁查看細節。", "Check that robot and sensor data can be read here. Use Help for details if something needs attention."], ["系統資料 · 唯讀", "System data · read only"], ["確認系統是否正常運作", "Check whether the system is running"], ["如果模擬還沒有啟動，我們會如實顯示目前讀得到的資料，不會把未知狀態當成正常。", "If simulation is not running, we show only what can be read. Unknown data is never shown as healthy."], ["重新檢查", "Check again"], ["目前可讀取的系統元件", "System services that can be read"], ["可用的訊息資料", "Available message data"], ["控制狀態", "Control status"], ["是否已準備完成", "Whether it is ready"],
+  ["遇到問題時再來這裡", "Get help when something needs attention"], ["你可以執行一個安全、固定的模擬檢查，或先查看系統建議；不會自動修改任何內容。", "Run a safe, fixed simulation check or review suggestions. Nothing is changed automatically."], ["安全檢查", "Safe check"], ["在既有的虛擬環境中，測試機器人能否前往一個已設定的位置。", "In the existing virtual environment, test whether the robot can reach a preset location."], ["我確認只進行這一項模擬檢查。", "I confirm that only this simulation check will run."], ["先看建議", "Review suggestions first"], ["可能的修正方式", "Possible fixes"], ["查看系統整理的修正建議。這個動作只會顯示內容，不會修改檔案或重新建置。", "Review suggested fixes. This only shows information; it does not change files or rebuild anything."], ["僅供查看，不會自動套用", "For review only; never applied automatically"],
+  ["這是後續驗證的組合目標；只有明確標示為 evidence-backed 才代表已具有對應記錄。", "This is a future validation target. Only items marked evidence-backed have a recorded result."], ["正在讀取 reference target…", "Loading reference target…"],
+  ["查看目前已登錄的硬體與軟體來源。這一頁只提供審查資訊，不會下載、安裝或執行外部套件。", "Review the registered hardware and software sources. This page only shows information; it does not download, install, or run external packages."], ["外部來源只會進入後續 sandbox 流程。", "External sources can only enter the later sandbox review flow."], ["正在等待元件資料。", "Waiting for component data."], ["選取一個元件後，查看它目前可進行的下一步。", "Select a component to see the next step currently available."], ["Sandbox runner：讀取中", "Sandbox runner: loading"], ["讀取中…", "Loading…"],
+  ["Robot Dev AI 動態首頁", "Robot Dev AI animated home"], ["重新檢查模擬系統", "Check simulation again"],
+  ["一台差速機器人的啟動動畫", "A differential-drive robot startup animation"], ["虛擬差速機器人啟動", "Virtual differential-drive robot starting"], ["機器人以 LiDAR 與相機感測器掃描環境，準備進入虛擬開發工作區。", "The robot scans its surroundings with LiDAR and a camera, ready to enter the virtual development workspace."], ["人形機器人動作展示", "Humanoid robot motion display"], ["可互動的人形機器人模型：拖曳旋轉、滾輪縮放、點擊切換自動展示；鍵盤可用方向鍵、空白鍵和 R 操作。", "Interactive humanoid model: drag to rotate, scroll to zoom, click to toggle the showcase; use arrow keys, Space, and R from the keyboard."], ["白色人形機器人準備啟動", "White humanoid robot ready to start"], ["機器人動作控制", "Robot motion controls"],
 ]);
 const originalStaticText = new WeakMap();
+const originalAttributes = new WeakMap();
 function localizeStaticText() {
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let node;
@@ -33,17 +49,27 @@ function localizeStaticText() {
     if (locale === "en" && staticEnglish.has(trimmed)) node.nodeValue = original.replace(trimmed, staticEnglish.get(trimmed));
     else node.nodeValue = original;
   }
-  document.querySelectorAll("[aria-label]").forEach((node) => {
-    if (!node.dataset.originalAriaLabel) node.dataset.originalAriaLabel = node.getAttribute("aria-label");
-    const original = node.dataset.originalAriaLabel;
-    node.setAttribute("aria-label", locale === "en" && staticEnglish.has(original) ? staticEnglish.get(original) : original);
+  document.querySelectorAll("[aria-label], [alt], [title]").forEach((node) => {
+    if (!originalAttributes.has(node)) originalAttributes.set(node, new Map());
+    const originals = originalAttributes.get(node);
+    ["aria-label", "alt", "title"].forEach((attribute) => {
+      if (!node.hasAttribute(attribute)) return;
+      if (!originals.has(attribute)) originals.set(attribute, node.getAttribute(attribute));
+      const original = originals.get(attribute);
+      node.setAttribute(attribute, locale === "en" && staticEnglish.has(original) ? staticEnglish.get(original) : original);
+    });
   });
 }
 function uiText(value) { return locale === "en" ? (staticEnglish.get(String(value)) || value) : value; }
 function applyLocale() {
   const copy = translations[locale];
   document.documentElement.lang = locale === "zh" ? "zh-Hant" : "en";
-  document.querySelectorAll("[data-i18n]").forEach((node) => { node.textContent = copy[node.dataset.i18n] || node.textContent; });
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    const value = copy[node.dataset.i18n] || node.textContent;
+    const icon = node.querySelector(":scope > i[aria-hidden]");
+    if (icon) node.replaceChildren(icon.cloneNode(true), document.createTextNode(value));
+    else node.textContent = value;
+  });
   document.querySelectorAll("[data-i18n-html]").forEach((node) => { node.innerHTML = copy[node.dataset.i18nHtml] || node.innerHTML; });
   document.querySelectorAll(".language-current").forEach((node) => { node.textContent = locale === "zh" ? "中" : "EN"; });
   document.querySelectorAll(".language-alternate").forEach((node) => { node.textContent = locale === "zh" ? "EN" : "中"; });
@@ -52,6 +78,7 @@ function applyLocale() {
   const viewTitle = document.querySelector("#view-title");
   if (active && viewTitle) viewTitle.textContent = copy.views[active];
   localizeStaticText();
+  document.dispatchEvent(new CustomEvent("robot-dev-ai:locale-change", { detail: { locale } }));
 }
 const demoRegistry = { hardware: [{ id: "generic-diff-base", kind: "mobile-base", vendor: "Robot Dev AI", capability_ids: ["differential-drive"] }], drivers: [{ id: "generic-diff-driver", hardware_id: "generic-diff-base", ros_distro: "jazzy" }], capabilities: [{ id: "differential-drive", interface_ids: [], template_id: "differential-drive" }], packages: [{ id: "diff-drive-controller", required_capability_ids: ["differential-drive"] }], compatibility: [{ hardware_id: "generic-diff-base", package_id: "diff-drive-controller", status: "validated" }] };
 
@@ -386,7 +413,7 @@ async function previewOnboarding(component) {
     const title = document.createElement("strong");
     title.textContent = plan.status === "blocked" ? (locale === "en" ? "A safe test plan cannot be made for this source" : "這個來源目前不能建立安全測試計畫") : (locale === "en" ? "Safe test plan needs your confirmation" : "安全測試計畫等待你的確認");
     const detail = document.createElement("p");
-    detail.textContent = plan.status === "blocked" ? plan.source_review.reasons.join(" ") : `預定步驟：${plan.sandbox_steps.join(" → ")}。目前沒有任何執行權限。`;
+    detail.textContent = plan.status === "blocked" ? plan.source_review.reasons.join(" ") : locale === "en" ? `Planned steps: ${plan.sandbox_steps.join(" → ")}. Nothing has permission to run.` : `預定步驟：${plan.sandbox_steps.join(" → ")}。目前沒有任何執行權限。`;
     target.append(title, detail);
     if (plan.status !== "blocked") {
       const authorize = document.createElement("button");
@@ -438,13 +465,13 @@ async function loadSandboxReadiness() {
     const readiness = await request("/registry/sandbox/readiness");
     const title = document.querySelector("#sandbox-readiness");
     const detail = document.querySelector("#sandbox-readiness-detail");
-    title.textContent = readiness.status === "available" ? `Sandbox runner：${readiness.runner} 可供測試` : readiness.status === "blocked" ? "Sandbox runner：已阻擋" : "Sandbox runner：尚未設定";
-    detail.textContent = readiness.status === "available" ? "已偵測到 runner；仍需人工確認與隔離 self-test 通過後才能執行。" : readiness.issues.join(" ");
+    title.textContent = readiness.status === "available" ? (locale === "en" ? `Sandbox runner: ${readiness.runner} is available for review` : `Sandbox runner：${readiness.runner} 可供測試`) : readiness.status === "blocked" ? (locale === "en" ? "Sandbox runner: blocked" : "Sandbox runner：已阻擋") : (locale === "en" ? "Sandbox runner: not configured" : "Sandbox runner：尚未設定");
+    detail.textContent = readiness.status === "available" ? (locale === "en" ? "A runner was found. A person must still confirm it, and its isolated self-test must pass before anything can run." : "已偵測到 runner；仍需人工確認與隔離 self-test 通過後才能執行。") : readiness.issues.join(" ");
   } catch (error) { document.querySelector("#sandbox-readiness-detail").textContent = error.message; }
 }
 document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); setView(link.dataset.viewLink); }));
 document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go)));
-document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); }));
+document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); if (registryCatalog) renderRegistry(); loadSandboxReadiness(); loadEvidenceViews().catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; }); }));
 bindAction('[data-action="load-summary"]', "summary-result", () => request("/project/summary"), "PROJECT SNAPSHOT");
 document.querySelector('[data-action="load-evidence"]').addEventListener("click", async () => {
   try { await loadEvidenceViews(); }

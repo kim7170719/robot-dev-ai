@@ -18,7 +18,9 @@ if (host && canvas && window.WebGLRenderingContext) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.domElement.setAttribute("role", "application");
-  renderer.domElement.setAttribute("aria-label", "可互動的人形機器人模型。拖曳旋轉，滾輪縮放，點擊切換自動展示；方向鍵旋轉，空白鍵切換，R 重設視角。載入失敗時使用本機原創備援模型。");
+  const setCanvasLabel = (locale = "zh") => renderer.domElement.setAttribute("aria-label", locale === "en" ? "Interactive humanoid model. Drag to rotate, scroll to zoom, click to toggle the automatic showcase; use arrow keys to rotate, Space to toggle, and R to reset the view. A local fallback model is used if loading fails." : "可互動的人形機器人模型。拖曳旋轉，滾輪縮放，點擊切換自動展示；方向鍵旋轉，空白鍵切換，R 重設視角。載入失敗時使用本機原創備援模型。");
+  setCanvasLabel(document.documentElement.lang === "en" ? "en" : "zh");
+  document.addEventListener("robot-dev-ai:locale-change", (event) => setCanvasLabel(event.detail.locale));
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(27, 1, .1, 40);

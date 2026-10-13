@@ -91,6 +91,11 @@ M14 newcomer terminology pass (2026-10-13): user-facing “Evidence” is now
 The landing page now explains the actual flow—describe a robot, try it in
 simulation, then read the result—without implying real-hardware validation.
 
+M14 English-mode coverage pass (2026-10-13): the locale layer now translates
+all visible workspace copy, image and control labels, loading states, and
+registry sandbox status. Switching languages refreshes read-only evidence and
+registry views so previously loaded Chinese status text is not left behind.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,
