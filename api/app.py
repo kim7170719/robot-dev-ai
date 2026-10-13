@@ -54,6 +54,7 @@ from agent.source_onboarding import (
     SandboxRunnerReadiness,
     IsolatedSandboxRunner,
     DependencyScanResult,
+    LicenseMetadataResult,
     RosManifestMetadataResult,
     LocalSourceBundleGate,
     LocalSourceBundleRequest,
@@ -492,6 +493,26 @@ def create_app(
             result.detail,
             bundle_sha256=request.expected_sha256,
         )
+        return result
+
+    @app.post(
+        "/api/v1/registry/onboarding/{transaction_id}/bundle/license-metadata",
+        response_model=LicenseMetadataResult,
+    )
+    def extract_verified_license_metadata(
+        transaction_id: str, request: LocalSourceBundleRequest
+    ) -> LicenseMetadataResult:
+        transaction = pending_onboarding.get(transaction_id)
+        if transaction is None:
+            raise HTTPException(status_code=404, detail="onboarding transaction was not found")
+        if not audit_store.has_bundle_event(transaction_id, "dependency-scan-passed", request.expected_sha256):
+            raise HTTPException(status_code=409, detail="a passed dependency scan for this bundle is required")
+        profile = sandbox_profile_from_environment()
+        bundle_path = bundle_gate.verified_path(request)
+        if profile is None or bundle_path is None:
+            return LicenseMetadataResult(status="blocked", runner="docker", detail="configured Docker runner and verified local tar bundle are required")
+        result = isolated_runner.license_metadata(profile, bundle_path)
+        audit_store.append(transaction, "license-metadata-extracted" if result.status == "passed" else "blocked", result.detail, bundle_sha256=request.expected_sha256)
         return result
 
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)

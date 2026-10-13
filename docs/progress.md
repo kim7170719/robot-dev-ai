@@ -124,6 +124,13 @@ not E4 real-hardware proof. The numerical population gate remains honest and
 open: it still needs externally recorded E0/E1, E2, E4, and reviewed E5
 evidence.
 
+v0.5 bounded license metadata extraction (2026-10-13): **PASS.** A verified,
+artifact-bound archive can expose only its first listed license candidate to a
+32 KiB isolated read. The result records an explicit SPDX declaration only
+when the source provides one and never treats a filename or license prose as a
+legal conclusion. The local Apache 2.0 license test correctly returned no
+SPDX declaration. Full suite: **125 tests**.
+
 v0.5 local source bundle gate (2026-10-13): **PASS.** Future sandbox inputs
 must be operator-supplied local archives under a configured root, with an
 allowlisted `.tar.gz`/`.tgz`/`.zip` type, non-symlink identity, size limit, and

@@ -91,6 +91,12 @@ same-context conflict viewer, and Reference Robot list through
 `planned`; it is not real-hardware evidence and does not close the numerical
 G12.6 population gate.
 
+Verified source archives can now expose bounded license metadata: the first
+scan-listed `LICENSE*`/`COPYING*`/`NOTICE*` is read up to 32 KiB inside the
+same isolated Docker profile. Only a literal SPDX header is reported; this is
+not a legal license decision. Local Apache license evidence correctly returned
+no SPDX declaration. Full suite: **125 tests passed**.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

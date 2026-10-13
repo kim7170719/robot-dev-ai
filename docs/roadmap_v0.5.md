@@ -110,3 +110,10 @@ Every artifact stage is bound to the same verified SHA-256 in append-only audit
 evidence. A dependency scan or ROS manifest request for a different—even also
 allowlisted—archive is rejected until that exact archive has passed its own
 preceding gate.
+
+The same bounded path also exposes `bundle/license-metadata`: it selects only
+the first scan-listed `LICENSE*`, `COPYING*`, or `NOTICE*`, streams at most
+32 KiB in the isolated container, and records an explicitly declared
+`SPDX-License-Identifier` when one is present. Its output is source-provided
+metadata only, not a license interpretation or authorization to redistribute,
+install, build, or execute code.

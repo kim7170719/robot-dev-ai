@@ -11,7 +11,7 @@ from .audit import (
     SandboxRunnerProfile,
     SandboxRunnerReadiness,
 )
-from .runner import DependencyScanResult, IsolatedSandboxRunner, RosManifestMetadataResult, SandboxSelfTestResult
+from .runner import DependencyScanResult, IsolatedSandboxRunner, LicenseMetadataResult, RosManifestMetadataResult, SandboxSelfTestResult
 from .bundle import LocalSourceBundleGate, LocalSourceBundleRequest, LocalSourceBundleVerification
 
-__all__ = ["OnboardingRequest", "OnboardingTransaction", "SourceOnboardingPlanner", "OnboardingAuditRecord", "OnboardingAuditStore", "OnboardingTransactionStore", "SandboxAuthorizationResult", "SandboxExecutorContract", "SandboxRunnerPreflight", "SandboxRunnerProfile", "SandboxRunnerReadiness", "IsolatedSandboxRunner", "SandboxSelfTestResult", "DependencyScanResult", "RosManifestMetadataResult", "LocalSourceBundleGate", "LocalSourceBundleRequest", "LocalSourceBundleVerification"]
+__all__ = ["OnboardingRequest", "OnboardingTransaction", "SourceOnboardingPlanner", "OnboardingAuditRecord", "OnboardingAuditStore", "OnboardingTransactionStore", "SandboxAuthorizationResult", "SandboxExecutorContract", "SandboxRunnerPreflight", "SandboxRunnerProfile", "SandboxRunnerReadiness", "IsolatedSandboxRunner", "SandboxSelfTestResult", "DependencyScanResult", "RosManifestMetadataResult", "LicenseMetadataResult", "LocalSourceBundleGate", "LocalSourceBundleRequest", "LocalSourceBundleVerification"]

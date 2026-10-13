@@ -126,3 +126,22 @@ def test_ros_manifest_metadata_rejects_xml_declarations() -> None:
 
     assert result.status == "blocked"
     assert "declarations" in result.detail
+
+
+def test_license_metadata_reads_only_the_first_scanned_license_declaration() -> None:
+    calls = 0
+
+    def license_runner(command: list[str]) -> subprocess.CompletedProcess[str]:
+        nonlocal calls
+        calls += 1
+        stdout = "robot/LICENSE\nrobot/NOTICE\n" if calls == 1 else "SPDX-License-Identifier: Apache-2.0\n"
+        return subprocess.CompletedProcess(command, 0, stdout=stdout, stderr="")
+
+    result = IsolatedSandboxRunner(license_runner).license_metadata(
+        SandboxRunnerProfile(runner="docker", image="local/sandbox:stable"),
+        Path("/safe/root/source.tar.gz"),
+    )
+
+    assert result.status == "passed"
+    assert result.license_path == "robot/LICENSE"
+    assert result.declared_spdx_expression == "Apache-2.0"

@@ -94,6 +94,10 @@ Isaac Sim G4 CLI results (2026-09-21):
   audit evidence retain the verified SHA-256. Each later endpoint requires the
   exact same hash; a second allowlisted archive cannot reuse an earlier
   artifact's transaction evidence.
+- Bounded license metadata: `POST /registry/onboarding/{id}/bundle/license-metadata`
+  reads only the first scan-listed license candidate, capped at 32 KiB under
+  the same Docker isolation and SHA-bound audit gate. It returns a declared
+  SPDX header only if present and is never a license or redistribution ruling.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus

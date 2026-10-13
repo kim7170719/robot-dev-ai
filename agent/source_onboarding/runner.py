@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import subprocess
 import xml.etree.ElementTree as ElementTree
+import re
 from pathlib import Path
 from typing import Callable, Literal
 
@@ -47,6 +48,18 @@ class RosManifestMetadataResult(BaseModel):
     manifest_path: str | None = None
     package_name: str | None = None
     dependency_ids: list[str] = Field(default_factory=list)
+    detail: str = Field(min_length=1, max_length=1024)
+
+
+class LicenseMetadataResult(BaseModel):
+    """A bounded source-declared SPDX expression; not a legal determination."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["passed", "blocked", "failed"]
+    runner: Literal["docker"]
+    license_path: str | None = None
+    declared_spdx_expression: str | None = None
     detail: str = Field(min_length=1, max_length=1024)
 
 
@@ -240,6 +253,47 @@ class IsolatedSandboxRunner:
             package_name=package_name, dependency_ids=dependencies,
             detail="ROS package.xml metadata parsed in an isolated read-only container; source was not installed or executed",
         )
+
+    @staticmethod
+    def license_metadata_command(
+        profile: SandboxRunnerProfile, bundle_path: Path, license_path: str
+    ) -> list[str]:
+        if profile.runner != "docker" or profile.image is None:
+            raise ValueError("license metadata requires a configured Docker sandbox profile")
+        if not bundle_path.name.endswith((".tar.gz", ".tgz")):
+            raise ValueError("license metadata currently supports verified tar archives only")
+        return [
+            "docker", "run", "--rm", "--pull", "never", "--network", "none",
+            "--read-only", "--tmpfs", "/tmp:rw,nosuid,nodev,noexec,size=64m",
+            "--pids-limit", "64", "--memory", "512m", "--cpus", "1",
+            "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+            "--user", "65534:65534", "--mount",
+            f"type=bind,src={bundle_path},dst=/bundle/source,readonly",
+            profile.image, "/bin/sh", "-c",
+            "tar -xOzf /bundle/source -- \"$1\" | head -c 32769",
+            "license-reader", license_path,
+        ]
+
+    def license_metadata(
+        self, profile: SandboxRunnerProfile, bundle_path: Path
+    ) -> LicenseMetadataResult:
+        scan = self.dependency_scan(profile, bundle_path)
+        if scan.status != "passed":
+            return LicenseMetadataResult(status="blocked" if scan.status == "blocked" else "failed", runner="docker", detail=f"archive listing did not pass: {scan.detail}")
+        license_path = next(iter(scan.candidate_license_files), None)
+        if license_path is None:
+            return LicenseMetadataResult(status="blocked", runner="docker", detail="no license candidate was found in the verified archive listing")
+        try:
+            completed = self.command_runner(self.license_metadata_command(profile, bundle_path, license_path))
+        except (ValueError, OSError, subprocess.TimeoutExpired) as error:
+            return LicenseMetadataResult(status="blocked", runner="docker", license_path=license_path, detail=str(error))
+        if completed.returncode != 0:
+            return LicenseMetadataResult(status="failed", runner="docker", license_path=license_path, detail=(completed.stderr or completed.stdout or "license metadata read failed")[:1024])
+        if len(completed.stdout.encode("utf-8")) >= 32769:
+            return LicenseMetadataResult(status="blocked", runner="docker", license_path=license_path, detail="license metadata exceeds the 32 KiB limit")
+        match = re.search(r"^\s*SPDX-License-Identifier:\s*(.{1,128})\s*$", completed.stdout, re.MULTILINE)
+        expression = match.group(1).strip() if match else None
+        return LicenseMetadataResult(status="passed", runner="docker", license_path=license_path, declared_spdx_expression=expression, detail="license metadata read in an isolated read-only container; an SPDX declaration is source-provided metadata, not a legal determination")
 
     @staticmethod
     def _local_name(tag: str) -> str:
