@@ -96,6 +96,10 @@ all visible workspace copy, image and control labels, loading states, and
 registry sandbox status. Switching languages refreshes read-only evidence and
 registry views so previously loaded Chinese status text is not left behind.
 
+M14 landing-copy pass (2026-10-13): replaced the promotional simulation
+wording with a plain description of the actual workflow: describe the robot,
+review compatible components and simulation checks, then choose the next step.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

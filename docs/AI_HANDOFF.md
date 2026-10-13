@@ -308,3 +308,7 @@ M14 English-mode coverage pass (2026-10-13): static UI copy, accessible labels,
 loading messages, and sandbox status now have English translations. A locale
 change also refreshes the read-only registry and test-record data, preventing
 already-loaded Chinese status text from remaining on screen.
+
+M14 landing-copy pass (2026-10-13): homepage wording is now task-first rather
+than promotional. It describes planning a robot, reviewing compatible
+components and simulation checks, and choosing the next step.
