@@ -117,6 +117,9 @@ Isaac Sim G4 CLI results (2026-09-21):
   paired transaction store retains its previously recorded sandbox
   authorization. This restores evidence only; it does not run a sandbox or
   authorize acquisition.
+- Audit integrity: newly appended audit records form a SHA-256 hash chain and
+  reload rejects tampered hashed records. Older unhashed JSONL remains legacy
+  evidence rather than hash-verified evidence.
 
 ## M5 evidence
 

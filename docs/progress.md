@@ -69,6 +69,11 @@ the prior human sandbox authorization for the recovered transaction. Recovery
 does not start a runner or grant source acquisition, installation, build, or
 execution authority. Full suite: **121 tests**.
 
+v0.5 audit integrity chain (2026-10-13): **PASS.** New append-only audit
+records include a canonical SHA-256 hash linked to the prior record; reload
+rejects a modified hashed record. Historical unhashed JSONL remains readable
+but is not represented as hash-verified evidence.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

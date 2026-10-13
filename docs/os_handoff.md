@@ -102,6 +102,10 @@ The future E2 build environment is now defined (not provisioned) by
 Building it remains an explicit operator action because it may pull the ROS
 base image. Application code does not build or pull it.
 
+New onboarding audit records form a SHA-256 hash chain. Reload rejects a
+tampered hashed record; preexisting unhashed JSONL remains legacy-readable but
+is not hash-verified evidence.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

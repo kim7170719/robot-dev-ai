@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import shutil
 from datetime import UTC, datetime
 from pathlib import Path
@@ -21,6 +22,8 @@ class OnboardingAuditRecord(BaseModel):
     recorded_at: datetime
     detail: str = Field(min_length=1, max_length=512)
     bundle_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    previous_record_hash: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    record_hash: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
 
 
 class OnboardingAuditStore:
@@ -29,6 +32,7 @@ class OnboardingAuditStore:
     def __init__(self, path: Path | None = None) -> None:
         self.path = path
         self.records: list[OnboardingAuditRecord] = []
+        self._last_record_hash: str | None = None
         self._load()
 
     def _load(self) -> None:
@@ -36,7 +40,12 @@ class OnboardingAuditStore:
         if self.path is None or not self.path.exists():
             return
         for line in self.path.read_text(encoding="utf-8").splitlines():
-            self.records.append(OnboardingAuditRecord.model_validate_json(line))
+            record = OnboardingAuditRecord.model_validate_json(line)
+            if record.record_hash is not None:
+                if record.previous_record_hash != self._last_record_hash or record.record_hash != self._record_hash(record):
+                    raise ValueError("onboarding audit hash chain is invalid")
+                self._last_record_hash = record.record_hash
+            self.records.append(record)
 
     def append(
         self,
@@ -52,13 +61,22 @@ class OnboardingAuditStore:
             recorded_at=datetime.now(UTC),
             detail=detail,
             bundle_sha256=bundle_sha256,
+            previous_record_hash=self._last_record_hash,
         )
+        record = record.model_copy(update={"record_hash": self._record_hash(record)})
+        self._last_record_hash = record.record_hash
         self.records.append(record)
         if self.path is not None:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             with self.path.open("a", encoding="utf-8") as audit_file:
                 audit_file.write(record.model_dump_json() + "\n")
         return record
+
+    @staticmethod
+    def _record_hash(record: OnboardingAuditRecord) -> str:
+        payload = record.model_dump(mode="json", exclude={"record_hash"})
+        canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
     def has_event(self, transaction_id: str, event: str) -> bool:
         return any(

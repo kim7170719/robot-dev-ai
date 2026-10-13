@@ -47,6 +47,18 @@ def test_confirmed_handoff_persists_audit_without_host_execution(tmp_path) -> No
     assert result.status == "sandbox-runner-authorized"
     assert result.host_execution_performed is False
     assert store.path.read_text(encoding="utf-8").count("sandbox-runner-authorized") == 1
+    assert OnboardingAuditStore(store.path).records[0].record_hash is not None
+
+
+def test_audit_store_rejects_a_tampered_hashed_record(tmp_path) -> None:
+    transaction = SourceOnboardingPlanner().preview(_request())
+    path = tmp_path / "audit.jsonl"
+    SandboxExecutorContract().authorize(transaction, confirmed=True, audit_store=OnboardingAuditStore(path))
+    path.write_text(path.read_text(encoding="utf-8").replace("human confirmation", "tampered confirmation"), encoding="utf-8")
+
+    import pytest
+    with pytest.raises(ValueError, match="hash chain"):
+        OnboardingAuditStore(path)
 
 
 def test_transaction_store_recovers_preview_across_a_new_store_instance(tmp_path) -> None:
