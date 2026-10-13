@@ -87,7 +87,7 @@ Isaac Sim G4 CLI results (2026-09-21):
   `POST /registry/onboarding/{id}/bundle/ros-manifest` selects only the first
   listed `package.xml` from the already verified archive. The same fixed Docker
   isolation streams no more than 128 KiB to an XML parser and returns only the
-  package name and declared dependency IDs. It neither writes, installs, builds,
+  package name, declared version, and declared dependency IDs. It neither writes, installs, builds,
   resolves, nor executes source. A successful result appends
   `manifest-metadata-extracted` audit evidence.
 - Artifact-bound gates: bundle verification, dependency scan, and ROS manifest

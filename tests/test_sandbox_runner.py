@@ -77,7 +77,7 @@ def test_ros_manifest_metadata_reads_only_the_first_scanned_package_xml() -> Non
             )
         return subprocess.CompletedProcess(
             command, 0,
-            stdout=("<package format=\"3\"><name>demo_robot</name>"
+            stdout=("<package format=\"3\"><name>demo_robot</name><version>1.2.3</version>"
                     "<depend>rclpy</depend><exec_depend>sensor_msgs</exec_depend>"
                     "<depend>rclpy</depend></package>"),
             stderr="",
@@ -91,6 +91,7 @@ def test_ros_manifest_metadata_reads_only_the_first_scanned_package_xml() -> Non
     assert result.status == "passed"
     assert result.manifest_path == "robot/package.xml"
     assert result.package_name == "demo_robot"
+    assert result.package_version == "1.2.3"
     assert result.dependency_ids == ["rclpy", "sensor_msgs"]
     assert observed[1][-1] == "robot/package.xml"
     assert "head -c 131073" in observed[1][-3]

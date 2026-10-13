@@ -115,6 +115,9 @@ read-only analysis, not an authorization to install, build, or execute source.
 The full local API flow passed against a temporary archive containing the
 existing `simple_diff_robot/package.xml`. Full suite: **122 tests**.
 
+The bounded ROS manifest result also records the source-declared package
+version when present; it remains metadata rather than a compatibility claim.
+
 v0.6 coverage, conflict, and reference views (2026-10-13): **PASS for the
 software surface.** The evidence API now exposes a read-only overview of all
 known components, their E0–E5 coverage, separately queryable same-context

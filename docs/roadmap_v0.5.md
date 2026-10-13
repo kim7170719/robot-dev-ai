@@ -102,7 +102,7 @@ For a verified ROS archive, the next bounded step is available at
 previous passed dependency scan, selects the first scan-listed `package.xml`,
 and uses the same no-network/no-pull/read-only Docker profile. A fixed command
 streams no more than 128 KiB to an XML parser and returns only the ROS package
-name plus declared dependency identifiers. It does not write the manifest to
+name, declared version, plus declared dependency identifiers. It does not write the manifest to
 the host, resolve dependency versions, validate licenses, install, build, or
 execute the candidate source.
 

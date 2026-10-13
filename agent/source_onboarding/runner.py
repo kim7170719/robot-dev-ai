@@ -47,6 +47,7 @@ class RosManifestMetadataResult(BaseModel):
     runner: Literal["docker"]
     manifest_path: str | None = None
     package_name: str | None = None
+    package_version: str | None = None
     dependency_ids: list[str] = Field(default_factory=list)
     detail: str = Field(min_length=1, max_length=1024)
 
@@ -239,6 +240,14 @@ class IsolatedSandboxRunner:
                 status="failed", runner="docker", manifest_path=manifest_path,
                 detail="ROS package.xml is missing a package name",
             )
+        package_version = next(
+            (
+                (element.text or "").strip()
+                for element in root
+                if self._local_name(element.tag) == "version" and (element.text or "").strip()
+            ),
+            None,
+        )
         dependency_tags = {
             "depend", "build_depend", "buildtool_depend", "build_export_depend",
             "exec_depend", "test_depend", "doc_depend",
@@ -250,7 +259,7 @@ class IsolatedSandboxRunner:
         })[:128]
         return RosManifestMetadataResult(
             status="passed", runner="docker", manifest_path=manifest_path,
-            package_name=package_name, dependency_ids=dependencies,
+            package_name=package_name, package_version=package_version, dependency_ids=dependencies,
             detail="ROS package.xml metadata parsed in an isolated read-only container; source was not installed or executed",
         )
 

@@ -69,7 +69,7 @@ the package name and declared dependency IDs, appends
 `manifest-metadata-extracted` audit evidence, and never writes, installs,
 builds, or executes candidate source. A live Docker check of the existing
 `simple_diff_robot/package.xml` returned its name plus nine declared
-dependencies. XML DTD/entity declarations are rejected before parsing. Full
+dependencies and its source-declared version. XML DTD/entity declarations are rejected before parsing. Full
 suite: **120 tests passed**.
 
 Append-only audit recovery is now PASS: a caller-configured audit JSONL store
