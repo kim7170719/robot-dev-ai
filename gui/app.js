@@ -346,8 +346,8 @@ async function loadSandboxReadiness() {
     const readiness = await request("/registry/sandbox/readiness");
     const title = document.querySelector("#sandbox-readiness");
     const detail = document.querySelector("#sandbox-readiness-detail");
-    title.textContent = readiness.status === "ready" ? `Sandbox runner：${readiness.runner} 已準備` : readiness.status === "blocked" ? "Sandbox runner：已阻擋" : "Sandbox runner：尚未設定";
-    detail.textContent = readiness.status === "ready" ? "隔離條件已通過 preflight；仍需人工確認與未來 runner 執行。" : readiness.issues.join(" ");
+    title.textContent = readiness.status === "available" ? `Sandbox runner：${readiness.runner} 可供測試` : readiness.status === "blocked" ? "Sandbox runner：已阻擋" : "Sandbox runner：尚未設定";
+    detail.textContent = readiness.status === "available" ? "已偵測到 runner；仍需人工確認與隔離 self-test 通過後才能執行。" : readiness.issues.join(" ");
   } catch (error) { document.querySelector("#sandbox-readiness-detail").textContent = error.message; }
 }
 document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); setView(link.dataset.viewLink); }));

@@ -50,6 +50,8 @@ from agent.source_onboarding import (
     SandboxRunnerPreflight,
     SandboxRunnerProfile,
     SandboxRunnerReadiness,
+    IsolatedSandboxRunner,
+    SandboxSelfTestResult,
     SourceOnboardingPlanner,
 )
 from agent.schemas import RequirementResult
@@ -227,6 +229,10 @@ class SandboxAuthorizationRequest(BaseModel):
     confirmed: Literal[True]
 
 
+class SandboxSelfTestRequest(SandboxAuthorizationRequest):
+    """A fixed runner health check; no arbitrary command or source is accepted."""
+
+
 def create_app(
     project_summary: ProjectSummary | None = None,
     workspace_root: Path | None = None,
@@ -235,6 +241,7 @@ def create_app(
     management_document: RegistryManagementDocumentV05 | None = None,
     onboarding_audit_store: OnboardingAuditStore | None = None,
     onboarding_transaction_store: OnboardingTransactionStore | None = None,
+    sandbox_runner: IsolatedSandboxRunner | None = None,
     build_collector_factory: Callable[[Path], BuildCommandCollector] | None = None,
     runtime_collector_factory: Callable[[], RosRuntimeCollector] | None = None,
     simulation_frame_collector_factory: Callable[[], SimulationFrameCollector] | None = None,
@@ -257,6 +264,7 @@ def create_app(
     management_document = management_document or _default_management_document()
     audit_store = onboarding_audit_store or OnboardingAuditStore()
     transaction_store = onboarding_transaction_store or OnboardingTransactionStore()
+    isolated_runner = sandbox_runner or IsolatedSandboxRunner()
     pending_onboarding = transaction_store.transactions
     pending_plans: dict[str, WorkspacePlan] = {}
     generated_plans: dict[str, WorkspacePlan] = {}
@@ -380,6 +388,18 @@ def create_app(
         return SandboxExecutorContract().authorize(
             transaction, confirmed=request.confirmed, audit_store=audit_store
         )
+
+    @app.post("/api/v1/registry/sandbox/self-test", response_model=SandboxSelfTestResult)
+    def run_sandbox_self_test(request: SandboxSelfTestRequest) -> SandboxSelfTestResult:
+        if not audit_store.has_event(request.transaction_id, "sandbox-runner-authorized"):
+            raise HTTPException(status_code=409, detail="sandbox runner authorization is required")
+        configured = os.environ.get("ROBOT_DEV_AI_SANDBOX_RUNNER")
+        if configured not in {"bubblewrap", "docker"}:
+            return SandboxSelfTestResult(
+                status="blocked", runner="unconfigured",
+                detail="no sandbox runner profile is configured",
+            )
+        return isolated_runner.self_test(SandboxRunnerProfile(runner=configured))
 
     @app.post("/api/v1/requirements/parse", response_model=RequirementResult)
     def parse_requirement(request: RequirementRequest) -> RequirementResult:

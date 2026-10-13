@@ -45,6 +45,12 @@ class OnboardingAuditStore:
                 audit_file.write(record.model_dump_json() + "\n")
         return record
 
+    def has_event(self, transaction_id: str, event: str) -> bool:
+        return any(
+            record.transaction_id == transaction_id and record.event == event
+            for record in self.records
+        )
+
 
 class OnboardingTransactionStore:
     """Recover preview transactions across API restarts from caller-owned JSONL."""
@@ -83,7 +89,7 @@ class SandboxRunnerProfile(BaseModel):
 class SandboxRunnerReadiness(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    status: Literal["ready", "not-configured", "blocked"]
+    status: Literal["available", "not-configured", "blocked"]
     runner: str | None = None
     issues: list[str] = Field(default_factory=list)
 
@@ -103,7 +109,7 @@ class SandboxRunnerPreflight:
                 status="blocked", runner=profile.runner,
                 issues=[f"configured sandbox runner is unavailable: {binary}"],
             )
-        return SandboxRunnerReadiness(status="ready", runner=profile.runner)
+        return SandboxRunnerReadiness(status="available", runner=profile.runner)
 
 
 class SandboxAuthorizationResult(BaseModel):

@@ -155,6 +155,16 @@ def test_onboarding_transaction_survives_a_new_app_with_configured_store(tmp_pat
     assert restored.json()["id"] == preview.json()["id"]
 
 
+def test_sandbox_self_test_requires_prior_authorization() -> None:
+    client = TestClient(create_app())
+    response = client.post(
+        "/api/v1/registry/sandbox/self-test",
+        json={"transaction_id": "unknown", "confirmed": True},
+    )
+
+    assert response.status_code == 409
+
+
 def test_requirement_endpoint_returns_structured_spec_and_provenance() -> None:
     response = TestClient(create_app()).post(
         "/api/v1/requirements/parse",

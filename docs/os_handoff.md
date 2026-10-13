@@ -29,6 +29,12 @@ the GUI shows a read-only sandbox runner status. Docker/bubblewrap are never
 started by that check. Full suite: **102 tests passed**. Actual isolated source
 acquisition/execution remains deliberately unimplemented.
 
+The first real bubblewrap self-test is **BLOCKED** here: the fixed no-network,
+read-only root, tmpfs-only test failed at loopback setup with `RTM_NEWADDR:
+Operation not permitted`. No source was acquired or executed. Treat a detected
+binary as `available`, never `ready`; use a namespace-capable host or a
+separately reviewed Docker runner before source acquisition.
+
 The next v0.5 onboarding preview is also complete: it creates a deterministic
 audit transaction and sandbox-step plan with `execution_authorized=false`.
 Registry GUI can preview it, never run it. Next is persistent audit storage and

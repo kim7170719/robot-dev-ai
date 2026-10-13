@@ -50,7 +50,12 @@ Isaac Sim G4 CLI results (2026-09-21):
   restarts. `GET /registry/sandbox/readiness` only checks an explicit
   `ROBOT_DEV_AI_SANDBOX_RUNNER` choice (`bubblewrap` or `docker`) and binary
   availability; it never starts a runner. The Registry UI labels this as
-  ready/not configured/blocked. Real sandbox execution remains future work.
+  available/not configured/blocked. Real sandbox execution remains future work.
+- Isolated runner self-test: the first bubblewrap no-network/read-only/tmpfs
+  self-test was attempted on 2026-10-13 and failed while configuring loopback
+  (`RTM_NEWADDR: Operation not permitted`). No source was acquired or executed.
+  Do not call the local runner ready; use a host that permits the required user
+  and network namespace setup, or establish a separately reviewed Docker path.
 - Audit and sandbox-runner contract: `OnboardingAuditStore` can append JSONL
   records at a caller-configured path. `POST /registry/onboarding/preview`
   stores its transaction in the current API process; only that pending ID plus

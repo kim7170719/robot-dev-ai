@@ -66,9 +66,17 @@ the project tree free of generated audit logs. Full suite: **99 tests**.
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,
-or `ready` for an explicitly configured Docker/bubblewrap binary; it never
+or `available` for an explicitly configured Docker/bubblewrap binary; it never
 starts either tool. Registry GUI displays this truthful readiness state. Full
 suite: **102 tests**.
+
+v0.5 isolated runner self-test (2026-10-13): **BLOCKED on this host.** The
+first real bubblewrap self-test invoked only its fixed no-network, read-only
+root, temporary-workspace check—no source was acquired or executed—but failed
+when the current environment denied loopback configuration
+(`RTM_NEWADDR: Operation not permitted`). Binary discovery now means
+`available`, not `ready`; only a passed self-test establishes isolation. The
+blocked result is retained as evidence rather than weakening network isolation.
 
 ## M8 Template Engine / Gate G8
 

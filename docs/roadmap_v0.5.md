@@ -64,6 +64,7 @@ a human-confirmed candidate onboarding action that can acquire code.
 Transaction persistence and runner preflight are now implemented. A
 caller-configured JSONL transaction store restores preview IDs after an API
 restart. The GUI exposes a runner status from a read-only preflight: no profile
-is `not-configured`; an unavailable configured binary is `blocked`; only an
-explicit bubblewrap or Docker profile with required isolation settings is
-`ready`. Preflight never starts Docker or bubblewrap.
+is `not-configured`; an unavailable configured binary is `blocked`; an
+explicit bubblewrap or Docker profile with required isolation settings is only
+`available` until the isolated self-test passes. Preflight never starts Docker
+or bubblewrap.
