@@ -404,3 +404,9 @@ unset value preserves memory-only, no-write operation.
 v0.6 read-only snapshot boundary (2026-10-13): LAN read-only mode now forces
 an in-memory snapshot store, ignoring configured persistence. A GET request
 cannot create a snapshot directory or write evidence data in that mode.
+
+G14.5 registry audit (2026-10-14): completed a read-only inventory of the
+v0.3–v0.6 registry, resolver, template, API, GUI, and evidence seams in
+`docs/g14_5_registry_audit.md`. It recommends a P0-only, data-backed artifact
+layer and records the unresolved E2/E4/E5 external boundaries. No component,
+source, or evidence record was added.
