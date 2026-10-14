@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -143,3 +145,14 @@ class ComponentLibraryPlanner:
                 "record M15 observations separately before any E4 promotion",
             ],
         )
+
+
+def load_reference_robot_spec(path: Path) -> ReferenceRobotSpec:
+    """Load a repository-owned JSON-compatible YAML spec without side effects."""
+    return ReferenceRobotSpec.model_validate(json.loads(path.read_text(encoding="utf-8")))
+
+
+def load_default_reference_robot_spec() -> ReferenceRobotSpec:
+    return load_reference_robot_spec(
+        Path(__file__).parents[2] / "data" / "reference_robot_a" / "robot_spec.yaml"
+    )

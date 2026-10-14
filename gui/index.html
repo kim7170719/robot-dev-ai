@@ -184,6 +184,12 @@
             <div class="registry-safety"><strong id="sandbox-readiness">Sandbox runner：讀取中</strong><span id="sandbox-readiness-detail">外部來源只會進入後續 sandbox 流程。</span></div>
           </div>
           <div id="registry-catalog" class="registry-catalog" aria-live="polite"><div class="registry-skeleton"></div><div class="registry-skeleton"></div></div>
+          <section class="component-library" aria-labelledby="component-library-title">
+            <header><div><p class="eyebrow">G14.5 · READ-ONLY</p><h2 id="component-library-title">基礎元件庫</h2><p>查看 P0 元件的來源、測試範圍、能力與限制；資料不代表真機已驗證。</p></div><button data-action="reference-plan" class="secondary">查看 Reference Robot A 計畫</button></header>
+            <label for="component-library-filter">搜尋元件<input id="component-library-filter" type="search" placeholder="例如 Nav2、D455、serial"></label>
+            <div id="component-library-catalog" class="component-library-catalog" aria-live="polite">正在讀取元件庫…</div>
+            <output id="reference-plan-result" class="result-panel" aria-live="polite"></output>
+          </section>
           <section class="source-review" aria-labelledby="source-review-title"><div><h2 id="source-review-title">來源審查結果</h2><p>選取一個元件後，查看它目前可進行的下一步。</p></div><output id="source-review-result" aria-live="polite">正在等待元件資料。</output></section>
         </section>
       </main>

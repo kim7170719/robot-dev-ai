@@ -156,6 +156,20 @@ def test_registry_management_endpoints_are_read_only_and_traceable() -> None:
     assert blocked_write.status_code == 403
 
 
+def test_component_library_and_reference_plan_are_available_read_only() -> None:
+    client = TestClient(create_app(read_only=True))
+
+    library = client.get("/api/v1/component-library")
+    plan = client.get("/api/v1/component-library/reference-robot-a/plan")
+
+    assert library.status_code == 200
+    assert len(library.json()["artifacts"]) == 11
+    assert library.json()["artifacts"][0]["verification"]["evidence_level"] == "E3"
+    assert plan.status_code == 200
+    assert plan.json()["ready"] is True
+    assert plan.json()["hardware_readiness"] == "blocked"
+
+
 def test_onboarding_preview_returns_no_execution_authority() -> None:
     response = TestClient(create_app()).post(
         "/api/v1/registry/onboarding/preview",

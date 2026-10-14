@@ -429,3 +429,9 @@ Robot A spec, expected architecture/composition plans, and a planner that
 outputs package/driver/adapter requirements, evidence gaps, blocked hardware
 readiness, deployment checklist, and validation plan. It performs no rendering,
 Docker, ROS, or hardware I/O; unknown seed dependencies block explicitly.
+
+G14.5 Registry/API surface (2026-10-14): added read-only component-library and
+Reference Robot A plan endpoints. The Registry GUI now renders searchable P0
+artifact source/license/evidence/capability/transport/limitation metadata and
+can inspect the deterministic Reference Robot A plan. LAN read-only mode still
+permits only those GET responses and no catalog mutation or source execution.

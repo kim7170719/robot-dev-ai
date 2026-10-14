@@ -19,6 +19,12 @@ from agent.compatibility_resolver import (
     ResolutionRequest,
     ResolutionResult,
 )
+from agent.component_library import (
+    ComponentLibraryPlanner,
+    ReferenceCompositionResult,
+    ReferenceRobotSpec,
+    load_default_reference_robot_spec,
+)
 from agent.auto_debug.build_collector import BuildCommandCollector
 from agent.auto_debug.collector import RosRuntimeCollector, RosRuntimeSnapshot
 from agent.auto_debug.simulation_view import (
@@ -72,6 +78,7 @@ from agent.source_onboarding import (
 from agent.schemas import RequirementResult
 from agent.template_engine import ExpansionRequest, ExpansionResult, TemplateExpander
 from registry.models import RobotKnowledgeRegistry
+from registry.g145 import SeedManifest, load_default_seed_manifest
 from registry.v04 import RegistryDocumentV04
 from registry.v06 import EvidenceEnvironment, EvidenceRecord, ReferenceRobot, RegistryDocumentV06
 from registry.v05 import (
@@ -254,6 +261,8 @@ def create_app(
     read_only: bool | None = None,
     evidence_document: RegistryDocumentV06 | None = None,
     evidence_snapshot_store: RegistrySnapshotStore | None = None,
+    component_library_manifest: SeedManifest | None = None,
+    reference_robot_spec: ReferenceRobotSpec | None = None,
     management_document: RegistryManagementDocumentV05 | None = None,
     onboarding_audit_store: OnboardingAuditStore | None = None,
     onboarding_transaction_store: OnboardingTransactionStore | None = None,
@@ -284,6 +293,8 @@ def create_app(
         else evidence_snapshot_store or _snapshot_store_from_environment()
     )
     management_document = management_document or _default_management_document()
+    component_library = component_library_manifest or load_default_seed_manifest()
+    reference_robot = reference_robot_spec or load_default_reference_robot_spec()
     audit_store = onboarding_audit_store or OnboardingAuditStore()
     transaction_store = onboarding_transaction_store or OnboardingTransactionStore()
     isolated_runner = sandbox_runner or IsolatedSandboxRunner()
@@ -371,6 +382,19 @@ def create_app(
     def read_registry_management() -> RegistryManagementDocumentV05:
         """Return only stored trusted-source metadata and lifecycle facts."""
         return management_document
+
+    @app.get("/api/v1/component-library", response_model=SeedManifest)
+    def read_component_library() -> SeedManifest:
+        """Inspect local seed metadata only; no discovery or acquisition occurs."""
+        return component_library
+
+    @app.get(
+        "/api/v1/component-library/reference-robot-a/plan",
+        response_model=ReferenceCompositionResult,
+    )
+    def read_reference_robot_a_plan() -> ReferenceCompositionResult:
+        """Return the deterministic planning result without creating deployment artifacts."""
+        return ComponentLibraryPlanner().plan(component_library, reference_robot)
 
     @app.get("/api/v1/registry/sources/{source_id}/review", response_model=SourceReview)
     def review_registry_source(source_id: str) -> SourceReview:

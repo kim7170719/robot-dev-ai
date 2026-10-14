@@ -35,6 +35,7 @@ const staticEnglish = new Map([
   ["遇到問題時再來這裡", "Get help when something needs attention"], ["你可以執行一個安全、固定的模擬檢查，或先查看系統建議；不會自動修改任何內容。", "Run a safe, fixed simulation check or review suggestions. Nothing is changed automatically."], ["安全檢查", "Safe check"], ["在既有的虛擬環境中，測試機器人能否前往一個已設定的位置。", "In the existing virtual environment, test whether the robot can reach a preset location."], ["我確認只進行這一項模擬檢查。", "I confirm that only this simulation check will run."], ["先看建議", "Review suggestions first"], ["可能的修正方式", "Possible fixes"], ["查看系統整理的修正建議。這個動作只會顯示內容，不會修改檔案或重新建置。", "Review suggested fixes. This only shows information; it does not change files or rebuild anything."], ["僅供查看，不會自動套用", "For review only; never applied automatically"],
   ["這是後續驗證的組合目標；只有明確標示為 evidence-backed 才代表已具有對應記錄。", "This is a future validation target. Only items marked evidence-backed have a recorded result."], ["正在讀取 reference target…", "Loading reference target…"],
   ["查看目前已登錄的硬體與軟體來源。這一頁只提供審查資訊，不會下載、安裝或執行外部套件。", "Review the registered hardware and software sources. This page only shows information; it does not download, install, or run external packages."], ["外部來源只會進入後續 sandbox 流程。", "External sources can only enter the later sandbox review flow."], ["正在等待元件資料。", "Waiting for component data."], ["選取一個元件後，查看它目前可進行的下一步。", "Select a component to see the next step currently available."], ["Sandbox runner：讀取中", "Sandbox runner: loading"], ["讀取中…", "Loading…"],
+  ["基礎元件庫", "Base component library"], ["查看 P0 元件的來源、測試範圍、能力與限制；資料不代表真機已驗證。", "Review P0 component sources, test scope, capabilities, and limitations. These records do not mean real hardware is verified."], ["查看 Reference Robot A 計畫", "View Reference Robot A plan"], ["搜尋元件", "Search components"], ["正在讀取元件庫…", "Loading component library…"],
   ["Robot Dev AI 動態首頁", "Robot Dev AI animated home"], ["重新檢查模擬系統", "Check simulation again"],
   ["一台差速機器人的啟動動畫", "A differential-drive robot startup animation"], ["虛擬差速機器人啟動", "Virtual differential-drive robot starting"], ["機器人以 LiDAR 與相機感測器掃描環境，準備進入虛擬開發工作區。", "The robot scans its surroundings with LiDAR and a camera, ready to enter the virtual development workspace."], ["人形機器人動作展示", "Humanoid robot motion display"], ["可互動的人形機器人模型：拖曳旋轉、滾輪縮放、點擊切換自動展示；鍵盤可用方向鍵、空白鍵和 R 操作。", "Interactive humanoid model: drag to rotate, scroll to zoom, click to toggle the showcase; use arrow keys, Space, and R from the keyboard."], ["白色人形機器人準備啟動", "White humanoid robot ready to start"], ["機器人動作控制", "Robot motion controls"],
 ]);
@@ -81,6 +82,7 @@ function applyLocale() {
   document.dispatchEvent(new CustomEvent("robot-dev-ai:locale-change", { detail: { locale } }));
 }
 const demoRegistry = { hardware: [{ id: "generic-diff-base", kind: "mobile-base", vendor: "Robot Dev AI", capability_ids: ["differential-drive"] }], drivers: [{ id: "generic-diff-driver", hardware_id: "generic-diff-base", ros_distro: "jazzy" }], capabilities: [{ id: "differential-drive", interface_ids: [], template_id: "differential-drive" }], packages: [{ id: "diff-drive-controller", required_capability_ids: ["differential-drive"] }], compatibility: [{ hardware_id: "generic-diff-base", package_id: "diff-drive-controller", status: "validated" }] };
+let componentLibrary = null;
 
 function showResult(id, value, label = "API EVIDENCE") {
   const output = document.querySelector(`#${id}`);
@@ -460,6 +462,34 @@ async function loadRegistry() {
   try { registryCatalog = await request("/registry/management"); renderRegistry(); if (registryCatalog.components[0]) reviewSource(registryCatalog.components[0].source_id); }
   catch (error) { document.querySelector("#registry-catalog").textContent = error.message; }
 }
+function renderComponentLibrary() {
+  const target = document.querySelector("#component-library-catalog");
+  if (!componentLibrary || !target) return;
+  const query = document.querySelector("#component-library-filter").value.trim().toLowerCase();
+  const artifacts = componentLibrary.artifacts.filter((artifact) => {
+    const searchable = [artifact.id, artifact.name, artifact.vendor, artifact.model, artifact.artifact_type, ...artifact.capabilities, ...artifact.interfaces, ...artifact.transports].join(" ").toLowerCase();
+    return !query || searchable.includes(query);
+  });
+  target.replaceChildren();
+  if (!artifacts.length) { target.textContent = locale === "en" ? "No seed component matches this search." : "沒有符合搜尋條件的 seed 元件。"; return; }
+  artifacts.forEach((artifact) => {
+    const article = document.createElement("article"); article.className = "component-library-row";
+    const title = document.createElement("h3"); title.textContent = artifact.name;
+    const meta = document.createElement("p"); meta.textContent = `${artifact.id} · ${artifact.artifact_type} · ${artifact.vendor}`;
+    const evidence = document.createElement("span"); evidence.className = "library-evidence"; evidence.textContent = `${artifact.verification.evidence_level} · ${artifact.verification.status} → ${artifact.verification.target_evidence_level}`;
+    const source = document.createElement("p"); source.className = "library-source"; source.textContent = `${locale === "en" ? "Source" : "來源"}: ${artifact.source.trust_level} · ${artifact.source.license.spdx} · ${artifact.source.url}`;
+    const details = document.createElement("p"); details.className = "library-details";
+    const capabilities = artifact.capabilities.length ? artifact.capabilities.join(", ") : "—";
+    const transports = artifact.transports.length ? artifact.transports.join(", ") : "—";
+    details.textContent = `${locale === "en" ? "Capabilities" : "能力"}: ${capabilities} · ${locale === "en" ? "Transport" : "傳輸"}: ${transports}`;
+    const limitation = document.createElement("p"); limitation.className = "library-limitation"; limitation.textContent = artifact.limitations.join(" ");
+    article.append(title, meta, evidence, source, details, limitation); target.append(article);
+  });
+}
+async function loadComponentLibrary() {
+  try { componentLibrary = await request("/component-library"); renderComponentLibrary(); }
+  catch (error) { const target = document.querySelector("#component-library-catalog"); if (target) target.textContent = error.message; }
+}
 async function loadSandboxReadiness() {
   try {
     const readiness = await request("/registry/sandbox/readiness");
@@ -471,13 +501,15 @@ async function loadSandboxReadiness() {
 }
 document.querySelectorAll("[data-view-link]").forEach((link) => link.addEventListener("click", (event) => { event.preventDefault(); setView(link.dataset.viewLink); }));
 document.querySelectorAll("[data-go]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.go)));
-document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); if (registryCatalog) renderRegistry(); loadSandboxReadiness(); loadEvidenceViews().catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; }); }));
+document.querySelectorAll('[data-action="toggle-language"]').forEach((button) => button.addEventListener("click", () => { locale = locale === "zh" ? "en" : "zh"; localStorage.setItem("robot-dev-ai-locale", locale); applyLocale(); if (registryCatalog) renderRegistry(); loadSandboxReadiness(); loadEvidenceViews().catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; }); if (componentLibrary) renderComponentLibrary(); }));
 bindAction('[data-action="load-summary"]', "summary-result", () => request("/project/summary"), "PROJECT SNAPSHOT");
 document.querySelector('[data-action="load-evidence"]').addEventListener("click", async () => {
   try { await loadEvidenceViews(); }
   catch (error) { document.querySelector("#evidence-summary").textContent = error.message; }
 });
 document.querySelector("#registry-filter")?.addEventListener("change", renderRegistry);
+document.querySelector("#component-library-filter")?.addEventListener("input", renderComponentLibrary);
+bindAction('[data-action="reference-plan"]', "reference-plan-result", () => request("/component-library/reference-robot-a/plan"), "REFERENCE ROBOT A · PLAN ONLY");
 document.querySelector('[data-action="refresh-simulation"]').addEventListener("click", refreshSimulation);
 document.querySelector('[data-action="refresh-camera"]').addEventListener("click", () => {
   if (document.querySelector("#camera-source").value === "webcam") stopMjpegPreview();
@@ -529,6 +561,7 @@ if (initialView?.matches("[data-view]")) {
 applyLocale();
 loadEvidenceViews().catch((error) => { document.querySelector("#evidence-summary").textContent = error.message; });
 loadRegistry();
+loadComponentLibrary();
 loadSandboxReadiness();
 refreshSimulation();
 window.setInterval(() => {
