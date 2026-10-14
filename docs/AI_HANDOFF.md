@@ -435,3 +435,9 @@ Reference Robot A plan endpoints. The Registry GUI now renders searchable P0
 artifact source/license/evidence/capability/transport/limitation metadata and
 can inspect the deterministic Reference Robot A plan. LAN read-only mode still
 permits only those GET responses and no catalog mutation or source execution.
+
+G14.5 planning gate (2026-10-14): **G14.5-P PASS.** The T1–T8 deterministic
+planning/compatibility suite, Reference Robot A data fixture, API/GUI surface,
+and `docs/g14_5_gate_report.md` are complete. The E2 build sub-gate remains
+pending an approved archive, allowlist hash, and local Jazzy build image; E4/E5
+remain M15/human-review work. No external code or physical hardware ran.

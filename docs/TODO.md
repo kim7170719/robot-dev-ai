@@ -18,6 +18,16 @@
   Identity-backed human review and broader G12.6 gate population remain
   external prerequisites.
 
+## Completed with external evidence pending — G14.5 Component Library Bootstrap
+
+- **Purpose:** Establish a narrow P0 component library and deterministic
+  Reference Robot A planning path before M15 hardware bring-up.
+- **Status (2026-10-14):** **G14.5-P PASS.** The seed manifest, artifact
+  schema, reference planner, T1–T8 planning/compatibility suite, read-only API,
+  and Registry GUI inspection surface are complete. E2 source-build results,
+  E4 hardware evidence, and E5 community evidence remain external
+  prerequisites. See `docs/g14_5_gate_report.md`.
+
 ## Paused — M15 Jetson + real-robot bring-up (Gate G15)
 
 - **Purpose:** Safely bring the selected Jetson Orin Nano differential-drive platform online with Intel RealSense D455, a physical 2D LiDAR, wheel encoders, and an independent emergency stop; then collect reproducible real-hardware evidence without changing the M12 simulation baseline.
