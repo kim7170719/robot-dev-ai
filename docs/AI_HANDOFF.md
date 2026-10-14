@@ -417,3 +417,9 @@ artifact manifest schema and a dependency-free JSON-compatible YAML loader.
 source/license state, interfaces, dependencies, limitations, target evidence,
 and provenance. External candidates remain E0 pending source review; only the
 pre-existing virtual differential-drive/Nav2/Isaac boundaries retain E3.
+
+G14.5 reference-fixture binding (2026-10-14): the P0 manifest now compiles to
+the frozen v0.4 RegistryDocument without changing legacy schema semantics. Its
+fixture proves Jetson+ESP32 host/MCU responsibility assignment, deterministic
+differential-drive/LiDAR/camera/Nav2 template selection, and the existing
+MCU-only navigation conflict. These are planning tests only, not E2/E4 claims.

@@ -40,7 +40,7 @@ ConstraintKind = Literal[
     "power",
     "sensor-rate",
 ]
-AdapterKind = Literal["serial", "micro-ros", "ros2-control"]
+AdapterKind = Literal["serial", "micro-ros", "ros2-control", "interface-normalization"]
 
 
 class Constraint(RegistryModel):

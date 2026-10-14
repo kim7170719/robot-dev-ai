@@ -135,6 +135,14 @@ about hardware that is not present.
 6. Extend the existing read-only Registry view through typed API fields after
    the schema and fixtures are stable.
 
+## Implemented after this audit
+
+The initial P0 manifest and typed artifact schema now exist at
+`data/registry/seed_manifest.yaml` and `registry/g145.py`. The manifest compiles
+to a fixture `RegistryDocumentV04` for the existing architecture and composition
+resolvers; this keeps new component facts out of the frozen default M14
+documents until the later typed API/GUI integration is complete.
+
 ## Branch note
 
 The handoff proposes branching directly from `develop`. Repository rules say

@@ -9,8 +9,22 @@ from typing import Literal
 
 from pydantic import Field, model_validator
 
-from .models import Identifier, RegistryModel
-from .v04 import EvidenceStatus
+from .models import (
+    Capability,
+    Hardware,
+    Identifier,
+    RegistryModel,
+    RobotKnowledgeRegistry,
+    RosInterface,
+)
+from .v04 import (
+    AdapterContract,
+    Constraint,
+    EvidenceStatus,
+    HardwareProfileV04,
+    RegistryDocumentV04,
+    SoftwareProfileV04,
+)
 from .v05 import SourceType, TrustLevel
 
 
@@ -108,3 +122,85 @@ class SeedManifest(RegistryModel):
 def load_seed_manifest(path: Path) -> SeedManifest:
     """Load JSON-compatible YAML without installing a parser or fetching data."""
     return SeedManifest.model_validate(json.loads(path.read_text(encoding="utf-8")))
+
+
+def load_default_seed_manifest() -> SeedManifest:
+    """Load the repository-owned P0 catalog; it has no network or hardware I/O."""
+    return load_seed_manifest(Path(__file__).parents[1] / "data" / "registry" / "seed_manifest.yaml")
+
+
+def build_reference_registry(manifest: SeedManifest) -> RegistryDocumentV04:
+    """Compile the narrow G14.5 fixture into the unchanged v0.4 resolver schema."""
+    artifacts = {artifact.id: artifact for artifact in manifest.artifacts}
+    required = {
+        "differential-drive", "jetson-generic", "esp32", "ld06",
+        "realsense-d455", "ros2-control", "diff-drive-controller",
+        "serial-bridge", "twist-twiststamped", "nav2",
+    }
+    missing = sorted(required - set(artifacts))
+    if missing:
+        raise ValueError("G14.5 reference registry is missing seed artifacts: " + ", ".join(missing))
+
+    capabilities = [
+        Capability(id="differential-drive", interface_ids=["cmd-vel", "odometry"], template_id="differential-drive"),
+        Capability(id="motor-control"),
+        Capability(id="encoder-feedback", interface_ids=["joint-state"]),
+        Capability(id="real-time-loop"),
+        Capability(id="ros2-runtime"),
+        Capability(id="nav2-runtime"),
+        Capability(id="navigation", interface_ids=["cmd-vel", "laser-scan", "odometry"], template_id="nav2"),
+        Capability(id="planar-lidar", interface_ids=["laser-scan"], template_id="lidar"),
+        Capability(id="rgbd-camera", interface_ids=["camera-image", "camera-info"], template_id="camera"),
+        Capability(id="hardware-abstraction", interface_ids=["joint-state", "cmd-vel-stamped"]),
+        Capability(id="simulation-validation"),
+    ]
+    interfaces = [
+        RosInterface(id="cmd-vel", topic="/cmd_vel", message_type="geometry_msgs/msg/Twist"),
+        RosInterface(id="cmd-vel-stamped", topic="/cmd_vel", message_type="geometry_msgs/msg/TwistStamped"),
+        RosInterface(id="odometry", topic="/odom", message_type="nav_msgs/msg/Odometry"),
+        RosInterface(id="joint-state", topic="/joint_states", message_type="sensor_msgs/msg/JointState"),
+        RosInterface(id="laser-scan", topic="/scan", message_type="sensor_msgs/msg/LaserScan"),
+        RosInterface(id="camera-image", topic="/camera/image_raw", message_type="sensor_msgs/msg/Image"),
+        RosInterface(id="camera-info", topic="/camera/camera_info", message_type="sensor_msgs/msg/CameraInfo"),
+    ]
+    hardware = [
+        Hardware(id="differential-drive", kind="mobile-base", vendor="Robot Dev AI", capability_ids=["differential-drive"]),
+        Hardware(id="jetson-generic", kind="edge-compute", vendor="NVIDIA", capability_ids=["ros2-runtime", "nav2-runtime", "navigation"]),
+        Hardware(id="esp32", kind="mcu", vendor="Espressif", capability_ids=["motor-control", "encoder-feedback", "real-time-loop"]),
+        Hardware(id="ld06", kind="lidar", vendor="LDROBOT", capability_ids=["planar-lidar"]),
+        Hardware(id="realsense-d455", kind="camera", vendor="Intel", capability_ids=["rgbd-camera"]),
+    ]
+    verification = {artifact.id: _verification_state(artifact) for artifact in manifest.artifacts}
+    registry = RobotKnowledgeRegistry(hardware=hardware, interfaces=interfaces, capabilities=capabilities)
+    return RegistryDocumentV04(
+        source_schema_version="v0.3",
+        registry=registry,
+        constraints=[Constraint(id="serial-transport", kind="transport", expected_value="serial", provenance="g14.5-seed-manifest")],
+        software_profiles=[
+            SoftwareProfileV04(id="ros2-control", kind="runtime", verification_state=verification["ros2-control"], provenance=artifacts["ros2-control"].provenance),
+            SoftwareProfileV04(id="diff-drive-controller", kind="driver", verification_state=verification["diff-drive-controller"], provenance=artifacts["diff-drive-controller"].provenance),
+            SoftwareProfileV04(id="nav2", kind="runtime", verification_state=verification["nav2"], provenance=artifacts["nav2"].provenance),
+        ],
+        hardware_profiles=[
+            HardwareProfileV04(device_id="differential-drive", device_class="mobile-base", capability_ids=["differential-drive"], driver_ids=["ros2-control", "diff-drive-controller"], verification_state=verification["differential-drive"], provenance=artifacts["differential-drive"].provenance),
+            HardwareProfileV04(device_id="jetson-generic", device_class="edge-compute", capability_ids=["ros2-runtime", "nav2-runtime", "navigation"], driver_ids=["nav2"], verification_state=verification["jetson-generic"], provenance=artifacts["jetson-generic"].provenance),
+            HardwareProfileV04(device_id="esp32", device_class="mcu", capability_ids=["motor-control", "encoder-feedback", "real-time-loop"], transport_ids=["serial-transport"], verification_state=verification["esp32"], provenance=artifacts["esp32"].provenance),
+            HardwareProfileV04(device_id="ld06", device_class="lidar", capability_ids=["planar-lidar"], transport_ids=["serial-transport"], verification_state=verification["ld06"], provenance=artifacts["ld06"].provenance),
+            HardwareProfileV04(device_id="realsense-d455", device_class="camera", capability_ids=["rgbd-camera"], verification_state=verification["realsense-d455"], provenance=artifacts["realsense-d455"].provenance),
+        ],
+        adapter_contracts=[
+            AdapterContract(id="serial-bridge", kind="serial", supported_device_classes=["mcu"], required_transport_ids=["serial-transport"], verification_state=verification["serial-bridge"], provenance=artifacts["serial-bridge"].provenance),
+            AdapterContract(id="ros2-control", kind="ros2-control", supported_device_classes=["mobile-base"], required_software_profile_ids=["ros2-control", "diff-drive-controller"], verification_state=verification["ros2-control"], provenance=artifacts["ros2-control"].provenance),
+            AdapterContract(id="twist-twiststamped", kind="interface-normalization", supported_device_classes=["mobile-base"], required_software_profile_ids=["ros2-control"], verification_state=verification["twist-twiststamped"], provenance=artifacts["twist-twiststamped"].provenance),
+        ],
+    )
+
+
+def _verification_state(artifact: ComponentArtifact) -> Literal["verified", "experimental", "unknown"]:
+    if artifact.verification.evidence_level == "E0":
+        return "unknown"
+    return "experimental"
+
+
+ComponentArtifact.model_rebuild()
+SeedManifest.model_rebuild()

@@ -27,7 +27,13 @@ from .v05 import (
     SourceReview,
     TrustedSource,
 )
-from .g145 import ComponentArtifact, SeedManifest, load_seed_manifest
+from .g145 import (
+    ComponentArtifact,
+    SeedManifest,
+    build_reference_registry,
+    load_default_seed_manifest,
+    load_seed_manifest,
+)
 
 __all__ = [
     "AdapterContract",
@@ -54,4 +60,6 @@ __all__ = [
     "ComponentArtifact",
     "SeedManifest",
     "load_seed_manifest",
+    "load_default_seed_manifest",
+    "build_reference_registry",
 ]
