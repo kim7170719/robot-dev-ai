@@ -410,3 +410,10 @@ v0.3–v0.6 registry, resolver, template, API, GUI, and evidence seams in
 `docs/g14_5_registry_audit.md`. It recommends a P0-only, data-backed artifact
 layer and records the unresolved E2/E4/E5 external boundaries. No component,
 source, or evidence record was added.
+
+G14.5 P0 component-library bootstrap (2026-10-14): added a typed G14.5
+artifact manifest schema and a dependency-free JSON-compatible YAML loader.
+`data/registry/seed_manifest.yaml` contains 11 narrow P0 artifacts with
+source/license state, interfaces, dependencies, limitations, target evidence,
+and provenance. External candidates remain E0 pending source review; only the
+pre-existing virtual differential-drive/Nav2/Isaac boundaries retain E3.
