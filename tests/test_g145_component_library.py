@@ -1,9 +1,11 @@
+import json
 from pathlib import Path
 
 import pytest
 
 from agent.architecture_resolver import ArchitectureResolutionRequest, ArchitectureResolver
 from agent.composition_planner import CompositionPlanner, CompositionPlanningRequest
+from agent.component_library import ComponentLibraryPlanner, ReferenceRobotSpec
 from registry.g145 import (
     SeedManifest,
     build_reference_registry,
@@ -98,3 +100,41 @@ def test_seed_manifest_preserves_mcu_only_navigation_conflict() -> None:
 
     assert result.compatible is False
     assert result.status == "architecture-conflict"
+
+
+def test_reference_robot_a_outputs_plans_dependencies_and_truthful_readiness() -> None:
+    root = Path(__file__).parents[1] / "data" / "reference_robot_a"
+    specification = ReferenceRobotSpec.model_validate(
+        json.loads((root / "robot_spec.yaml").read_text(encoding="utf-8"))
+    )
+
+    result = ComponentLibraryPlanner().plan(load_default_seed_manifest(), specification)
+
+    assert result.ready is True
+    assert result.architecture_plan.model_dump() == json.loads(
+        (root / "expected_architecture_plan.yaml").read_text(encoding="utf-8")
+    )
+    assert result.composition_plan.model_dump() == json.loads(
+        (root / "expected_composition_plan.yaml").read_text(encoding="utf-8")
+    )
+    assert result.required_packages == ["ros2-control", "diff-drive-controller", "nav2"]
+    assert result.required_drivers == ["ld06", "realsense-d455"]
+    assert result.required_adapters == ["serial-bridge", "ros2-control", "twist-twiststamped"]
+    assert result.hardware_readiness == "blocked"
+    assert "esp32" in result.evidence_gaps
+    assert len(result.deployment_checklist) == 4
+    assert len(result.validation_plan) == 4
+
+
+def test_reference_robot_a_blocks_an_unknown_seed_dependency() -> None:
+    specification = ReferenceRobotSpec.model_validate({
+        "id": "invalid-reference", "display_name": "Invalid reference",
+        "robot_spec": {"robot_type": "differential-drive", "device_ids": ["jetson-generic"]},
+        "package_ids": ["unknown-package"],
+    })
+
+    result = ComponentLibraryPlanner().plan(load_default_seed_manifest(), specification)
+
+    assert result.ready is False
+    assert result.missing_dependencies == ["unknown-package"]
+    assert result.hardware_readiness == "blocked"

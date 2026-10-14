@@ -1,0 +1,13 @@
+{
+  "id": "reference-robot-a",
+  "display_name": "Reference Robot A · Jetson + ESP32 differential drive",
+  "robot_spec": {
+    "robot_type": "differential-drive",
+    "capability_ids": ["differential-drive", "planar-lidar", "rgbd-camera", "navigation", "motor-control", "encoder-feedback"],
+    "requested_architecture": "host-plus-mcu",
+    "device_ids": ["jetson-generic", "esp32", "differential-drive", "ld06", "realsense-d455"]
+  },
+  "adapter_ids": ["serial-bridge", "ros2-control", "twist-twiststamped"],
+  "package_ids": ["ros2-control", "diff-drive-controller", "nav2"],
+  "driver_ids": ["ld06", "realsense-d455"]
+}

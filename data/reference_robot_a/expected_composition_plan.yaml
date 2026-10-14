@@ -1,0 +1,9 @@
+{
+  "components": [
+    {"kind": "template", "id": "differential-drive", "device_id": "differential-drive"},
+    {"kind": "template", "id": "lidar", "device_id": "ld06"},
+    {"kind": "template", "id": "camera", "device_id": "realsense-d455"},
+    {"kind": "template", "id": "nav2", "device_id": "jetson-generic"}
+  ],
+  "evidence_status": "not-tested"
+}

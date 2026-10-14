@@ -207,6 +207,12 @@ fixture proves Jetson+ESP32 host/MCU responsibility assignment, deterministic
 differential-drive/LiDAR/camera/Nav2 template selection, and the existing
 MCU-only navigation conflict. These are planning tests only, not E2/E4 claims.
 
+G14.5 Reference Robot A planning (2026-10-14): added a data-backed Reference
+Robot A spec, expected architecture/composition plans, and a planner that
+outputs package/driver/adapter requirements, evidence gaps, blocked hardware
+readiness, deployment checklist, and validation plan. It performs no rendering,
+Docker, ROS, or hardware I/O; unknown seed dependencies block explicitly.
+
 v0.5 transaction recovery and runner preflight (2026-10-13): **PASS.** A
 caller-configured transaction JSONL store restores preview transactions after
 an API restart. Read-only runner preflight reports `not-configured`, `blocked`,

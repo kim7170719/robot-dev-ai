@@ -1,0 +1,8 @@
+{
+  "architecture": "host-plus-mcu",
+  "assignments": [
+    {"device_id": "jetson-generic", "responsibility_ids": ["ros2-runtime", "nav2-runtime"]},
+    {"device_id": "esp32", "responsibility_ids": ["motor-control", "encoder-feedback"]}
+  ],
+  "evidence_status": "not-tested"
+}
